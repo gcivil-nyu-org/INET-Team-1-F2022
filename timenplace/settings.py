@@ -25,7 +25,7 @@ SECRET_KEY = 'n%eoon1^8v5%0=j&g^ef&eq)5cab)7-)^v5*bs6mkeuwr##61m'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1','timenplace-dev.eba-b8qtmvtt.us-east-1.elasticbeanstalk.com']
 
 
 # Application definition
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'timenplace.wsgi.application'
+WSGI_APPLICATION = 'INET-Team-1-F2022.wsgi.application'
 
 
 # Database
