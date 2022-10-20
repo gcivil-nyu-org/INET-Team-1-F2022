@@ -25,12 +25,13 @@ SECRET_KEY = '6afn+0ee8viojn(-m^jknuzovg^ino=#zleg4au)2mi=ir7aaq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['timeandplace-dev.eba-ngz3apug.us-west-2.elasticbeanstalk.com','timeandplace-dev.eba-juwihe4w.us-west-2.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['127.0.0.1','timeandplace-dev.eba-ngz3apug.us-west-2.elasticbeanstalk.com','timeandplace-dev.eba-juwihe4w.us-west-2.elasticbeanstalk.com']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'users.apps.UsersConfig',
     'main.apps.MainConfig',
     'django.contrib.admin',
     'django.contrib.auth',
