@@ -17,14 +17,14 @@ install:
 # after_script:
 #   - coveralls
 
-# before_deploy: "echo 'Deploying Timenplace from Travis...'"
-# deploy:
-#   provider: elasticbeanstalk
-#   access_key_id: $AWS_ACCESS_KEY
-#   secret_access_key: $AWS_SECRET_KEY
-#   region: "us-west-2"
-#   app: "polls"
-#   env: "django-env"
-#   bucket_name: "elasticbeanstalk-us-west-2-200959226035"
+before_deploy: "echo 'Deploying Timenplace from Travis...'"
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: $AWS_ACCESS_KEY_ID
+  secret_access_key: $AWS_SECRET
+  region: "us-west-2"
+  app: "timeandplace"
+  env: "timeandplace-dev"
+  bucket_name: "elasticbeanstalk-us-west-2-522724211121"
 
-# only_create_app_version: "true"
+#only_create_app_version: "true"
