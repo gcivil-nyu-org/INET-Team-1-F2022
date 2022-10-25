@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .forms import NewUserForm
+from .forms import NewUserForm, ProfileForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
@@ -51,3 +51,8 @@ def logout_request(request):
 	logout(request)
 	messages.info(request, "You have successfully logged out.") 
 	return redirect("main:index")
+
+# Add profile view
+def profile(request):
+	context = {'profile_form': ProfileForm()}
+	return render(request, template_name='users/profile.html', context=context)
