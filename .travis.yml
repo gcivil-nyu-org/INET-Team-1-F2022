@@ -6,16 +6,16 @@ python:
 install:
   - pip install -r requirements.txt
 
-# before_script:
-#   - python manage.py migrate
+before_script:
+  - python manage.py migrate
 
 script:
   - black ./
   - flake8 ./
   - coverage run --source=. manage.py test
 
-# after_script:
-#   - coveralls
+after_script:
+  - coveralls
 
 before_deploy: "echo 'Deploying Timenplace from Travis...'"
 deploy:
@@ -26,5 +26,6 @@ deploy:
   app: "timeandplace"
   env: "timeandplace-dev"
   bucket_name: "elasticbeanstalk-us-west-2-522724211121"
-
+  on:
+      branch: develop
 #only_create_app_version: "true"
