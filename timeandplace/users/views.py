@@ -18,11 +18,11 @@ def register_request(request):
 	if request.method == "POST":
 		form = NewUserForm(request.POST)
 		if form.is_valid():
-			user = form.save()
+			form.save()
 			# login(request, user)
 			messages.success(request, "Registration successful." )
 			username = form.cleaned_data.get("username")
-			messages.success(request, f"Account Created. You can now log in")
+			messages.success(request, f"Account Created. You can now log in {username}")
 			return redirect("login")
 		messages.error(request, "Unsuccessful registration. Invalid information.")
 	else:

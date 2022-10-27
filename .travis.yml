@@ -6,8 +6,8 @@ python:
 install:
   - pip install -r requirements.txt
 
-# before_script:
-#   - python ./timeandplace/manage.py migrate
+before_script:
+  - python ./timeandplace/manage.py migrate
 
 script:
   - black ./
