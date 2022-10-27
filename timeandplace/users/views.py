@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 
 # Create your views here.
-from django.http import HttpResponse
+# from django.http import HttpResponse
 
 
 def index(request):

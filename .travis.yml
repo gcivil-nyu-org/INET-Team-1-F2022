@@ -12,7 +12,7 @@ before_script:
 script:
   - black ./
   - flake8 ./
-  - coverage run --source=./timeandplace/manage.py test
+  # - coverage run --source=./timeandplace/manage.py test
 
 after_script:
   - coveralls
