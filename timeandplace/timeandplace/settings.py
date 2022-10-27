@@ -25,7 +25,7 @@ SECRET_KEY = '6afn+0ee8viojn(-m^jknuzovg^ino=#zleg4au)2mi=ir7aaq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','timeandplace-dev.eba-ngz3apug.us-west-2.elasticbeanstalk.com','timeandplace-dev.eba-juwihe4w.us-west-2.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -119,6 +119,15 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
+# PROJECT_ROOT = os.path.abspath(os.path.dirname(__name__))
+# print("Project root is "+ PROJECT_ROOT)
+# STATIC_ROOT = os.path.join(PROJECT_ROOT,'static/')
+# print("Project root is "+ STATIC_ROOT)
+# STATIC_URL = '/static/'
+# STATICFILES_FINDERS = (
+#     'django.contrib.staticfiles.finders.FileSystemFinder',
+#     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+# )
 
 STATIC_URL = '/static/'
 STATIC_ROOT = 'static'
