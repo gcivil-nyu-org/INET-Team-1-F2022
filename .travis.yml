@@ -6,13 +6,13 @@ python:
 install:
   - pip install -r requirements.txt
 
-before_script:
-  - python /timeandplace/manage.py migrate
+# before_script:
+#   - python ./timeandplace/manage.py migrate
 
 script:
   - black ./
   - flake8 ./
-  - coverage run --source=. /timeandplace/manage.pymanage.py test
+  - coverage run --source=./timeandplace/manage.py test
 
 after_script:
   - coveralls
