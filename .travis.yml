@@ -27,5 +27,5 @@ deploy:
   env: "timeandplace-dev"
   bucket_name: "elasticbeanstalk-us-west-2-522724211121"
   on:
-      branch: develop
+      branch: main
 #only_create_app_version: "true"
