@@ -16,7 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from users import views as user_views
+from main import views as main_views
 from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("", include("main.urls")),
@@ -42,4 +45,17 @@ urlpatterns = [
     
     # Profile route
     path("accounts/profile/", user_views.profile, name="profile"),
+
+    # Profile route
+    path("edit_profile/", user_views.editprofile, name="editprofile"),
+
+    # Matching route
+    path("match/", main_views.datePage, name="datePage"),
+
+    path("user/<int:pk>/", main_views.UserDetail.as_view(), name="user-detail"),
+    
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

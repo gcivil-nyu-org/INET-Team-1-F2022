@@ -1,0 +1,86 @@
+{% extends "main/base.html" %}
+<!--  -->
+{% block head %}
+<link
+  rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+/>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" defer></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+  defer
+></script>
+<script
+  src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+  defer
+></script>
+{% endblock head %}
+<!--  -->
+{% block content %}
+<section class="match-page">
+  <div class="navigation navigation--bg">
+    <a href="" class="logo link">TimeAndPlace</a>
+    <div>
+      {% if user.is_authenticated %}
+      <a href="{% url 'datePage' %}" class="profile-link link">Profile</a>
+      <a href="{% url 'logout' %}" class="login link">Logout</a>
+      {% else %}
+      <a href="{% url 'login' %}" class="login link">Log in</a>
+      {% endif %}
+    </div>
+  </div>
+  <ul id="slide-out" class="sidenav">
+    <li>
+      <div class="user-view">
+        <img class="circle" src="{{userIn.profile.profile_image.url}}" />
+        <span class="name">{{userIn.profile.full_name}}</span>
+        <span class="email">{{userIn.email}}</span>
+      </div>
+    </li>
+    <li><a href="{% url 'profile' %}" class="waves-effect"><i class="material-icons">account_box</i>Your Profile</a></li>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">Other Pages</a></li>
+    <li><a class="waves-effect" href="/"><i class="material-icons">home</i>Dating Page</a></li>
+  </ul>
+
+  {% for msg in messages %}
+  <div
+    class="alert alert-success alert-dismissible fade show"
+    id="message"
+    role="alert"
+  >
+    <strong>{{ msg }}</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {% endfor %}
+
+  <div class="users-container">
+    {% for user in users %}
+    <!--  -->
+      {% if user.user != userIn %}
+      
+        {% if userIn not in user.blocked_by.all %}
+        <div class="user-card">
+          <a href="{% url 'user-detail' user.pk %}">
+            <img src="{{user.profile_image.url}}" class="image-home" alt="" />
+          </a>
+          <div class="info-container">
+            <p>{{user.full_name}}, {{user.age}}</p>
+            <p>{{user.date}}</p>
+            <p>{{user.place}}</p>
+          </div>
+        </div>
+        {% endif %}
+      
+      {% endif %}
+    
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock content %}
+
+<!--  -->
+{% comment %} https://diverseui.com/ {% endcomment %}

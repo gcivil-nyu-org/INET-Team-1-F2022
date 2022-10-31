@@ -1,0 +1,44 @@
+{% extends "main/base.html" %}
+<!--  -->
+{% load crispy_forms_tags %}
+<!--  -->
+{% block content %}
+<section>
+  <div class="navigation navigation--bg">
+    <a href="/" class="logo link">TimeAndPlace</a>
+    <div>
+      {% if user.is_authenticated %}
+      <a href="{% url 'profile' %}" class="profile-link link">Profile</a>
+      <a href="{% url 'logout' %}" class="login link">Logout</a>
+      {% else %}
+      <a href="{% url 'login' %}" class="login link">Log in</a>
+      {% endif %}
+    </div>
+  </div>
+  <div style="margin: 50px auto; max-width: 80%">
+    <ul class="collapsible">
+      <li>
+        <div class="collapsible-header">
+          <i class="fas fa-cog"></i> Edit Profile
+        </div>
+        <div class="collapsible-body">
+          <p>*Please enter your Tech Stack in CSV Format</p>
+          <form action="" method="POST" enctype="multipart/form-data">
+            <!-- Cross site request token added security -->
+            {% csrf_token %}
+            <!-- -->
+            {{ profile_form }}
+            <div>
+              <button class="btn" type="submit" style="margin: 20px 0">
+                Update
+              </button>
+            </div>
+          </form>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!--  -->
+{% endblock content %}
