@@ -46,4 +46,42 @@ class AppViewTests(TestCase):
         response = client.get(path="account/")
         assert response.status_code == 200
 
+class TestForms(TestCase):
+    def test_form_save(self):
+        from .forms import LoginForm
+
+        form = LoginForm()
+        form.cleaned_data = {}
+        form.cleaned_data["email"] = "test_email"
+        form.cleaned_data["password1"] = "test_password"
+
+        user = form.save(False)
+        email = form.cleaned_data["email"]
+        assert email == user.email
+
+    def test_meta(self):
+        from .forms import LoginForm
+
+        meta = LoginForm.Meta()
+        assert meta.model == User
+        assert meta.fields == ("username", "email", "password1", "password2")
+
+    def test_form_save_register(self):
+        from .forms import UserRegistrationForm
+
+        form = UserRegistrationForm()
+        form.cleaned_data = {}
+        form.cleaned_data["email"] = "test_email"
+        form.cleaned_data["password1"] = "test_password"
+
+        user = form.save(False)
+        email = form.cleaned_data["email"]
+        assert email == user.email
+
+    def test_meta_register(self):
+        from .forms import UserRegistrationForm
+
+        meta = UserRegistrationForm.Meta()
+        assert meta.model == User
+        assert meta.fields == ("username", "email", "password1", "password2")
 
