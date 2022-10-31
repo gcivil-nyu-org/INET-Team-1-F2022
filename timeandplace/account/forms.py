@@ -41,6 +41,7 @@ class ProfileEditForm(forms.ModelForm):
 	BIRTH_YEAR_CHOICES = list(str(year) for year in list(range(1940,2004)))
 	date_of_birth = forms.DateField(widget=forms.SelectDateWidget(years=BIRTH_YEAR_CHOICES))
 	about_me = forms.CharField(widget=forms.Textarea)
+	#proposal_time = forms.DateTimeField(widget=forms.DateTimeInput)
 	class Meta:
 		model = Profile
 		fields = ('date_of_birth',

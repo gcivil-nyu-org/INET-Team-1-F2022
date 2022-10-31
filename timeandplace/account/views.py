@@ -88,10 +88,12 @@ def profile_list(request):
     return render(request, 
                 'profile/profile_list.html',
                 {"profiles" : profiles})
-
+import datetime
 @login_required
 def profile(request, pk):
     profile = Profile.objects.get(user_id=pk)
+    age = datetime.datetime.now().date() - profile.date_of_birth
+    age = age.days // 365
     return render(request, 
                     "profile/profile.html", 
-                    {"profile": profile})
+                    {"profile": profile,"age": age})
