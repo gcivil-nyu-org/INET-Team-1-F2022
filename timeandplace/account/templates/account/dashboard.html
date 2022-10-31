@@ -2,5 +2,21 @@
    {% block title %}Dashboard{% endblock %}
    {% block content %}
      <h1>Dashboard</h1>
-     <p>Welcome to your dashboard. You can <a href="{% url "edit" %}">edit your profile</a> or <a href="{% url "password_change" %}">change your password</a>.</p>
+     <p>Welcome to your dashboard. 
+      You can 
+      <ul>
+        <li>
+          <a href="{% url 'profile' username=request.user.username %}">Preview your profile</a>,  
+        </li>
+        <li> 
+          <a href="{% url "edit" %}">Edit your profile</a>, or
+        </li>
+        <li>
+          <a href="{% url "password_change" %}">Change your password</a>.</p>
+        </li>
+      </ul>
+      
+       
 {% endblock %}
+
+

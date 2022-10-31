@@ -81,3 +81,17 @@ def edit(request):
                     'account/edit.html',
                     {'user_form': user_form,
                     'profile_form': profile_form})
+
+@login_required
+def profile_list(request):
+    profiles = Profile.objects.exclude(user=request.user)
+    return render(request, 
+                'profile/profile_list.html',
+                {"profiles" : profiles})
+
+@login_required
+def profile(request, username):
+    profile = Profile.objects.get(user.username=username)
+    return render(request, 
+                    "profile/profile.html", 
+                    {"profile": profile})

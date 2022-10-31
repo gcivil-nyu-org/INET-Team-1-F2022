@@ -1,0 +1,14 @@
+<!-- account/templates/profile/profile.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<ul>
+
+    <li>{{ profile.user.first_name }}</li>
+    <li>{{ profile.date_of_birth }}</li>
+    <li>{{ profile.proposal_time }}</li>
+    <li>{{ profile.proposal_location }}</li>
+
+</ul>
+
+{% endblock content %}

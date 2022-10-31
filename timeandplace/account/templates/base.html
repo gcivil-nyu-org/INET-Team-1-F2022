@@ -13,11 +13,13 @@
                     <li {% if section == "dashboard" %}class="selected"{% endif %}>
                     <a href="{% url "dashboard" %}">My dashboard</a>
                     </li>
-                    <li {% if section == "images" %}class="selected"{% endif %}>
-                    <a href="#">Images</a>
-                    </li>
+                
                     <li {% if section == "people" %}class="selected"{% endif %}>
-                    <a href="#">People</a>
+                    <a href="{% url "profile_list" %}">People</a>
+                    </li>
+
+                    <li {% if section == "like_me" %}class="selected"{% endif %}>
+                    <a href="#">Liked Me</a>
                     </li>
                 </ul>
                 {% endif %}
