@@ -1,0 +1,22 @@
+<!-- account/templates/profile/profile.html -->
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+<h2>
+    {{ profile.user.first_name }}, {{ age }}
+</h2>
+<b>Time:</b> {{ profile.proposal_time }}
+<br>
+<b>Place:</b> {{ profile.proposal_location }}
+<p><img src="{{ profile.photo.url }}" width="250px"></p>
+<br>
+<b>Occupation:</b> {{ profile.occupation }}
+<br>
+<b>About me:</b> {{ profile.about_me }}
+
+
+
+{% endblock content %}

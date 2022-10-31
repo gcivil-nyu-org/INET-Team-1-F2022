@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'users.apps.UsersConfig',
+    'account.apps.AccountConfig',
     'main.apps.MainConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -131,3 +131,19 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = 'static'
+
+# Tells Django which URL to redirect user to after
+# a successful login if no next parameter present in request
+LOGIN_REDIRECT_URL = 'dashboard'
+
+# URL to redirect user to login
+LOGIN_URL = 'login'
+
+# URL to redirect user to logout
+LOGOUT_URL = 'logout'
+
+# indicates class to use to send emails
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
