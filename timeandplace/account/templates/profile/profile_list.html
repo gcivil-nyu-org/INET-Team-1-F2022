@@ -9,7 +9,7 @@
 
     <div class="block">
       <div class="card">
-        <a href="#">
+        <a href="{% url 'profile' pk=profile.user.id %}">
           <div class="card-content">
             <div class="media">
               <div class="media-left">
@@ -20,7 +20,7 @@
               </div>
               <div class="media-content">
                 <p class="title is-4">
-                  {{ profile.user.username }}
+                  {{ profile.user.first_name  }}, {{ profile.date_of_birth  }}, 
                 </p>
                 <p class="subtitle is-6">
                   @{{ profile.user.username|lower }}
