@@ -14,7 +14,7 @@ before_script:
 script:
   - black ./
   # - flake8 ./
-  - coverage run --source=timandplace,account manage.py test
+  - coverage run ./timeandplace/manage.py test
   
 
 after_script:
