@@ -15,12 +15,12 @@
  
               <div class="media-content">
                 <h3 class="title is-4">
-                  {{ profile.user.first_name  }}, {{ profile.date_of_birth  }}, 
+                  {{ profile.user.first_name  }} 
                 </h3>
                 <div class="media-left">
                     <figure class="image is-48x48">
-                      <img src="https://bulma.io/images/placeholders/96x96.png"
-                           alt="Placeholder image">
+                      <img src="{{ profile.photo.url }}" width="100px">
+                         <!--  alt="Placeholder image"> -->
                     </figure>
                   </div>
                 <p class="subtitle is-6">

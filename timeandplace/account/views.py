@@ -81,10 +81,12 @@ def edit(request):
                     'account/edit.html',
                     {'user_form': user_form,
                     'profile_form': profile_form})
-
+import datetime
 @login_required
 def profile_list(request):
     profiles = Profile.objects.exclude(user=request.user)
+    #age = datetime.datetime.now().date() - profile.date_of_birth
+    #age = age.days // 365
     return render(request, 
                 'profile/profile_list.html',
                 {"profiles" : profiles})
