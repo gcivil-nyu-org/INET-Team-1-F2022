@@ -90,8 +90,8 @@ def profile_list(request):
                 {"profiles" : profiles})
 
 @login_required
-def profile(request, username):
-    profile = Profile.objects.get(user.username=username)
+def profile(request, pk):
+    profile = Profile.objects.get(user_id=pk)
     return render(request, 
                     "profile/profile.html", 
                     {"profile": profile})
