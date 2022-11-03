@@ -4,9 +4,10 @@
 {% block content %}
 
 <div class="column">
+  <h1>Here are the suggestions based on your preferences!</h1>
 
 {% for profile in profiles %}
-
+  {% if profile.calc_age >= currentuser.age_preference_min %}
     <div class="block">
       <div class="card">
         <a href="{% url 'profile' pk=profile.user.id %}">
@@ -15,7 +16,7 @@
  
               <div class="media-content">
                 <h3 class="title is-4">
-                  {{ profile.user.first_name  }} , {{ profile.calc_age  }}
+                  {{ profile.user.first_name  }} , {{ profile.calc_age  }} 
                 </h3>
                 <div class="media-left">
                     <figure class="image is-48x48">
@@ -33,7 +34,7 @@
         </a>
       </div>
     </div>
-
+    {% endif %} 
 {% endfor %}
 
 </div>

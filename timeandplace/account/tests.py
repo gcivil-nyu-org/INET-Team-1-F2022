@@ -24,64 +24,6 @@ class Test_is_user_auth(TestCase):
         response = self.client.get("login")
         assert response.status_code == 404
 
-# class AppViewTests(TestCase):
-#     def test_home_endpoint_returns_welcome_page(self):
-#         response = self.client.get(path="/")
-#         assert response.status_code == 200
-
-#     def test_login_endpoint_returns_login_page(self):
-#         response = self.client.get(path="login/")
-#         assert response.status_code == 200
-
-#     def test_register_endpoint_returns_login_page(self):
-#         response = self.client.get(path="register/")
-#         assert response.status_code == 200
-
-#     def test_password_endpoint_returns_password_page(self):
-#         response = self.client.get(path="password-reset/")
-#         assert response.status_code == 200
-
-#     def test_reset_endpoint_returns_reset_page(self):
-#         response = self.client.get(path="password-reset/done")
-#         assert response.status_code == 200
-
-#     def test_account_endpoint_returns_reset_page(self):
-#         response = self.client.get(path="account/")
-#         assert response.status_code == 200
-
-# class TestForms(TestCase):
-#     def test_form_save(self):
-
-#         form = LoginForm()
-#         form.cleaned_data = {}
-#         form.cleaned_data["email"] = "test_email"
-#         form.cleaned_data["password1"] = "test_password"
-
-#         user = form.save(False)
-#         email = form.cleaned_data["email"]
-#         assert email == user.email
-
-#     def test_meta(self):
-#         from .forms import LoginForm
-
-#         meta = LoginForm.Meta()
-#         assert meta.model == User
-#         assert meta.fields == ("username", "email", "password1", "password2")
-
-#     def test_form_save_register(self):
-#         form = UserRegistrationForm()
-#         form.cleaned_data = {}
-#         form.cleaned_data["email"] = "test_email"
-#         form.cleaned_data["password1"] = "test_password"
-
-#         user = form.save(False)
-#         email = form.cleaned_data["email"]
-#         assert email == user.email
-
-#     def test_meta_register(self):
-#         meta = UserRegistrationForm.Meta()
-#         assert meta.model == User
-#         assert meta.fields == ("username", "email", "password1", "password2")
 
 class TestRegister(TestCase):
     def test_register_page(self):

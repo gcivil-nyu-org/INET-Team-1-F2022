@@ -6,7 +6,7 @@
 {% block content %}
 
 <h2>
-    {{ profile.user.first_name }}, {{ age }}
+    {{ profile.user.first_name }}, {{ profile.calc_age }}
 </h2>
 <b>Time:</b> {{ profile.proposal_time }}
 <br>
@@ -16,7 +16,20 @@
 <b>Occupation:</b> {{ profile.occupation }}
 <br>
 <b>About me:</b> {{ profile.about_me }}
-
-
-
+<br>
+<b>Gender Identity: </b> {{ profile.gender_identity }}
+<br>
+<b>Sexual Orientation: </b> {{ profile.sexual_orientation }}
+<br>
+<br>
+<br>
+<p>You can 
+    <ul>
+      <li> 
+        <a href="{% url "edit" %}">Edit your profile</a>, or
+      </li>
+      <li> 
+        <a href="{% url "preferences" pk=profile.user_id %}">Preview your preferences</a>
+      </li>
+    </ul>
 {% endblock content %}

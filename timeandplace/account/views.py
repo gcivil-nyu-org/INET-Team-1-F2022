@@ -1,8 +1,8 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from .forms import LoginForm, UserRegistrationForm
+from .forms import LoginForm, UserRegistrationForm,PreferenceEditForm
 from .models import Profile
 
 def register(request):
@@ -69,10 +69,13 @@ def edit(request):
         profile_form = ProfileEditForm(
                                     instance=request.user.profile,
                                     data=request.POST,
-                                    files=request.FILES)
+                                    files=request.FILES)                                
+        user_id = request.user.id
+        print(user_id)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
+            return redirect('profile',pk=user_id)
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(
@@ -94,8 +97,44 @@ import datetime
 @login_required
 def profile(request, pk):
     profile = Profile.objects.get(user_id=pk)
-    age = datetime.datetime.now().date() - profile.date_of_birth
-    age = age.days // 365
+    # age = datetime.datetime.now().date() - profile.date_of_birth
+    # age = age.days // 365
     return render(request, 
                     "profile/profile.html", 
-                    {"profile": profile,"age": age})
+                    {"profile": profile})
+@login_required
+def preferences(request, pk):
+    profile = Profile.objects.get(user_id=pk)
+    # age = datetime.datetime.now().date() - profile.date_of_birth
+    # age = age.days // 365
+    return render(request, 
+                    "profile/preferences.html", 
+                    {"profile": profile})
+@login_required
+def edit_preferences(request):
+    if request.method == 'POST':
+        preference_form = PreferenceEditForm(
+                                    instance=request.user.profile,
+                                    data=request.POST)
+        user_id = request.user.id
+        if preference_form.is_valid():
+            preference_form.save()
+            return redirect('profile',pk=user_id)
+    else:
+        preference_form = PreferenceEditForm(
+                                    instance=request.user.profile)
+    return render(request,
+                    'profile/edit_preferences.html',
+                    {'preference_form': preference_form})
+@login_required
+def filter_profile_list(request):
+    age_p_min = request.user.profile.age_preference_min
+    age_p_max = request.user.profile.age_preference_max
+    gender_p = request.user.profile.gender_preference
+    oreo_p = request.user.profile.orientation_preference
+    print(age_p_min,age_p_max,gender_p,oreo_p)
+    # age__gte=age_p_min,age__lte=age_p_max
+    profiles = Profile.objects.exclude(user=request.user).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
+    return render(request, 
+                'profile/filter_profile_list.html',
+                {"profiles" : profiles, "currentuser" : request.user.profile})
