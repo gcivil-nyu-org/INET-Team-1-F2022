@@ -5,9 +5,18 @@
 
 <div class="column">
   <h1>Here are the suggestions based on your preferences!</h1>
-
+  <p>
+    You can 
+    <ul>
+      <li>
+        <a href="{% url 'preferences' pk=user.id %}">Preview your preferences</a>,  or
+      </li>
+      <li> 
+        <a href="{% url "edit_preferences" %}">Edit your preferences</a>
+      </li>
+    </ul>
 {% for profile in profiles %}
-  {% if profile.calc_age >= currentuser.age_preference_min %}
+  {% if profile.calc_age >= currentuser.age_preference_min and profile.calc_age <= currentuser.age_preference_max %}
     <div class="block">
       <div class="card">
         <a href="{% url 'profile' pk=profile.user.id %}">

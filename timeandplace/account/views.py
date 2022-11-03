@@ -132,7 +132,7 @@ def filter_profile_list(request):
     age_p_max = request.user.profile.age_preference_max
     gender_p = request.user.profile.gender_preference
     oreo_p = request.user.profile.orientation_preference
-    print(age_p_min,age_p_max,gender_p,oreo_p)
+    # print(age_p_min,age_p_max,gender_p,oreo_p)
     # age__gte=age_p_min,age__lte=age_p_max
     profiles = Profile.objects.exclude(user=request.user).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
     return render(request, 
