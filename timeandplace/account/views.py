@@ -134,6 +134,7 @@ def filter_profile_list(request):
     oreo_p = request.user.profile.orientation_preference
     # print(age_p_min,age_p_max,gender_p,oreo_p)
     # age__gte=age_p_min,age__lte=age_p_max
+    print('Test my fork')
     profiles = Profile.objects.exclude(user=request.user).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
     return render(request, 
                 'profile/filter_profile_list.html',
