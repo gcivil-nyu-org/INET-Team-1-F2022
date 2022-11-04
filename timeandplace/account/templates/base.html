@@ -21,6 +21,10 @@
                     <li {% if section == "like_me" %}class="selected"{% endif %}>
                     <a href="#">Liked Me</a>
                     </li>
+
+                    <li {% if section == "suggestions" %}class="selected"{% endif %}>
+                        <a href="{% url "filter_profile_list" %}">Suggestions</a>
+                    </li>
                 </ul>
                 {% endif %}
                 <span class="user">
