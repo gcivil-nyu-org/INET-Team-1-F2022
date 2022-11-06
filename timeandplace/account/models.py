@@ -27,6 +27,8 @@ class Profile(models.Model):
     # age = datetime.datetime.now() - date_of_birth
     # marital_choices = (('Single', 'Single'), ('Widowed', 'Widowed'), ('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorced', 'Divorced'))
     # marital_status = models.CharField(max_length = 10, choices = marital_choices, blank = True)
+
+    users_like = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='users_liked', blank=True)
     @property
     def calc_age(self):
         today = date.today()
@@ -34,4 +36,3 @@ class Profile(models.Model):
     def __str__(self):
         return f'Profile for user {self.user.username}'
 
-   
