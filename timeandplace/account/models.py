@@ -8,17 +8,18 @@ class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
 
-    date_of_birth = models.DateField(blank=True, null=True)
+    date_of_birth = models.DateField(blank=True, null=True, default=date.today())
     photo = models.ImageField(upload_to='users/%Y/%m/%d/',
-                        blank=True)
+                        blank=True,
+                        default='users/default/user-default.png')
     occupation = models.CharField(max_length = 50,blank=True, null=True)
     proposal_time = models.CharField(max_length = 50,blank=True, null=True)
     proposal_location = models.CharField(max_length = 50,blank=True, null=True)
     about_me = models.CharField(max_length = 100,blank=True, null=True)
     gender_choices = (('Woman', 'Woman'), ('Man', 'Man'), ('Transgender', 'Transgender'), ('Non-binary', 'Non-binaary'))
-    gender_identity = models.CharField(max_length = 15, choices = gender_choices, blank = True)
+    gender_identity = models.CharField(max_length = 15, choices = gender_choices, blank = True, default="N/A")
     orientation_choices = (('Lesbian', 'Lesbian'), ('Gay', 'Gay'), ('Bisexual', 'Bisexual'), ('Queer', 'Queer'), ('Asexual', 'Asexual'), ('Straight', 'Straight'),('Other', 'Other'))
-    sexual_orientation = models.CharField(max_length = 15, choices = orientation_choices, blank = True)
+    sexual_orientation = models.CharField(max_length = 15, choices = orientation_choices, blank = True, default="N/A")
     age_preference_min = models.IntegerField(blank=True, null=True)
     age_preference_max = models.IntegerField(blank=True, null=True)
     gender_preference = models.CharField(max_length = 15, choices = gender_choices, blank = True)

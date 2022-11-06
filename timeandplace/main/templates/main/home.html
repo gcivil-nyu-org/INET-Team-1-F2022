@@ -16,7 +16,7 @@
   {% if request.user.is_authenticated %}
     <a href="{% url 'dashboard' %}" class="create-btn">Welcome {{ request.user.first_name }}</a>
   {% else %}
-    <a href="{% url 'dashboard' %}" class="create-btn">Create Account</a>
+    <a href="{% url 'register' %}" class="create-btn">Create Account</a>
   {% endif %}
 </section>
 {% endblock content %}
