@@ -21,16 +21,16 @@ after_script:
   - coveralls
 
 before_deploy: "echo 'Deploying Timenplace from Travis...'"
-# deploy:
-#   provider: elasticbeanstalk
-#   access_key_id: $AWS_ACCESS_KEY_ID
-#   secret_access_key: $AWS_SECRET
-#   region: "us-west-2"
-#   app: "timeandplace"
-#   env: "timeandplace-dev"
-#   bucket_name: "elasticbeanstalk-us-west-2-522724211121"
-#   on:
-#     branch: develop
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: $AWS_ACCESS_KEY_ID
+  secret_access_key: $AWS_SECRET
+  region: "us-west-2"
+  app: "timeandplace"
+  env: "timeandplace-dev"
+  bucket_name: "elasticbeanstalk-us-west-2-522724211121"
+  on:
+    branch: develop
 
   # provider: elasticbeanstalk
   # access_key_id: $AWS_ACCESS_KEY_ID
