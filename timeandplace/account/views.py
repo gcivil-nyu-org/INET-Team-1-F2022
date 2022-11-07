@@ -152,8 +152,8 @@ def filter_profile_list(request):
     # To-Do: Debug the issue with profile_id not matching user_id
     print(request.user.profile.likes.all())
     print(request.user.profile.hides.all())
-
-    profiles = Profile.objects.exclude(id__in=user_ids_to_exclude_likes).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
+    
+    profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
     return render(request, 
                 'profile/filter_profile_list.html',
                 {"profiles" : profiles, "currentuser" : request.user.profile})
