@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
-    'map.apps.MapConfig'
+    # 'map.apps.MapConfig'
 ]
 
 MIDDLEWARE = [
