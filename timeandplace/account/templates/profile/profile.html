@@ -22,7 +22,69 @@
 <b>Sexual Orientation: </b> {{ profile.sexual_orientation }}
 <br>
 <br>
+<form method="post">
+  {% csrf_token %}
+  <div class="buttons has-addons">
+  <!-- {% if profile in user.profile.likes.all %}
+      <button class="button is-success is-static">Like</button>
+      <button class="button is-danger" name="like" value="hide">
+          Hide
+      </button>
+  {% else %}
+      <button class="button is-success" name="like" value="like">
+          Like
+      </button>
+      <button class="button is-danger is-static">Hide</button>
+  {% endif %} -->
+  <button class="button is-success" name="like" value="like">Like</button>
+    <button class="button is-danger" name="like" value="hide">Hide</button>
+  </div>
+</form>
 <br>
+
+<div class="block">
+  <a href="{% url 'filter_profile_list' %}">
+      <button class="button is-dark is-outlined is-fullwidth">
+          All Profiles
+      </button>
+  </a>
+</div>
+
+<div class="block">
+  <h3 class="title is-4">
+      {{profile.user.username}} likes:
+  </h3>
+  <div class="content">
+      <ul>
+      {% for user_liked in profile.likes.all %}
+          <li>
+              <a href="#">
+                  {{ user_liked }}
+              </a>
+          </li>
+      {% endfor %}
+      </ul>
+  </div>
+</div>
+
+<div class="block">
+  <h3 class="title is-4">
+      {{profile.user.username}} hides:
+  </h3>
+  <div class="content">
+      <ul>
+      {% for user_hides in profile.hides.all %}
+          <li>
+              <a href="#">
+                  {{ user_hides }}
+              </a>
+          </li>
+      {% endfor %}
+      </ul>
+  </div>
+</div>
+
+
 <p>You can 
     <ul>
       <li> 
