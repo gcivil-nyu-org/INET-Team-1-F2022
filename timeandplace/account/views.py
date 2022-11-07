@@ -106,9 +106,9 @@ def profile(request, pk):
         data = request.POST
         action = data.get("like")
         if action == "like":
-            current_user_profile.likes.add(profile.user_id)
+            current_user_profile.likes.add(profile.id)
         elif action == "hide":
-            current_user_profile.hides.add(profile.user_id)
+            current_user_profile.hides.add(profile.id)
         current_user_profile.save()
     return render(request, 
                     "profile/profile.html", 
