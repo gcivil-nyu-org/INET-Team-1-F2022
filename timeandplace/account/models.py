@@ -28,7 +28,21 @@ class Profile(models.Model):
     # marital_choices = (('Single', 'Single'), ('Widowed', 'Widowed'), ('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorced', 'Divorced'))
     # marital_status = models.CharField(max_length = 10, choices = marital_choices, blank = True)
 
-    users_like = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='users_liked', blank=True)
+    # likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_by', blank=True)
+    # hides = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='hidden_by', blank=True)
+    likes = models.ManyToManyField(
+        "self",
+        related_name="liked_by",
+        symmetrical=False,
+        blank=True
+    )
+    hides = models.ManyToManyField(
+        "self",
+        related_name="hidden_by",
+        symmetrical=False,
+        blank=True
+    )
+    
     @property
     def calc_age(self):
         today = date.today()

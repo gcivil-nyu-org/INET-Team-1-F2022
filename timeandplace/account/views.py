@@ -96,17 +96,27 @@ def profile_list(request):
 import datetime
 @login_required
 def profile(request, pk):
+    if not hasattr(request.user, 'profile'):
+        missing_profile = Profile(user=request.user)
+        missing_profile.save()
+
     profile = Profile.objects.get(user_id=pk)
-    # age = datetime.datetime.now().date() - profile.date_of_birth
-    # age = age.days // 365
+    if request.method == "POST":
+        current_user_profile = request.user.profile
+        data = request.POST
+        action = data.get("like")
+        if action == "like":
+            current_user_profile.likes.add(profile.user_id)
+        elif action == "hide":
+            current_user_profile.hides.add(profile.user_id)
+        current_user_profile.save()
     return render(request, 
                     "profile/profile.html", 
                     {"profile": profile})
 @login_required
 def preferences(request, pk):
     profile = Profile.objects.get(user_id=pk)
-    # age = datetime.datetime.now().date() - profile.date_of_birth
-    # age = age.days // 365
+    
     return render(request, 
                     "profile/preferences.html", 
                     {"profile": profile})
@@ -132,9 +142,18 @@ def filter_profile_list(request):
     age_p_max = request.user.profile.age_preference_max
     gender_p = request.user.profile.gender_preference
     oreo_p = request.user.profile.orientation_preference
-    # print(age_p_min,age_p_max,gender_p,oreo_p)
-    # age__gte=age_p_min,age__lte=age_p_max
-    profiles = Profile.objects.exclude(user=request.user).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
+
+
+    user_ids_to_exclude_likes = [userX.user.id for userX in request.user.profile.likes.all()]
+    user_ids_to_exclude_likes.append(request.user.id)
+    user_ids_to_exclude_hides = [userX.user.id for userX in request.user.profile.hides.all()]
+    user_ids_to_exclude_likes.extend(user_ids_to_exclude_hides)
+    
+    # To-Do: Debug the issue with profile_id not matching user_id
+    print(request.user.profile.likes.all())
+    print(request.user.profile.hides.all())
+
+    profiles = Profile.objects.exclude(id__in=user_ids_to_exclude_likes).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
     return render(request, 
                 'profile/filter_profile_list.html',
                 {"profiles" : profiles, "currentuser" : request.user.profile})
