@@ -109,8 +109,8 @@ def profile(request, pk):
         missing_profile.save()
 
     profile = Profile.objects.get(user_id=pk)
+    current_user_profile = request.user.profile
     if request.method == "POST":
-        current_user_profile = request.user.profile
         data = request.POST
         action = data.get("like")
         if action == "like":
@@ -120,7 +120,7 @@ def profile(request, pk):
         current_user_profile.save()
     return render(request, 
                     "profile/profile.html", 
-                    {"profile": profile})
+                    {"profile": profile, "current_user_profile": current_user_profile})
 @login_required
 def preferences(request, pk):
     profile = Profile.objects.get(user_id=pk)
