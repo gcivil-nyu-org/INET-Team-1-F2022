@@ -22,24 +22,28 @@
 <b>Sexual Orientation: </b> {{ profile.sexual_orientation }}
 <br>
 <br>
+<div class="block">
+{%if profile in current_user_profile.liked_by.all %}
+<form method="post">
+    {% csrf_token %}
+    <div class="buttons has-addons">
+      <button class="button is-success" name="match" value="match">Match</button>
+      <button class="button is-danger" name="match" value="decline">Decline</button>
+    </div>
+  </form>
+{% else %}
+<!-- not show like hide for yourself -->
+{%if profile != current_user_profile and profile not in current_user_profile.likes.all%}
 <form method="post">
   {% csrf_token %}
   <div class="buttons has-addons">
-  <!-- {% if profile in user.profile.likes.all %}
-      <button class="button is-success is-static">Like</button>
-      <button class="button is-danger" name="like" value="hide">
-          Hide
-      </button>
-  {% else %}
-      <button class="button is-success" name="like" value="like">
-          Like
-      </button>
-      <button class="button is-danger is-static">Hide</button>
-  {% endif %} -->
-  <button class="button is-success" name="like" value="like">Like</button>
+    <button class="button is-success" name="like" value="like">Like</button>
     <button class="button is-danger" name="like" value="hide">Hide</button>
   </div>
 </form>
+{% endif %}
+{% endif %}
+</div>
 <br>
 
 <div class="block">
