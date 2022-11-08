@@ -33,7 +33,7 @@
   </form>
 {% else %}
 <!-- not show like hide for yourself -->
-{%if profile != current_user_profile %}
+{%if profile != current_user_profile and profile not in current_user_profile.likes.all%}
 <form method="post">
   {% csrf_token %}
   <div class="buttons has-addons">

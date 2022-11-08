@@ -115,8 +115,10 @@ def profile(request, pk):
         action = data.get("like")
         if action == "like":
             current_user_profile.likes.add(profile.id)
+            return redirect('filter_profile_list')
         elif action == "hide":
             current_user_profile.hides.add(profile.id)
+            return redirect('filter_profile_list')
         current_user_profile.save()
     return render(request, 
                     "profile/profile.html", 
