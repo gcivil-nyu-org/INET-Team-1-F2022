@@ -8,6 +8,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('edit/', views.edit, name='edit'),
     path('profile_list/', views.profile_list, name='profile_list'),
+    path('profile_liked_me/<int:pk>/', views.profile_liked_me, name='profile_liked_me'),
     path('profile/<int:pk>/', views.profile, name="profile"),
     path('preferences/<int:pk>/', views.preferences, name="preferences"),
     path('edit_preferences/', views.edit_preferences, name='edit_preferences'),

@@ -93,6 +93,14 @@ def profile_list(request):
     return render(request, 
                 'profile/profile_list.html',
                 {"profiles" : profiles})
+
+@login_required
+def profile_liked_me(request, pk):
+    # user = request.user.profile
+    user_profile = Profile.objects.get(user_id = pk)
+    return render(request,
+                'profile/profile_liked_me.html',
+                {"profile" : user_profile})
 import datetime
 @login_required
 def profile(request, pk):
