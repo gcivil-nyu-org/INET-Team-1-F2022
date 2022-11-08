@@ -42,6 +42,12 @@ class Profile(models.Model):
         symmetrical=False,
         blank=True
     )
+    matches = models.ManyToManyField(
+        "self",
+        related_name="matched_with",
+        symmetrical=False,
+        blank=True
+    )
     
     @property
     def calc_age(self):

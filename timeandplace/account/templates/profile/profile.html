@@ -88,6 +88,23 @@
   </div>
 </div>
 
+<div class="block">
+  <h3 class="title is-4">
+      {{profile.user.username}} accepted match request from:
+  </h3>
+  <div class="content">
+      <ul>
+      {% for user_matches in profile.matches.all %}
+          <li>
+              <a href="#">
+                  {{ user_matches }}
+              </a>
+          </li>
+      {% endfor %}
+      </ul>
+  </div>
+</div>
+
 
 <p>You can 
     <ul>

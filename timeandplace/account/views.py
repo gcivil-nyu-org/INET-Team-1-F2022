@@ -98,6 +98,9 @@ def profile_list(request):
 def profile_liked_me(request, pk):
     # user = request.user.profile
     user_profile = Profile.objects.get(user_id = pk)
+    # user_ids_to_exclude_matches = [userX.user.id for userX in request.user.profile.matches.all()]
+    # user_ids_to_exclude_matches.append(request.user.id)
+    # profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_matches)
     return render(request,
                 'profile/profile_liked_me.html',
                 {"profile" : user_profile})
@@ -112,13 +115,16 @@ def profile(request, pk):
     current_user_profile = request.user.profile
     if request.method == "POST":
         data = request.POST
-        action = data.get("like")
-        if action == "like":
+        action_for_like_hide = data.get("like")
+        action_for_match_decline = data.get("match")
+        if action_for_like_hide == "like":
             current_user_profile.likes.add(profile.id)
             return redirect('filter_profile_list')
-        elif action == "hide":
+        elif action_for_like_hide == "hide":
             current_user_profile.hides.add(profile.id)
             return redirect('filter_profile_list')
+        elif action_for_match_decline == "match":
+            current_user_profile.matches.add(profile.id)
         current_user_profile.save()
     return render(request, 
                     "profile/profile.html", 
