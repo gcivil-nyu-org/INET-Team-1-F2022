@@ -19,7 +19,7 @@
                     </li>
 
                     <li {% if section == "like_me" %}class="selected"{% endif %}>
-                    <a href="#">Liked Me</a>
+                    <a href=" {% url 'profile_liked_me' pk=request.user.id %}">Liked Me</a>
                     </li>
 
                     <li {% if section == "suggestions" %}class="selected"{% endif %}>
