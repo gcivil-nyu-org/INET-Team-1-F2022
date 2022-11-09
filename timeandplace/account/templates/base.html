@@ -9,6 +9,7 @@
     <div id="header">
         <span class="logo">Time & Place</span>
         {% if request.user.is_authenticated %}
+        {% if not request.user.profile.matches.exists %}
                 <ul class="menu">
                     <li {% if section == "dashboard" %}class="selected"{% endif %}>
                     <a href="{% url "dashboard" %}">My dashboard</a>
@@ -27,6 +28,7 @@
                     </li>
                 </ul>
                 {% endif %}
+            {% endif %}
                 <span class="user">
                 {% if request.user.is_authenticated %}
                     Hello {{ request.user.first_name }},

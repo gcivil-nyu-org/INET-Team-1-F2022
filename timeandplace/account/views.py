@@ -55,9 +55,10 @@ def user_login(request):
 
 @login_required
 def dashboard(request):
+    user_profile = Profile.objects.get(user_id = request.user.id)
     return render(request,
                      'account/dashboard.html',
-                     {'section': 'dashboard'})
+                     {'section': 'dashboard', "user_profile": user_profile})
 
 
 from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
