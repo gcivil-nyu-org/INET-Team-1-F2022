@@ -23,6 +23,7 @@
 <br>
 <br>
 <div class="block">
+{%if not current_user_profile.matches.exists %}
 {%if profile in current_user_profile.liked_by.all %}
 <form method="post">
     {% csrf_token %}
@@ -43,9 +44,10 @@
 </form>
 {% endif %}
 {% endif %}
+{% endif %}
 </div>
 <br>
-
+{%if not current_user_profile.matches.exists %}
 <div class="block">
   <a href="{% url 'filter_profile_list' %}">
       <button class="button is-dark is-outlined is-fullwidth">
@@ -53,7 +55,7 @@
       </button>
   </a>
 </div>
-
+{%endif%}
 <div class="block">
   <h3 class="title is-4">
       {{profile.user.username}} likes:
@@ -88,14 +90,33 @@
   </div>
 </div>
 
+<div class="block">
+  <h3 class="title is-4">
+      {{profile.user.username}} accepted match request from:
+  </h3>
+  <div class="content">
+      <ul>
+      {% for user_matches in profile.matches.all %}
+          <li>
+              <a href="#">
+                  {{ user_matches }}
+              </a>
+          </li>
+      {% endfor %}
+      </ul>
+  </div>
+</div>
 
+{%if not current_user_profile.matches.exists %}
 <p>You can 
     <ul>
       <li> 
         <a href="{% url "edit" %}">Edit your profile</a>, or
       </li>
+{%endif%}
       <li> 
         <a href="{% url "preferences" pk=profile.user_id %}">Preview your preferences</a>
       </li>
     </ul>
+
 {% endblock content %}

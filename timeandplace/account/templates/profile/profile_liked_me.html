@@ -5,9 +5,9 @@
 {% block content %}
 
 <div class="column">
-
+  <h1> Here are all the people who liked you </h1>
 {% for liker in profile.liked_by.all %}
-
+{%if not profile.matches.exists %}
     <div class="block">
       <div class="card">
         <a href="{% url 'profile' pk=liker.user.id %}">
@@ -34,7 +34,7 @@
         </a>
       </div>
     </div>
-
+    {% endif %}
 {% endfor %}
 
 </div>
