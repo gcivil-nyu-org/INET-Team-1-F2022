@@ -17,10 +17,12 @@
 <br>
 <b>Age Preference: </b> {{ profile.age_preference_min }} to {{ profile.age_preference_max }}
 <br>
+{%if not profile.matches.exists %}
 <p>You can 
     <ul>
       <li> 
         <a href="{% url "edit_preferences" %}">Edit your preferences</a>
       </li>
     </ul>
+  {% endif %}
 {% endblock content %}
