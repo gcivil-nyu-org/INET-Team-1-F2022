@@ -144,7 +144,13 @@ LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 
 # indicates class to use to send emails
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_BACKEND = 'django_ses.SESBackend'
+AWS_ACCESS_KEY_ID = 'AKIAXTNGKPGY2ZMC2S4T'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_SES_REGION_NAME = 'us-east-2'
+AWS_SES_REGION_ENDPOINT ='email.us-east-2.amazonaws.com'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

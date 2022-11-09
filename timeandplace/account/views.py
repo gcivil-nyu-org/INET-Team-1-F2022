@@ -1,9 +1,18 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth.decorators import login_required
 from .forms import LoginForm, UserRegistrationForm,PreferenceEditForm
 from .models import Profile
+
+from django.core.mail import send_mail, BadHeaderError
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.models import User
+from django.template.loader import render_to_string
+from django.db.models.query_utils import Q
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
 
 def register(request):
     if request.method == 'POST':
@@ -30,10 +39,10 @@ def register(request):
 def user_login(request):
     if request.method == 'POST': # when user submits form via POST
         form = LoginForm(request.POST) # instantiate form with submitted data
-        if form.is_valid(): 
+        if form.is_valid():
 
             # Authenticate user against database
-            cd = form.cleaned_data 
+            cd = form.cleaned_data
 
             # Returns the User object if authentication successful
             user = authenticate(request,
@@ -53,6 +62,34 @@ def user_login(request):
         form = LoginForm() # instantiate a new login form
     return render(request, 'account/login.html', {'form': form})
 
+def password_reset_request(request):
+	if request.method == "POST":
+		password_reset_form = PasswordResetForm(request.POST)
+		if password_reset_form.is_valid():
+			data = password_reset_form.cleaned_data['email']
+			associated_users = get_user_model().objects.filter(Q(email=data))
+			if associated_users.exists():
+				for user in associated_users:
+					subject = "Password Reset Requested"
+					email_template_name = "registration/password_reset_email.txt"
+					c = {
+					"email":user.email,
+					'domain':'timeandplace-dev.eba-ngz3apug.us-west-2.elasticbeanstalk.com',
+					'site_name': 'Website',
+					"uid": urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+					"user": user,
+					'token': default_token_generator.make_token(user),
+					'protocol': 'http',
+					}
+					email = render_to_string(email_template_name, c)
+					try:
+						send_mail(subject, email, 'admin@example.com' , [user.email], fail_silently=False)
+					except BadHeaderError:
+						return HttpResponse('Invalid header found.')
+					return redirect ("account/password_reset/done/")
+	password_reset_form = PasswordResetForm()
+	return render(request=request, template_name="registration/password_reset.html", context={"password_reset_form":password_reset_form})
+
 @login_required
 def dashboard(request):
     return render(request,
@@ -69,7 +106,7 @@ def edit(request):
         profile_form = ProfileEditForm(
                                     instance=request.user.profile,
                                     data=request.POST,
-                                    files=request.FILES)                                
+                                    files=request.FILES)
         user_id = request.user.id
         print(user_id)
         if user_form.is_valid() and profile_form.is_valid():
@@ -90,7 +127,7 @@ def profile_list(request):
     profiles = Profile.objects.exclude(user=request.user)
     #age = datetime.datetime.now().date() - profile.date_of_birth
     #age = age.days // 365
-    return render(request, 
+    return render(request,
                 'profile/profile_list.html',
                 {"profiles" : profiles})
 
@@ -120,15 +157,15 @@ def profile(request, pk):
             current_user_profile.hides.add(profile.id)
             return redirect('filter_profile_list')
         current_user_profile.save()
-    return render(request, 
-                    "profile/profile.html", 
+    return render(request,
+                    "profile/profile.html",
                     {"profile": profile, "current_user_profile": current_user_profile})
 @login_required
 def preferences(request, pk):
     profile = Profile.objects.get(user_id=pk)
-    
-    return render(request, 
-                    "profile/preferences.html", 
+
+    return render(request,
+                    "profile/preferences.html",
                     {"profile": profile})
 @login_required
 def edit_preferences(request):
@@ -158,12 +195,12 @@ def filter_profile_list(request):
     user_ids_to_exclude_likes.append(request.user.id)
     user_ids_to_exclude_hides = [userX.user.id for userX in request.user.profile.hides.all()]
     user_ids_to_exclude_likes.extend(user_ids_to_exclude_hides)
-    
+
     # To-Do: Debug the issue with profile_id not matching user_id
     print(request.user.profile.likes.all())
     print(request.user.profile.hides.all())
-    
+
     profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
-    return render(request, 
+    return render(request,
                 'profile/filter_profile_list.html',
                 {"profiles" : profiles, "currentuser" : request.user.profile})
