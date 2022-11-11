@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from .forms import UserRegistrationForm
 from django.urls import reverse
 from .forms import LoginForm
+from .models import Profile
+import datetime
 
 
 # Create your tests here.
@@ -42,3 +44,12 @@ class TestRegister(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+class TestProfile(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="test-profile", password="test-profile")
+        Profile.objects.create(user=self.user, date_of_birth=datetime.date(1996, 5, 28))
+    
+    def testCalculateAge(self):
+        profileObj = Profile.objects.get(date_of_birth=datetime.date(1996, 5, 28))
+        self.assertEqual(profileObj.calc_age, 26)

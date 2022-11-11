@@ -1,14 +1,14 @@
 # Create your models here.
 from django.db import models
 from django.conf import settings
-import datetime
 from datetime import date
+from django.utils import timezone
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
 
-    date_of_birth = models.DateField(blank=True, null=True, default=date.today())
+    date_of_birth = models.DateField(blank=True, null=True, default=timezone.now())
     photo = models.ImageField(upload_to='users/%Y/%m/%d/',
                         blank=True,
                         default='users/default/user-default.png')
