@@ -7,11 +7,11 @@ from datetime import date
 class Location(models.Model):
     DBA = models.CharField(max_length=100,null=True)
     BORO = models.CharField(max_length=100,null=True) 
-    BUILDING = models.CharField(max_length=20,null=True)
-    STREET = models.CharField(max_length = 40,null=True)
+    BUILDING = models.CharField(max_length=100,null=True)
+    STREET = models.CharField(max_length = 100,null=True)
     ZIPCODE = models.FloatField(null=True)
-    PHONE = models.CharField(max_length=12,null=True)
-    CUISINE = models.CharField(max_length=20,null=True)
+    PHONE = models.CharField(max_length=100,null=True)
+    CUISINE = models.CharField(max_length=100,null=True)
     LATITUDE = models.FloatField(null=True)
     LONGITUDE = models.FloatField(null=True)
 
