@@ -9,4 +9,4 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Location)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ['DBA']
+    list_display = ['DBA','BORO', 'BUILDING','STREET','ZIPCODE','PHONE','CUISINE','LATITUDE','LONGITUDE']
