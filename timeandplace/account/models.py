@@ -4,6 +4,11 @@ from django.conf import settings
 import datetime
 from datetime import date
 
+class Location(models.Model):
+    DBA = models.CharField(max_length=100)
+    def __str__(self):
+        return self.DBA
+
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
@@ -16,7 +21,7 @@ class Profile(models.Model):
     proposal_time = models.CharField(max_length = 50,blank=True, null=True)
     proposal_location = models.CharField(max_length = 50,blank=True, null=True)
     about_me = models.CharField(max_length = 100,blank=True, null=True)
-    gender_choices = (('Woman', 'Woman'), ('Man', 'Man'), ('Transgender', 'Transgender'), ('Non-binary', 'Non-binaary'))
+    gender_choices = (('Woman', 'Woman'), ('Man', 'Man'), ('Transgender', 'Transgender'), ('Non-binary', 'Non-binary'))
     gender_identity = models.CharField(max_length = 15, choices = gender_choices, blank = True, default="N/A")
     orientation_choices = (('Lesbian', 'Lesbian'), ('Gay', 'Gay'), ('Bisexual', 'Bisexual'), ('Queer', 'Queer'), ('Asexual', 'Asexual'), ('Straight', 'Straight'),('Other', 'Other'))
     sexual_orientation = models.CharField(max_length = 15, choices = orientation_choices, blank = True, default="N/A")
@@ -24,6 +29,7 @@ class Profile(models.Model):
     age_preference_max = models.IntegerField(blank=True, null=True)
     gender_preference = models.CharField(max_length = 15, choices = gender_choices, blank = True)
     orientation_preference = models.CharField(max_length = 15, choices = orientation_choices, blank = True)
+    location_drawdown = models.ForeignKey(Location,on_delete=models.SET_NULL, blank=True, null=True)
     # age = models.IntegerField(blank=True, null=True)
     # age = datetime.datetime.now() - date_of_birth
     # marital_choices = (('Single', 'Single'), ('Widowed', 'Widowed'), ('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorced', 'Divorced'))
