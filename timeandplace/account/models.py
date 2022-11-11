@@ -16,7 +16,7 @@ class Location(models.Model):
     LONGITUDE = models.FloatField(null=True)
 
     def __str__(self):
-        return f'The BORO: {self.BORO} {self.DBA}'
+        return f'{self.DBA} At : {self.BUILDING}, {self.STREET}, {self.BORO} '
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
