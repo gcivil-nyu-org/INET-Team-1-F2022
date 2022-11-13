@@ -3,7 +3,7 @@
 {% block content %}
 <section class="landing">
   <div class="navigation">
-    <a href="" class="logo">TimeAndPlace</a>
+    <a href="" class="logo">Time&Place</a>
     <span class="user">
       {% if request.user.is_authenticated %}
           <a href="{% url 'logout' %}" class="login">Logout</a>
@@ -12,7 +12,7 @@
       {% endif %}
     </span>
   </div>
-  <h1 class="title">Set. TimeAndPlace. Match.</h1>
+  <h1 class="title">Set. Time&Place. Match.</h1>
   {% if request.user.is_authenticated %}
     <a href="{% url 'dashboard' %}" class="create-btn">Welcome {{ request.user.first_name }}</a>
   {% else %}
