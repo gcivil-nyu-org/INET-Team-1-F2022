@@ -5,15 +5,15 @@ import datetime
 from datetime import date
 
 class Location(models.Model):
-    DBA = models.CharField(max_length=100,null=True)
-    BORO = models.CharField(max_length=100,null=True) 
-    BUILDING = models.CharField(max_length=100,null=True)
-    STREET = models.CharField(max_length = 100,null=True)
-    ZIPCODE = models.FloatField(null=True)
-    PHONE = models.CharField(max_length=100,null=True)
-    CUISINE = models.CharField(max_length=100,null=True)
-    LATITUDE = models.FloatField(null=True)
-    LONGITUDE = models.FloatField(null=True)
+    DBA = models.CharField(max_length=255,blank=True,null=True)
+    BORO = models.CharField(max_length=255,blank=True,null=True) 
+    BUILDING = models.CharField(max_length=255,blank=True,null=True)
+    STREET = models.CharField(max_length = 255,blank=True,null=True)
+    ZIPCODE = models.CharField(max_length=255,blank=True,null=True)
+    PHONE = models.CharField(max_length=255,blank=True,null=True)
+    CUISINE = models.CharField(max_length=255,blank=True,null=True)
+    LATITUDE = models.CharField(max_length=255,blank=True,null=True)
+    LONGITUDE = models.CharField(max_length=255,blank=True,null=True)
 
     def __str__(self):
         return f'{self.DBA} At : {self.BUILDING}, {self.STREET}, {self.BORO} '
