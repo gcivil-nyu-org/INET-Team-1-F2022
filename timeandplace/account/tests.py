@@ -26,6 +26,12 @@ class Test_is_user_auth(TestCase):
         response = self.client.get("login")
         assert response.status_code == 404
 
+    def test_user_login(self): # Tests redirection after user login
+        Profile.objects.create(user=self.user, date_of_birth=datetime.date(1996, 5, 28))
+        self.client.login(username="test", password="test")
+        response = self.client.get('/account/',follow=True)
+        self.assertEquals(response.status_code, 200)
+
 
 class TestRegister(TestCase):
     def test_register_page(self):
@@ -47,9 +53,27 @@ class TestRegister(TestCase):
 
 class TestProfile(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="test-profile", password="test-profile")
-        Profile.objects.create(user=self.user, date_of_birth=datetime.date(1996, 5, 28))
-    
+        self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
+        Profile.objects.create(user=self.user1, date_of_birth=datetime.date(1996, 5, 28))
+
+        self.user2 = User.objects.create_user(username="test-profile2", password="test-profile2")
+        Profile.objects.create(user=self.user2, date_of_birth=datetime.date(1996, 6, 28))
+
     def testCalculateAge(self):
         profileObj = Profile.objects.get(date_of_birth=datetime.date(1996, 5, 28))
         self.assertEqual(profileObj.calc_age, 26)
+
+    def testProfileLoad(self):
+        self.client.login(username="test-profile", password="test-profile")
+        profile2 = Profile.objects.get(user=self.user2)
+        pk2 = profile2.id
+        print("Profile2 id: ",pk2)
+        print("User2 id: ",profile2.user_id)
+        path_to_view = '/account/profile/' + str(pk2) + "/"
+        print("Path: ",path_to_view)
+        response = self.client.get(path_to_view)
+        self.assertEqual(response.status_code,200)
+        self.assertTemplateUsed(response, 'profile/profile.html')
+
+
+    
