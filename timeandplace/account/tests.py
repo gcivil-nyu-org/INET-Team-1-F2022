@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from .forms import UserRegistrationForm
 from django.urls import reverse
 from .forms import LoginForm
+from .models import Profile
 
 
 # Create your tests here.
@@ -42,3 +43,26 @@ class TestRegister(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+class TestPreferences(TestCase):
+    user = User.objects.create_user(username="foo1", password="foo123")
+    profile = Profile(user_id = user.id)
+
+    def test_preferences(self):
+        self.profile.age_preference_min = 22
+        self.profile.age_preference_max = 32
+        self.profile.gender_identity = 'Man'
+        self.profile.sexual_orientation = 'Straight'
+        self.profile.gender_preference = 'Woman'
+        self.profile.orientation_preference = 'Straight'
+        self.profile.save()
+
+        record = Profile.objects.get(pk = self.profile.user_id)
+        self.assertEqual(record,self.profile)
+
+    # def test_preferences_page(self):
+    #     response = self.client.get(reverse("preferences/?pk={self.profile.user_id}"))
+    #     self.assertEqual(response.status_code, 200)
+
+
+
