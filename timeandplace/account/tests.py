@@ -59,6 +59,9 @@ class TestProfile(TestCase):
         self.user2 = User.objects.create_user(username="test-profile2", password="test-profile2")
         Profile.objects.create(user=self.user2, date_of_birth=datetime.date(1996, 6, 28))
 
+        self.user3 = User.objects.create_user(username="test-profile3", password="test-profile3")
+        Profile.objects.create(user=self.user3, date_of_birth=datetime.date(1997, 6, 28))
+
     def testCalculateAge(self):
         profileObj = Profile.objects.get(date_of_birth=datetime.date(1996, 5, 28))
         self.assertEqual(profileObj.calc_age, 26)
@@ -80,7 +83,24 @@ class TestProfile(TestCase):
         pass
 
     def testLike(self):
-        pass
+        self.client.login(username="test-profile", password="test-profile")
+        #profile1 = Profile.objects.get(user=self.user1)
+        profile2 = Profile.objects.get(user=self.user2)
+
+        pk2 = profile2.id
+        # print("Profile2 id: ",pk2)
+        # print("User2 id: ",profile2.user_id)
+        url_path = '/account/profile/' + str(pk2) + "/"
+
+        response = self.client.post(
+            url_path,
+            data = {
+                "like" : "like",
+            },
+        )
+        self.assertEquals(response.status_code, 302)
+
+
 
     def testHideRiderect(self):
         pass
