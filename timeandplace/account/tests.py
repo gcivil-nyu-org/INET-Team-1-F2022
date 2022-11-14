@@ -1,8 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .forms import UserRegistrationForm
 from django.urls import reverse
-from .forms import LoginForm
 from .models import Profile
 
 
@@ -45,7 +43,7 @@ class TestRegister(TestCase):
         self.assertEqual(response.status_code, 200)
 
 class TestPreferences(TestCase):
-    user = User.objects.create_user(username="foo1", password="foo123")
+    user = User.objects.create_user(username="test", password="test")
     profile = Profile(user_id = user.id)
 
     def test_preferences(self):
@@ -60,9 +58,12 @@ class TestPreferences(TestCase):
         record = Profile.objects.get(pk = self.profile.user_id)
         self.assertEqual(record,self.profile)
 
-    # def test_preferences_page(self):
-    #     response = self.client.get(reverse("preferences/?pk={self.profile.user_id}"))
-    #     self.assertEqual(response.status_code, 200)
+    def test_preferences_page(self):
+        url = reverse('preferences', args=[self.user.id])
+        print(url)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'account/profile/preferences.html')
 
 
 
