@@ -52,6 +52,28 @@ class TestRegister(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
+class TestPreferences(TestCase):
+    user = User.objects.create_user(username="test", password="test")
+    profile = Profile(user_id = user.id)
+
+    def test_preferences(self):
+        self.profile.age_preference_min = 22
+        self.profile.age_preference_max = 32
+        self.profile.gender_identity = 'Man'
+        self.profile.sexual_orientation = 'Straight'
+        self.profile.gender_preference = 'Woman'
+        self.profile.orientation_preference = 'Straight'
+        self.profile.save()
+
+        record = Profile.objects.get(pk = self.profile.user_id)
+        self.assertEqual(record,self.profile)
+
+    def test_preferences_page(self):
+        url = reverse('preferences', args=[self.user.id])
+        print(url)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+
 class TestProfile(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
@@ -85,9 +107,10 @@ class TestProfile(TestCase):
 
     def testLike(self):
         self.client.login(username="test-profile", password="test-profile")
+        assert self.user1.is_authenticated
         profile1 = Profile.objects.get(user=self.user1)
         profile2 = Profile.objects.get(user=self.user2)
-
+        print(views.profile)
         pk2 = profile2.id
         # print("Profile2 id: ",pk2)
         # print("User2 id: ",profile2.user_id)
