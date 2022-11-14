@@ -4,8 +4,6 @@ from .forms import UserRegistrationForm
 from django.urls import reverse
 from .forms import LoginForm
 from .models import Profile
-from . import views
-import datetime
 
 
 # Create your tests here.
@@ -52,70 +50,25 @@ class TestRegister(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-class TestProfile(TestCase):
-    def setUp(self):
-        self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
-        Profile.objects.create(user=self.user1, date_of_birth=datetime.date(1996, 5, 28))
+class TestPreferences(TestCase):
+    user = User.objects.create_user(username="foo1", password="foo123")
+    profile = Profile(user_id = user.id)
 
-        self.user2 = User.objects.create_user(username="test-profile2", password="test-profile2")
-        Profile.objects.create(user=self.user2, date_of_birth=datetime.date(1996, 6, 28))
+    def test_preferences(self):
+        self.profile.age_preference_min = 22
+        self.profile.age_preference_max = 32
+        self.profile.gender_identity = 'Man'
+        self.profile.sexual_orientation = 'Straight'
+        self.profile.gender_preference = 'Woman'
+        self.profile.orientation_preference = 'Straight'
+        self.profile.save()
 
-        self.user3 = User.objects.create_user(username="test-profile3", password="test-profile3")
-        Profile.objects.create(user=self.user3, date_of_birth=datetime.date(1997, 6, 28))
+        record = Profile.objects.get(pk = self.profile.user_id)
+        self.assertEqual(record,self.profile)
 
-    def testCalculateAge(self):
-        profileObj = Profile.objects.get(date_of_birth=datetime.date(1996, 5, 28))
-        self.assertEqual(profileObj.calc_age, 26)
+    # def test_preferences_page(self):
+    #     response = self.client.get(reverse("preferences/?pk={self.profile.user_id}"))
+    #     self.assertEqual(response.status_code, 200)
 
-    #Tests ability to view other user's profiles
-    def testProfileLoad(self):
-        self.client.login(username="test-profile", password="test-profile")
-        profile2 = Profile.objects.get(user=self.user2)
-        pk2 = profile2.id
-        # print("Profile2 id: ",pk2)
-        # print("User2 id: ",profile2.user_id)
-        path_to_view = '/account/profile/' + str(pk2) + "/"
-        # print("Path: ",path_to_view)
-        response = self.client.get(path_to_view)
-        self.assertEqual(response.status_code,200)
-        self.assertTemplateUsed(response, 'profile/profile.html')
 
-    def testHide(self):
-        pass
-
-    def testLike(self):
-        self.client.login(username="test-profile", password="test-profile")
-        assert self.user1.is_authenticated
-        profile1 = Profile.objects.get(user=self.user1)
-        profile2 = Profile.objects.get(user=self.user2)
-        print(views.profile)
-        pk2 = profile2.id
-        # print("Profile2 id: ",pk2)
-        # print("User2 id: ",profile2.user_id)
-        url_path = '/account/profile/' + str(pk2) + "/"
-
-        response = self.client.post(
-            url_path,
-            data = {
-                "like" : "like",
-            },
-        )
-        
-        # profile1.likes.add(profile2.id)
-        # profile1.save()
-       # print(profile1.likes.all())
-        #self.assertEquals(self.user1.is_authenticated, True) 
-        # self.assertEquals(response.status_code, 302)
-        # self.assertEquals(profile1.likes, profile2.id)
-        self.assertEquals(profile1.likes.all().first(), profile2)
-        self.assertEquals(response.status_code, 302)
-        self.assertRedirects(response, reverse('filter_profile_list'), 
-                                    status_code=302, target_status_code=200,
-                                     msg_prefix='', fetch_redirect_response=True)
-
-    def testHideRiderect(self): 
-        pass
-
-    def testLikeRidirect(self):
-        pass
 
