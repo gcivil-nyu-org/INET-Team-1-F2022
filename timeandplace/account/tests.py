@@ -63,17 +63,30 @@ class TestProfile(TestCase):
         profileObj = Profile.objects.get(date_of_birth=datetime.date(1996, 5, 28))
         self.assertEqual(profileObj.calc_age, 26)
 
+    #Tests ability to view other user's profiles
     def testProfileLoad(self):
         self.client.login(username="test-profile", password="test-profile")
         profile2 = Profile.objects.get(user=self.user2)
         pk2 = profile2.id
-        print("Profile2 id: ",pk2)
-        print("User2 id: ",profile2.user_id)
+        # print("Profile2 id: ",pk2)
+        # print("User2 id: ",profile2.user_id)
         path_to_view = '/account/profile/' + str(pk2) + "/"
-        print("Path: ",path_to_view)
+        # print("Path: ",path_to_view)
         response = self.client.get(path_to_view)
         self.assertEqual(response.status_code,200)
         self.assertTemplateUsed(response, 'profile/profile.html')
+
+    def testHide(self):
+        pass
+
+    def testLike(self):
+        pass
+
+    def testHideRiderect(self):
+        pass
+
+    def testLikeRidirect(self):
+        pass
 
 
     
