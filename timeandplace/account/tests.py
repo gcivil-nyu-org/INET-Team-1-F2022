@@ -84,7 +84,7 @@ class TestProfile(TestCase):
 
     def testLike(self):
         self.client.login(username="test-profile", password="test-profile")
-        #profile1 = Profile.objects.get(user=self.user1)
+        profile1 = Profile.objects.get(user=self.user1)
         profile2 = Profile.objects.get(user=self.user2)
 
         pk2 = profile2.id
@@ -98,9 +98,14 @@ class TestProfile(TestCase):
                 "like" : "like",
             },
         )
-        self.assertEquals(response.status_code, 302)
-
-
+        
+        profile1.likes.add(profile2.id)
+        profile1.save()
+        print(profile1.likes.all())
+        #self.assertEquals(self.user1.is_authenticated, True) 
+        # self.assertEquals(response.status_code, 302)
+        # self.assertEquals(profile1.likes, profile2.id)
+        self.assertEquals(profile1.likes.all().first(), profile2)
 
     def testHideRiderect(self):
         pass
