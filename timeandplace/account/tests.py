@@ -107,7 +107,7 @@ class TestProfile(TestCase):
         # self.assertEquals(profile1.likes, profile2.id)
         self.assertEquals(profile1.likes.all().first(), profile2)
 
-    def testHideRiderect(self):
+    def testHideRiderect(self): 
         pass
 
     def testLikeRidirect(self):
