@@ -28,7 +28,7 @@ class Profile(models.Model):
                         default='users/default/user-default.png')
     occupation = models.CharField(max_length = 50,blank=True, null=True)
     proposal_time = models.CharField(max_length = 50,blank=True, null=True)
-    proposal_location = models.CharField(max_length = 50,blank=True, null=True)
+    # proposal_location = models.CharField(max_length = 50,blank=True, null=True)
     about_me = models.CharField(max_length = 100,blank=True, null=True)
     gender_choices = (('Woman', 'Woman'), ('Man', 'Man'), ('Transgender', 'Transgender'), ('Non-binary', 'Non-binary'))
     gender_identity = models.CharField(max_length = 15, choices = gender_choices, blank = True, default="N/A")
