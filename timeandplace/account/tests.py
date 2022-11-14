@@ -99,9 +99,9 @@ class TestProfile(TestCase):
             },
         )
         
-        profile1.likes.add(profile2.id)
-        profile1.save()
-        print(profile1.likes.all())
+        # profile1.likes.add(profile2.id)
+        # profile1.save()
+       # print(profile1.likes.all())
         #self.assertEquals(self.user1.is_authenticated, True) 
         # self.assertEquals(response.status_code, 302)
         # self.assertEquals(profile1.likes, profile2.id)
