@@ -106,6 +106,9 @@ class TestProfile(TestCase):
         # self.assertEquals(response.status_code, 302)
         # self.assertEquals(profile1.likes, profile2.id)
         self.assertEquals(profile1.likes.all().first(), profile2)
+        self.assertRedirects(response, reverse('filter_profile_list'), 
+                                    status_code=302, target_status_code=200,
+                                     msg_prefix='', fetch_redirect_response=True)
 
     def testHideRiderect(self): 
         pass
