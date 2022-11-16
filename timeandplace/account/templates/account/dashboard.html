@@ -27,7 +27,8 @@
      {%if user_profile.matches.all.exists %}
      {%for user in user_profile.matches.all %}
      <h1> Hey you are matched with  </h1>
-     <h2>{{user}}!</h2>
+     <h2>{{user.user.first_name}}</h2>
+     <p><img src="{{ user.photo.url }}" width="250px"></p>
      <div class="block">
       <h3 class="title is-4">
           Proposal time : {{user_profile.proposal_time}}
@@ -38,7 +39,8 @@
      {% else %}
      {%if user_profile.matched_with.all.exists%}
      {%for user in user_profile.matched_with.all %}
-     <h1> Hey {{user}} accepted your match </h1>
+     <h1> Hey {{user}} agreed to match with you </h1>
+     <p><img src="{{ user.photo.url }}" width="250px"></p>
      <div class="block">
       <h3 class="title is-4">
           Proposal time : {{user.proposal_time}}

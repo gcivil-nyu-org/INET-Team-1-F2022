@@ -166,7 +166,11 @@ def profile(request, pk):
             current_user_profile.hides.add(profile.id)
             return redirect('filter_profile_list')
         elif action_for_match_decline == "match":
+            # Clear likes to ensure the users no longer
+            # appear in any 'Liked Me' list
+            current_user_profile.likes.clear()
             current_user_profile.matches.add(profile.id)
+            profile.likes.clear()
         current_user_profile.save()
     return render(request,
                     "profile/profile.html",
