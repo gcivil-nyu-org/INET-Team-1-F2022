@@ -53,7 +53,9 @@ class ProfileEditForm(forms.ModelForm):
                   'sexual_orientation',
                   'photo',
                   'proposal_time',
-                  'location_drawdown')
+                  'location_drawdown',
+                  'cusine',
+                  'location_dropdown')
                 # 'age')
                 #   'age_preference_min',
                 #   'age_preference_max',

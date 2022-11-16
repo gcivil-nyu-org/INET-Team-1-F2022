@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import Profile
-from .models import Location
+from .models import Profile,Location,Cusine,newLocation
+
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -10,3 +10,12 @@ class ProfileAdmin(admin.ModelAdmin):
 @admin.register(Location)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['DBA','BORO', 'BUILDING','STREET','ZIPCODE','PHONE','CUISINE','LATITUDE','LONGITUDE']
+
+
+@admin.register(newLocation)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['DBA','BORO', 'BUILDING','STREET','ZIPCODE','PHONE','CUISINE','LATITUDE','LONGITUDE']
+
+@admin.register(Cusine)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['cusine']

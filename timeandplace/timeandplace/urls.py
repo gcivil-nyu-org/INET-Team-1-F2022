@@ -22,6 +22,7 @@ urlpatterns = [
     path('', include('main.urls')),
     path('admin/', admin.site.urls),
     path('account/', include('account.urls')),
+    path(r'^chaining/', include('smart_selects.urls')),
     # path('map/',include('map.urls')),
 ]
 if settings.DEBUG:

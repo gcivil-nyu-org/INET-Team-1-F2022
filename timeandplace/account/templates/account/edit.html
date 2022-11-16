@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-
+{% comment %} <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
+<script src="{% static 'smart-selects/admin/js/chainedm2m.js' %}"></script> {% endcomment %}
 {% block title %}Edit your account{% endblock %}
 
 {% block content %}
@@ -10,5 +11,6 @@
     {{ profile_form.as_p }}
     {% csrf_token %}
     <p><input type="submit" value="Save changes"></p>
+
     </form>
 {% endblock %}

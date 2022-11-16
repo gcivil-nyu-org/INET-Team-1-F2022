@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
+    'smart_selects'
     # 'map.apps.MapConfig'
 ]
 
@@ -154,3 +155,5 @@ AWS_SES_REGION_ENDPOINT ='email.us-east-2.amazonaws.com'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+USE_DJANGO_JQUERY = True
