@@ -3,7 +3,7 @@ from django.db import models
 from django.conf import settings
 import datetime
 from datetime import date
-from smart_selects.db_fields import ChainedForeignKey
+#from smart_selects.db_fields import ChainedForeignKey
 
 
 class Location(models.Model):
@@ -64,15 +64,7 @@ class Profile(models.Model):
     orientation_preference = models.CharField(max_length = 15, choices = orientation_choices, blank = True)
     location_drawdown = models.ForeignKey(Location,on_delete=models.SET_NULL, blank=True, null=True)
     cusine = models.ForeignKey(Cusine,on_delete=models.SET_NULL, blank=True, null=True)
-    location_dropdown  = ChainedForeignKey(
-        newLocation,
-        chained_field="cusine",
-        chained_model_field="CUISINE",
-        show_all=False,
-        auto_choose=True,
-        sort=True,
-        blank=True, 
-        null=True)
+    location_dropdown  = models.ForeignKey(newLocation,on_delete=models.SET_NULL, blank=True, null=True)
     # age = models.IntegerField(blank=True, null=True)
     # age = datetime.datetime.now() - date_of_birth
     # marital_choices = (('Single', 'Single'), ('Widowed', 'Widowed'), ('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorced', 'Divorced'))

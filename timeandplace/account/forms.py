@@ -1,4 +1,4 @@
-from .models import Profile
+from .models import Profile,newLocation
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -53,14 +53,30 @@ class ProfileEditForm(forms.ModelForm):
                   'sexual_orientation',
                   'photo',
                   'proposal_time',
-                  'location_drawdown',
-                  'cusine',
-                  'location_dropdown')
+                  'location_drawdown')
                 # 'age')
                 #   'age_preference_min',
                 #   'age_preference_max',
                 #   'gender_preference',
                 #   'orientation_preference')
+
+class NewLocationForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('cusine',
+                  'location_dropdown')
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['location_dropdown'].queryset = newLocation.objects.none()
+
+        if 'cusine' in self.data:
+            try:
+                cusine_id = int(self.data.get('cusine'))
+                self.fields['location_dropdown'].queryset = newLocation.objects.filter(CUISINE_id=cusine_id)
+            except (ValueError, TypeError):
+                pass  # invalid input from the client; ignore and fallback to empty City queryset
+        # elif self.instance.pk:
+        #     self.fields['city'].queryset = self.instance.country.city_set.order_by('name')
 
 class PreferenceEditForm(forms.ModelForm):
     class Meta:
