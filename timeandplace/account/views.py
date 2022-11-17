@@ -122,8 +122,11 @@ def edit(request):
             profile_form.save()
             cur_time, cur_place = user_profile.proposal_time, user_profile.location_drawdown
             if cur_time != prev_time  or cur_place != prev_place:
-                print("--DELETING LIKED_BY--")
+                print("--CLEARING LIKED_BY--")
                 user_profile.liked_by.clear()
+                # print("--CLEARING DECLINES--")
+                # user_profile.declined.clear()
+
 
             return redirect('profile',pk=user_id)
     else:
@@ -179,6 +182,9 @@ def profile(request, pk):
             current_user_profile.likes.clear()
             current_user_profile.matches.add(profile.id)
             profile.likes.clear()
+        elif action_for_match_decline == "decline":
+            # Add profile id to declined list
+            current_user_profile.declines.add(profile.id)
         current_user_profile.save()
     return render(request,
                     "profile/profile.html",

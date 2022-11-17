@@ -56,6 +56,13 @@ class Profile(models.Model):
         symmetrical=False,
         blank=True
     )
+
+    declines = models.ManyToManyField(
+        "self",
+        related_name="declined_by",
+        symmetrical=False,
+        blank=True
+    )
     matches = models.ManyToManyField(
         "self",
         related_name="matched_with",
