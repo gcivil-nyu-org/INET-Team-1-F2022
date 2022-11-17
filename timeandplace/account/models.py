@@ -20,6 +20,11 @@ class Location(models.Model):
     def __str__(self):
         return f'{self.DBA} At : {self.BUILDING}, {self.STREET}, {self.BORO} '
 
+class Boro(models.Model):
+    boro = models.CharField(max_length=255,blank=True,null=True)
+    def __str__(self):
+        return self.boro
+
 class Cusine(models.Model):
     cusine = models.CharField(max_length=255,blank=True,null=True)
     def __str__(self):
@@ -28,7 +33,7 @@ class Cusine(models.Model):
 
 class newLocation(models.Model):
     DBA = models.CharField(max_length=255,blank=True,null=True)
-    BORO = models.CharField(max_length=255,blank=True,null=True) 
+    BORO = models.ForeignKey(Boro,on_delete=models.SET_NULL, blank=True, null=True) 
     BUILDING = models.CharField(max_length=255,blank=True,null=True)
     STREET = models.CharField(max_length = 255,blank=True,null=True)
     ZIPCODE = models.CharField(max_length=255,blank=True,null=True)
@@ -38,7 +43,7 @@ class newLocation(models.Model):
     LONGITUDE = models.CharField(max_length=255,blank=True,null=True)
 
     def __str__(self):
-        return f'{self.DBA} At : {self.BUILDING}, {self.STREET}, {self.BORO} '
+        return f'{self.DBA} At : {self.BUILDING}, {self.STREET} '
 
 
 
@@ -63,6 +68,7 @@ class Profile(models.Model):
     gender_preference = models.CharField(max_length = 15, choices = gender_choices, blank = True)
     orientation_preference = models.CharField(max_length = 15, choices = orientation_choices, blank = True)
     location_drawdown = models.ForeignKey(Location,on_delete=models.SET_NULL, blank=True, null=True)
+    boro = models.ForeignKey(Boro,on_delete=models.SET_NULL, blank=True, null=True)
     cusine = models.ForeignKey(Cusine,on_delete=models.SET_NULL, blank=True, null=True)
     location_dropdown  = models.ForeignKey(newLocation,on_delete=models.SET_NULL, blank=True, null=True)
     # age = models.IntegerField(blank=True, null=True)

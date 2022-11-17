@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Profile,Location,Cusine,newLocation
+from .models import Profile,Location,Cusine,newLocation,Boro
 
 
 @admin.register(Profile)
@@ -19,3 +19,7 @@ class ProfileAdmin(admin.ModelAdmin):
 @admin.register(Cusine)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['cusine']
+
+@admin.register(Boro)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['boro']
