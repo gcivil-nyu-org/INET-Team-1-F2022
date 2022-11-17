@@ -112,11 +112,19 @@ def edit(request):
                                     instance=request.user.profile,
                                     data=request.POST,
                                     files=request.FILES)
+        user_profile = request.user.profile
+        prev_time, prev_place = user_profile.proposal_time, user_profile.location_drawdown
+
         user_id = request.user.id
         print(user_id)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
+            cur_time, cur_place = user_profile.proposal_time, user_profile.location_drawdown
+            if cur_time != prev_time  or cur_place != prev_place:
+                print("--DELETING LIKED_BY--")
+                user_profile.liked_by.clear()
+
             return redirect('profile',pk=user_id)
     else:
         user_form = UserEditForm(instance=request.user)

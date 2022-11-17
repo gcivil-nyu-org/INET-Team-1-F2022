@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}Edit your account{% endblock %}
@@ -10,7 +11,9 @@
     {{ user_form.as_p }}
     {{ profile_form.as_p }}
     {% csrf_token %}
-    <p><input type="submit" value="Save changes"></p>
+    <p><input type="submit" value="Save changes" 
+        onclick="return confirm('WARNING: Any changes to proposal time and place will clear the likes you have so far received.')" />
+    </p>
     </form>
 {% else %}
 Oops! It looks like you are currently in a match. You won't be able to edit your preferences until the match expires.
