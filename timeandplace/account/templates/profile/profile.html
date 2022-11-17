@@ -107,7 +107,7 @@
   </div>
 </div>
 
-{%if not current_user_profile.matches.exists %}
+{%if not current_user_profile.matches.exists and not current_user_profile.matched_with.exists%}
 <p>You can 
     <ul>
       <li> 
