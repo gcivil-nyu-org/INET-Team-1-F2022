@@ -53,7 +53,7 @@ class ProfileEditForm(forms.ModelForm):
                   'sexual_orientation',
                   'photo',
                   'proposal_time',
-                  'location_drawdown')
+                  )
                 # 'age')
                 #   'age_preference_min',
                 #   'age_preference_max',
@@ -68,13 +68,13 @@ class NewLocationForm(forms.ModelForm):
                   'location_dropdown')
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['location_dropdown'].queryset = newLocation.objects.none()
+        self.fields['location_dropdown'].queryset = newLocation.objects.all()
 
-        if 'cusine'in self.data:
+        if 'cusine' and 'boro' in self.data:
             try:
                 cusine_id = int(self.data.get('cusine'))
                 boro_id = int(self.data.get('boro'))
-                self.fields['location_dropdown'].queryset = newLocation.objects.filter(CUISINE_id=cusine_id)
+                self.fields['location_dropdown'].queryset = newLocation.objects.filter(CUISINE_id=cusine_id,BORO_id = boro_id)
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset
         # elif self.instance.pk:

@@ -43,7 +43,7 @@ class newLocation(models.Model):
     LONGITUDE = models.CharField(max_length=255,blank=True,null=True)
 
     def __str__(self):
-        return f'{self.DBA} At : {self.BUILDING}, {self.STREET} '
+        return f'{self.DBA} At : {self.BUILDING}, {self.STREET}, {self.BORO} '
 
 
 
@@ -67,7 +67,7 @@ class Profile(models.Model):
     age_preference_max = models.IntegerField(blank=True, null=True)
     gender_preference = models.CharField(max_length = 15, choices = gender_choices, blank = True)
     orientation_preference = models.CharField(max_length = 15, choices = orientation_choices, blank = True)
-    location_drawdown = models.ForeignKey(Location,on_delete=models.SET_NULL, blank=True, null=True)
+    #location_drawdown = models.ForeignKey(Location,on_delete=models.SET_NULL, blank=True, null=True)
     boro = models.ForeignKey(Boro,on_delete=models.SET_NULL, blank=True, null=True)
     cusine = models.ForeignKey(Cusine,on_delete=models.SET_NULL, blank=True, null=True)
     location_dropdown  = models.ForeignKey(newLocation,on_delete=models.SET_NULL, blank=True, null=True)

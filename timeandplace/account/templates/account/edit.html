@@ -16,14 +16,17 @@
     </form>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
-        $("#id_cusine").change(function () {
+        $("#id_cusine,#id_boro").change(function () {
             const url = $("#editProfile").attr("data-locations-url");  // get the url of the `load_cities` view
-            const cusineId = $(this).val();  // get the selected country ID from the HTML input
+            
+            var cusineId = $('#id_cusine').val();
+            var boroId = $('#id_boro').val();
 
             $.ajax({                       // initialize an AJAX request
                 url: url,                    // set the url of the request (= /persons/ajax/load-cities/ )
                 data: {
-                    'cusine_id': cusineId 
+                    'cusine_id': cusineId, // set the country
+                    'boro_id': boroId
                           // add the country id to the GET parameters
                 },
                 success: function (data) {   // `data` is the return of the `load_cities` view function
@@ -34,4 +37,6 @@
 
         });
     </script>
+
 {% endblock %}
+
