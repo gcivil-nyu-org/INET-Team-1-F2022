@@ -89,7 +89,7 @@
                     </li>
 
                 </ul>
-        {% if not request.user.profile.matches.exists %} 
+        {% if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists %} 
                 <ul class="menu">
 
                     {% comment %} <li {% if section == "people" %}class="selected"{% endif %}>
