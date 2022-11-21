@@ -180,8 +180,10 @@ def profile(request, pk):
             # Clear likes to ensure the users no longer
             # appear in any 'Liked Me' list
             current_user_profile.likes.clear()
+            current_user_profile.liked_by.clear()
             current_user_profile.matches.add(profile.id)
             profile.likes.clear()
+            profile.liked_by.clear()
         elif action_for_match_decline == "decline":
             # Add profile id to declined list
             current_user_profile.declines.add(profile.id)
