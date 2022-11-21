@@ -7,6 +7,7 @@
 <div class="column">
   <h1> Here are all the people who liked you </h1>
 {% for liker in profile.liked_by.all %}
+{%if liker not in profile.declined.all() %}
 {%if not profile.matches.exists %}
     <div class="block">
       <div class="card">
@@ -25,7 +26,8 @@
                     </figure>
                   </div>
                 <p class="subtitle is-6">
-                  {{ liker.proposal_time|lower }} @{{ liker.location_dropdown|lower }}
+
+                  {{ liker.proposal_time }} @{{ liker.location_dropdown }}
                 </p>
                 <br>
               </div>
@@ -35,6 +37,7 @@
       </div>
     </div>
     {% endif %}
+  {% endif %}
 {% endfor %}
 
 </div>

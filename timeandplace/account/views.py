@@ -112,14 +112,28 @@ def edit(request):
                                     instance=request.user.profile,
                                     data=request.POST,
                                     files=request.FILES)
+
+        user_profile = request.user.profile
+        prev_time, prev_place = user_profile.proposal_time, user_profile.location_dropdown
+
+
         location_form = NewLocationForm(instance=request.user.profile,
                                     data=request.POST)
+
         user_id = request.user.id
         print(user_id)
         if user_form.is_valid() and profile_form.is_valid() and location_form.is_valid():
             user_form.save()
             profile_form.save()
+
+            cur_time, cur_place = user_profile.proposal_time, user_profile.location_dropdown
+            if cur_time != prev_time  or cur_place != prev_place:
+                print("--CLEARING LIKED_BY--")
+                user_profile.liked_by.clear()
+                # print("--CLEARING DECLINES--")
+                # user_profile.declined.clear()
             location_form.save()
+
             return redirect('profile',pk=user_id)
     else:
         user_form = UserEditForm(instance=request.user)
@@ -182,8 +196,19 @@ def profile(request, pk):
             current_user_profile.hides.add(profile.id)
             return redirect('filter_profile_list')
         elif action_for_match_decline == "match":
+            # Clear likes to ensure the users no longer
+            # appear in any 'Liked Me' list
+            current_user_profile.likes.clear()
+            current_user_profile.liked_by.clear()
             current_user_profile.matches.add(profile.id)
+            profile.likes.clear()
+            profile.liked_by.clear()
             return redirect('dashboard')
+        elif action_for_match_decline == "decline":
+            # Add profile id to declined list
+            current_user_profile.declines.add(profile.id)
+            return redirect('dashboard')
+
         current_user_profile.save()
     return render(request,
                     "profile/profile.html",

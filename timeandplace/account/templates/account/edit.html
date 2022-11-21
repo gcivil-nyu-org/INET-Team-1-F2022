@@ -1,9 +1,11 @@
+
 {% extends "base.html" %}
 {% comment %} <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
 <script src="{% static 'smart-selects/admin/js/chainedm2m.js' %}"></script> {% endcomment %}
 {% block title %}Edit your account{% endblock %}
 
 {% block content %}
+{%if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists%}
     <h1>Edit your account</h1>
     <p>You can edit your account using the following form:</p>
     <form method="post" id = 'editProfile' data-locations-url= "{% url 'ajax_load_locations' %}" enctype="multipart/form-data">
@@ -11,8 +13,15 @@
     {{ profile_form.as_p }}
     {{ location_form.as_p }}
     {% csrf_token %}
-    <p><input type="submit" value="Save changes"></p>
+    <p><input type="submit" value="Save changes" 
+        onclick="return confirm('WARNING: Any changes to proposal time and place will clear the likes you have so far received.')" />
+    </p>
 
+{% else %}
+Oops! It looks like you are currently in a match. You won't be able to edit your preferences until the match expires.
+<a href="{% url 'dashboard' %}">Go back to dashboard</a>
+{%endif%}
+    <p><input type="submit" value="Save changes"></p>
     </form>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
