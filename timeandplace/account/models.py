@@ -3,6 +3,8 @@ from django.db import models
 from django.conf import settings
 import datetime
 from datetime import date
+#from smart_selects.db_fields import ChainedForeignKey
+
 
 class Location(models.Model):
     DBA = models.CharField(max_length=255,blank=True,null=True)
@@ -17,6 +19,33 @@ class Location(models.Model):
 
     def __str__(self):
         return f'{self.DBA} At : {self.BUILDING}, {self.STREET}, {self.BORO} '
+
+class Boro(models.Model):
+    boro = models.CharField(max_length=255,blank=True,null=True)
+    def __str__(self):
+        return self.boro
+
+class Cusine(models.Model):
+    cusine = models.CharField(max_length=255,blank=True,null=True)
+    def __str__(self):
+        return self.cusine
+
+
+class newLocation(models.Model):
+    DBA = models.CharField(max_length=255,blank=True,null=True)
+    BORO = models.ForeignKey(Boro,on_delete=models.SET_NULL, blank=True, null=True) 
+    BUILDING = models.CharField(max_length=255,blank=True,null=True)
+    STREET = models.CharField(max_length = 255,blank=True,null=True)
+    ZIPCODE = models.CharField(max_length=255,blank=True,null=True)
+    PHONE = models.CharField(max_length=255,blank=True,null=True)
+    CUISINE = models.ForeignKey(Cusine,on_delete=models.SET_NULL, blank=True, null=True)
+    LATITUDE = models.CharField(max_length=255,blank=True,null=True)
+    LONGITUDE = models.CharField(max_length=255,blank=True,null=True)
+
+    def __str__(self):
+        return f'{self.DBA} At : {self.BUILDING}, {self.STREET}, {self.BORO} '
+
+
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
@@ -38,7 +67,10 @@ class Profile(models.Model):
     age_preference_max = models.IntegerField(blank=True, null=True)
     gender_preference = models.CharField(max_length = 15, choices = gender_choices, blank = True)
     orientation_preference = models.CharField(max_length = 15, choices = orientation_choices, blank = True)
-    location_drawdown = models.ForeignKey(Location,on_delete=models.SET_NULL, blank=True, null=True)
+    #location_drawdown = models.ForeignKey(Location,on_delete=models.SET_NULL, blank=True, null=True)
+    boro = models.ForeignKey(Boro,on_delete=models.SET_NULL, blank=True, null=True)
+    cusine = models.ForeignKey(Cusine,on_delete=models.SET_NULL, blank=True, null=True)
+    location_dropdown  = models.ForeignKey(newLocation,on_delete=models.SET_NULL, blank=True, null=True)
     # age = models.IntegerField(blank=True, null=True)
     # age = datetime.datetime.now() - date_of_birth
     # marital_choices = (('Single', 'Single'), ('Widowed', 'Widowed'), ('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorced', 'Divorced'))

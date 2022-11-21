@@ -1,14 +1,42 @@
 {% extends "base.html" %}
-
+{% comment %} <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
+<script src="{% static 'smart-selects/admin/js/chainedm2m.js' %}"></script> {% endcomment %}
 {% block title %}Edit your account{% endblock %}
 
 {% block content %}
     <h1>Edit your account</h1>
     <p>You can edit your account using the following form:</p>
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" id = 'editProfile' data-locations-url= "{% url 'ajax_load_locations' %}" enctype="multipart/form-data">
     {{ user_form.as_p }}
     {{ profile_form.as_p }}
+    {{ location_form.as_p }}
     {% csrf_token %}
     <p><input type="submit" value="Save changes"></p>
+
     </form>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $("#id_cusine,#id_boro").change(function () {
+            const url = $("#editProfile").attr("data-locations-url");  // get the url of the `load_cities` view
+            
+            var cusineId = $('#id_cusine').val();
+            var boroId = $('#id_boro').val();
+
+            $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= /persons/ajax/load-cities/ )
+                data: {
+                    'cusine_id': cusineId, // set the country
+                    'boro_id': boroId
+                          // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                    $("#id_location_dropdown").html(data);  // replace the contents of the city input with the data that came from the server
+
+                }
+            });
+
+        });
+    </script>
+
 {% endblock %}
+

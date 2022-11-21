@@ -17,3 +17,4 @@ pytz==2022.4
 sqlparse==0.4.3
 tomli==2.0.1
 typing-extensions==4.4.0
+django-smart-selects @ git+https://github.com/digi604/django-smart-selects.git@1ceafd8ff63e5888d5c0bcb9ff6f5d4e03769fcf

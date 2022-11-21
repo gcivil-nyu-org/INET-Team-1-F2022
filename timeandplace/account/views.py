@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth.decorators import login_required
 from .forms import LoginForm, UserRegistrationForm,PreferenceEditForm
-from .models import Profile
+from .models import Profile,newLocation
 
 from django.core.mail import send_mail, BadHeaderError
 from django.contrib.auth.forms import PasswordResetForm
@@ -102,7 +102,7 @@ def dashboard(request):
                      {'section': 'dashboard', "user_profile": user_profile})
 
 
-from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
+from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm, NewLocationForm
 @login_required
 def edit(request):
     if request.method == 'POST':
@@ -112,20 +112,36 @@ def edit(request):
                                     instance=request.user.profile,
                                     data=request.POST,
                                     files=request.FILES)
+        location_form = NewLocationForm(instance=request.user.profile,
+                                    data=request.POST)
         user_id = request.user.id
         print(user_id)
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid() and profile_form.is_valid() and location_form.is_valid():
             user_form.save()
             profile_form.save()
+            location_form.save()
             return redirect('profile',pk=user_id)
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(
                                     instance=request.user.profile)
+        location_form = NewLocationForm(instance=request.user.profile,
+                                    data=request.POST)
     return render(request,
                     'account/edit.html',
                     {'user_form': user_form,
-                    'profile_form': profile_form})
+                    'profile_form': profile_form,
+                    'location_form':location_form})
+
+@login_required   
+def load_locations(request):
+    print(request)
+    cusine_id = request.GET.get('cusine_id')
+    boro_id = request.GET.get('boro_id')
+    locations = newLocation.objects.filter(CUISINE_id=cusine_id,BORO_id = boro_id)
+    return render(request, 'profile/location_drop_down.html', {'locations': locations})
+    # return JsonResponse(list(cities.values('id', 'name')), safe=False)
+
 import datetime
 @login_required
 def profile_list(request):
