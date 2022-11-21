@@ -7,7 +7,7 @@
 <div class="column">
   <h1> Here are all the people who liked you </h1>
 {% for liker in profile.liked_by.all %}
-{%if liker not in profile.declined.all() %}
+{%if liker not in profile.declines.all %}
 {%if not profile.matches.exists %}
     <div class="block">
       <div class="card">

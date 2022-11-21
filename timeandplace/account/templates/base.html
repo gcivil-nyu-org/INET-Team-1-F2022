@@ -92,9 +92,9 @@
         {% if not request.user.profile.matches.exists %} 
                 <ul class="menu">
 
-                    <li {% if section == "people" %}class="selected"{% endif %}>
+                    {% comment %} <li {% if section == "people" %}class="selected"{% endif %}>
                     <a href="{% url "profile_list" %}">People</a>
-                    </li>
+                    </li> {% endcomment %}
 
                     <li {% if section == "like_me" %}class="selected"{% endif %}>
                     <a href=" {% url 'profile_liked_me' pk=request.user.id %}">Liked Me</a>
@@ -139,9 +139,9 @@
     </div>
     <!-- The Modal END -->
 
-    <button class="button is-dark is-outlined is-fullwidth" id="button">
+    {% comment %} <button class="button is-dark is-outlined is-fullwidth" id="button">
         a button
-    </button>
+    </button> {% endcomment %}
 </body>
 
 <script>

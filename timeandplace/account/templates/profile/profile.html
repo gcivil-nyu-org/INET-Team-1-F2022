@@ -54,7 +54,7 @@
   </a>
 </div>
 {%endif%}
-<div class="block">
+{% comment %} <div class="block">
   <h3 class="title is-4">
       {{profile.user.username}} likes:
   </h3>
@@ -69,9 +69,9 @@
       {% endfor %}
       </ul>
   </div>
-</div>
+</div> {% endcomment %}
 
-<div class="block">
+{% comment %} <div class="block">
   <h3 class="title is-4">
       {{profile.user.username}} hides:
   </h3>
@@ -86,9 +86,9 @@
       {% endfor %}
       </ul>
   </div>
-</div>
+</div> {% endcomment %}
 
-<div class="block">
+{% comment %} <div class="block">
   <h3 class="title is-4">
       {{profile.user.username}} accepted match request from:
   </h3>
@@ -103,7 +103,7 @@
       {% endfor %}
       </ul>
   </div>
-</div>
+</div> {% endcomment %}
 
 
 {%if not current_user_profile.matches.exists and not current_user_profile.matched_with.exists%}
