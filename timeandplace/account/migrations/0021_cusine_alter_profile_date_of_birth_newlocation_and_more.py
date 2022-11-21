@@ -3,7 +3,6 @@
 import datetime
 from django.db import migrations, models
 import django.db.models.deletion
-import smart_selects.db_fields
 
 
 class Migration(migrations.Migration):
@@ -74,19 +73,6 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
                 to="account.cusine",
-            ),
-        ),
-        migrations.AddField(
-            model_name="profile",
-            name="location_dropdown",
-            field=smart_selects.db_fields.ChainedForeignKey(
-                auto_choose=True,
-                blank=True,
-                chained_field="cusine",
-                chained_model_field="cusine",
-                null=True,
-                on_delete=django.db.models.deletion.CASCADE,
-                to="account.newlocation",
             ),
         ),
     ]
