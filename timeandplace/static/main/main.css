@@ -12,7 +12,7 @@ a {
 
 .landing {
   height: 100vh;
-  background-image: url("/static/main/bg.jpeg");
+  background-image: url("/static/main/image-bg.jpeg");
   background-size: cover;
   background-repeat: no-repeat;
   display: grid;
