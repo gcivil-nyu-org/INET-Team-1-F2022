@@ -1,8 +1,6 @@
 <!-- account/templates/profile/profile.html -->
 {% extends 'base.html' %}
 
-
-
 {% block content %}
 
 <h2>
@@ -108,13 +106,13 @@
 </div>
 
 {%if not current_user_profile.matches.exists %}
-<p>You can 
+<p>You can
     <ul>
-      <li> 
+      <li>
         <a href="{% url "edit" %}">Edit your profile</a>, or
       </li>
 {%endif%}
-      <li> 
+      <li>
         <a href="{% url "preferences" pk=profile.user_id %}">Preview your preferences</a>
       </li>
     </ul>

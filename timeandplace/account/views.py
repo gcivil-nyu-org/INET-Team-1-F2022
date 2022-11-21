@@ -183,6 +183,7 @@ def profile(request, pk):
             return redirect('filter_profile_list')
         elif action_for_match_decline == "match":
             current_user_profile.matches.add(profile.id)
+            return redirect('dashboard')
         current_user_profile.save()
     return render(request,
                     "profile/profile.html",
