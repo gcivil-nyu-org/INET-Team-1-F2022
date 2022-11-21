@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for l in locations %}
+<option value="{{ l.id }}">{{l.DBA}} At {{l.BUILDING}} {{l.STREET}}, {{l.BORO}}</option>
+{% endfor %}

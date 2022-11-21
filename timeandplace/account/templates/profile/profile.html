@@ -1,8 +1,6 @@
 <!-- account/templates/profile/profile.html -->
 {% extends 'base.html' %}
 
-
-
 {% block content %}
 
 <h2>
@@ -10,7 +8,7 @@
 </h2>
 <b>Time:</b> {{ profile.proposal_time }}
 <br>
-<b>Place:</b> {{ profile.location_drawdown }}
+<b>Place:</b> {{ profile.location_dropdown }}
 <p><img src="{{ profile.photo.url }}" width="250px"></p>
 <br>
 <b>Occupation:</b> {{ profile.occupation }}
@@ -107,14 +105,16 @@
   </div>
 </div>
 
+
 {%if not current_user_profile.matches.exists and not current_user_profile.matched_with.exists%}
 <p>You can 
+
     <ul>
-      <li> 
+      <li>
         <a href="{% url "edit" %}">Edit your profile</a>, or
       </li>
 {%endif%}
-      <li> 
+      <li>
         <a href="{% url "preferences" pk=profile.user_id %}">Preview your preferences</a>
       </li>
     </ul>
