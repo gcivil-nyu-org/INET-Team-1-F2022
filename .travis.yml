@@ -16,7 +16,7 @@ script:
   # - flake8 ./
   - coverage run ./timeandplace/manage.py test account.tests
 
-  
+
 
 after_script:
   - coveralls
