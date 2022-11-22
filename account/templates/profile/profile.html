@@ -4,7 +4,7 @@
 {% block content %}
 
 <h2>
-    {{ profile.user.first_name }} ,{{ profile.user.last_name }}, {{ profile.calc_age }}
+    {{ profile.user.first_name }}, {{ profile.calc_age }}
 </h2>
 <b>Time:</b> {{ profile.proposal_time }}
 <br>
@@ -107,7 +107,7 @@
 
 
 {%if not current_user_profile.matches.exists and not current_user_profile.matched_with.exists%}
-<p>You can 
+<p>You can
 
     <ul>
       <li>
