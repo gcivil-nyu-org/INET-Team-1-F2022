@@ -7,14 +7,14 @@ install:
   - pip install -r requirements.txt
 
 before_script:
-  - python ./timeandplace/manage.py makemigrations
-  - python ./timeandplace/manage.py migrate
+  - python manage.py makemigrations
+  - python manage.py migrate
   # - python ./timeandplace/manage.py collectstatic
 
 script:
   - black ./
   # - flake8 ./
-  - coverage run ./timeandplace/manage.py test account.tests
+  - coverage run manage.py test account.tests
 
 
 
