@@ -1,6 +1,7 @@
 
 <!-- account/profile_list.html -->
 {% extends 'base.html' %}
+{% load thumbnail %}
 
 {% block content %}
 
@@ -20,11 +21,12 @@
                   {{ liker.user.first_name  }} , {{ liker.calc_age  }}
                 </h3>
                 <div class="media-left">
-                    <figure class="image is-48x48">
-                      <img src="{{ liker.photo.url }}" width="100px">
+                    <div class="user">
+                      <img src="{%thumbnail liker.photo '180x180' crop='smart'%}">
                          <!--  alt="Placeholder image"> -->
-                    </figure>
+                      </div>
                   </div>
+                  
                 <p class="subtitle is-6">
 
                   {{ liker.proposal_time }} @{{ liker.location_dropdown }}
@@ -43,3 +45,8 @@
 </div>
 
 {% endblock content %}
+
+<style>
+  img {
+  border-radius: 50%;
+} </style>

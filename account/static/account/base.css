@@ -4,7 +4,10 @@ body {
     margin:0;
     padding:0;
     font-family:helvetica, sans-serif;
+    overflow-y:auto
 }
+
+
 
 p {
     line-height: 1.8;
@@ -203,6 +206,7 @@ ul.messages li a.close {
 .image-info div {
     padding:20px 0;
     overflow:auto;
+    overflow-y:auto
 }
 .count {
     color:#aaa;
@@ -275,3 +279,4 @@ img.user-detail {
     font-style:italic;
     color:#ccc;
 }
+

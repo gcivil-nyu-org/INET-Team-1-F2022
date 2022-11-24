@@ -21,6 +21,7 @@
 <br>
 <br>
 <div class="block">
+  
 {%if not current_user_profile.matches.exists %}
 {%if profile in current_user_profile.liked_by.all %}
 <form method="post">
@@ -35,7 +36,7 @@
 {%if profile != current_user_profile and profile not in current_user_profile.likes.all%}
 <form method="post">
   {% csrf_token %}
-  <div class="buttons has-addons">
+  <div class="buttons">
     <button class="button is-success" name="like" value="like">Like</button>
     <button class="button is-danger" name="like" value="hide">Hide</button>
   </div>
@@ -48,7 +49,7 @@
 {%if not current_user_profile.matches.exists %}
 <div class="block">
   <a href="{% url 'filter_profile_list' %}">
-      <button class="button is-dark is-outlined is-fullwidth">
+      <button class="button is-dark is-outlined ">
           All Profiles
       </button>
   </a>
@@ -106,6 +107,7 @@
 </div> {% endcomment %}
 
 
+{% comment %}
 {%if not current_user_profile.matches.exists and not current_user_profile.matched_with.exists%}
 <p>You can
 
@@ -118,5 +120,5 @@
         <a href="{% url "preferences" pk=profile.user_id %}">Preview your preferences</a>
       </li>
     </ul>
-
+    {% endcomment %}
 {% endblock content %}

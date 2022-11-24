@@ -12,7 +12,10 @@
       {% endif %}
     </span>
   </div>
-  <h1 class="title">Set. TimeAndPlace. Match.</h1>
+
+  <img src="static/main/time_and_place_logo.png" style="width:675px;height:350px;" class="center">
+
+  <h1 class="title">We let you cut to the chase</h1>
   {% if request.user.is_authenticated %}
     <a href="{% url 'dashboard' %}" class="create-btn">Welcome {{ request.user.first_name }}</a>
   {% else %}

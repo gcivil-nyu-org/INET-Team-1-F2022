@@ -1,6 +1,7 @@
 <!-- account/profile_list.html -->
 {% extends 'base.html' %}
 
+{% load thumbnail %}
 {% block content %}
 
 <div class="column">
@@ -28,13 +29,15 @@
                   {{ profile.user.first_name  }} , {{ profile.calc_age  }} 
                 </h3>
                 <div class="media-left">
-                    <figure class="image is-48x48">
-                      <img src="{{ profile.photo.url }}" width="100px">
-                         <!--  alt="Placeholder image"> -->
-                    </figure>
+                  <div class="user">
+                      
+                    <img src="{%thumbnail profile.photo '180x180' crop='smart'%}">
+                       <!--  alt="Placeholder image"> -->
+                    
+                    </div>
                   </div>
                 <p class="subtitle is-6">
-                  {{ profile.proposal_time|lower }} @{{ profile.location_dropdown|lower }}
+                  {{ profile.proposal_time }} @{{ profile.location_dropdown }}
                 </p>
                 <br>
               </div>
