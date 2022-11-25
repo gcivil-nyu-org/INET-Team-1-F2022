@@ -6,43 +6,68 @@
 {% block content %}
 
 <div class="column">
-  <h1 class="title is-4"> Here's everyone interested in your proposal</h1>
-{% for liker in profile.liked_by.all %}
-{%if liker not in profile.declines.all %}
-{%if not profile.matches.exists %}
-    <div class="block">
-      <div class="card">
-        <a href="{% url 'profile' pk=liker.user.id %}">
-          <div class="card-content">
-            <div class="media">
- 
-              <div class="media-content">
-                <h3 class="title is-4">
-                  {{ liker.user.first_name  }} , {{ liker.calc_age  }}
-                </h3>
-                <div class="media-left">
-                    <div class="user">
-                      <img src="{%thumbnail liker.photo '180x180' crop='smart'%}">
-                         <!--  alt="Placeholder image"> -->
-                      </div>
-                  </div>
-                  
-                <p class="subtitle is-6">
+    <h1 class="title is-4"> Here's everyone interested in your proposal</h1>
+{% comment %}{% for liker in profile.liked_by.all %}{% endcomment %}
+  {% for liker in liked_me %}
+  {% if liker not in profile.declines.all %}
+  {% if not profile.matches.exists %}
+      <div class="block">
+        <div class="card">
+          <a href="{% url 'profile' pk=liker.user.id %}">
+            <div class="card-content">
+              <div class="media">
+  
+                <div class="media-content">
+                  <h3 class="title is-4">
+                    {{ liker.user.first_name  }} , {{ liker.calc_age  }}
+                  </h3>
+                  <div class="media-left">
+                      <div class="user">
+                        <img src="{%thumbnail liker.photo '180x180' crop='smart'%}">
+                          <!--  alt="Placeholder image"> -->
+                        </div>
+                    </div>
+                    
+                  <p class="subtitle is-6">
 
-                  {{ liker.proposal_time }} @{{ liker.location_dropdown }}
-                </p>
-                <br>
+                    {{ liker.proposal_time }} @{{ liker.location_dropdown }}
+                  </p>
+                  <br>
+                </div>
               </div>
             </div>
-          </div>
-        </a>
+          </a>
+        </div>
       </div>
-    </div>
+      {% endif %}
     {% endif %}
-  {% endif %}
-{% endfor %}
+
+  {% endfor %}
 
 </div>
+<hr>
+<nav class="pagination is-centered is-rounded" role="navigation" aria-label="pagination">
+	{% if profiles.has_previous %} 
+	<a href="?page={{liked_me.previous_page_number}}" class="pagination-previous">Previous</a>
+	{%else%}
+	<!-- <a href="#" class="pagination-previous">Previous</a> -->
+	{% endif %} 
+	
+	{% if profiles.has_next %} 
+		<a href="?page={{liked_me.next_page_number}}" class="pagination-next">Next Page</a>
+	{%else%}
+		<!-- <a href="#" class="pagination-next">Next Page</a> -->
+	{% endif %} 
+
+	<ul class="pagination-list">
+		<li>
+			<a class="pagination-link is-current" aria-label="Page 46" aria-current="page">Page {{liked_me.number}} of {{liked_me.paginator.num_pages}} </a>
+	
+	</ul>
+	
+	
+	
+  </nav>
 
 {% endblock content %}
 

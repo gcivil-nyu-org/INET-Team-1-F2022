@@ -68,7 +68,7 @@ Page {{profiles.number}} of {{profiles.paginator.num_pages}}
 {% if profiles.has_next %} 
 <a href="?page={{profiles.next_page_number}}">&raquo Next </a>
 {% endif %}  -->
-
+<hr>
 <nav class="pagination is-centered is-rounded" role="navigation" aria-label="pagination">
 	{% if profiles.has_previous %} 
 	<a href="?page={{profiles.previous_page_number}}" class="pagination-previous">Previous</a>

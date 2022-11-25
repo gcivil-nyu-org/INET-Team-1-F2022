@@ -175,9 +175,18 @@ def profile_liked_me(request, pk):
     # user_ids_to_exclude_matches = [userX.user.id for userX in request.user.profile.matches.all()]
     # user_ids_to_exclude_matches.append(request.user.id)
     # profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_matches)
+
+    #Pagination
+    liked_me = user_profile.liked_by.all()
+    p = Paginator(liked_me, 2)
+    page = request.GET.get('page')
+    liked_me_list = p.get_page(page)
+    print(liked_me)
+
     return render(request,
                 'profile/profile_liked_me.html',
-                {"profile" : user_profile})
+                {"profile" : user_profile,
+                 "liked_me" : liked_me_list})
 import datetime
 @login_required
 def profile(request, pk):
@@ -256,7 +265,9 @@ def filter_profile_list(request):
     print(request.user.profile.hides.all())
 
     profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
-    p = Paginator(profiles, 1)
+    
+    #Pagination
+    p = Paginator(profiles, 2)
     page = request.GET.get('page')
     profile_list = p.get_page(page)
     return render(request,
