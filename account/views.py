@@ -15,6 +15,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.contrib import messages
 
+from django.core.paginator import Paginator #for pagination of list views
+
 def register(request):
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
@@ -254,6 +256,9 @@ def filter_profile_list(request):
     print(request.user.profile.hides.all())
 
     profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
+    p = Paginator(profiles, 1)
+    page = request.GET.get('page')
+    profile_list = p.get_page(page)
     return render(request,
                 'profile/filter_profile_list.html',
-                {"profiles" : profiles, "currentuser" : request.user.profile})
+                {"profiles" : profile_list, "currentuser" : request.user.profile})

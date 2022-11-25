@@ -6,7 +6,7 @@
 {% block content %}
 
 <div class="column">
-  <h1> Here are all the people who liked you </h1>
+  <h1 class="title is-4"> Here's everyone interested in your proposal</h1>
 {% for liker in profile.liked_by.all %}
 {%if liker not in profile.declines.all %}
 {%if not profile.matches.exists %}

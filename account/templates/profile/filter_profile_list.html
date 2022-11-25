@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="column">
-  <h1>Here are the suggestions based on your preferences!</h1>
+  <h1 class="title is-4">Here are the suggestions based on your preferences!</h1>
   <p>
     You can 
     <ul>
@@ -55,5 +55,41 @@
 {% endfor %}
 
 </div>
+
+<!--Pagination-->
+
+<!-- {% if profiles.has_previous %} 
+<a href="?page=1">&laquo First </a>
+<a href="?page={{profiles.previous_page_number}}">&laquo Previous </a>
+{% endif %} 
+
+Page {{profiles.number}} of {{profiles.paginator.num_pages}}
+
+{% if profiles.has_next %} 
+<a href="?page={{profiles.next_page_number}}">&raquo Next </a>
+{% endif %}  -->
+
+<nav class="pagination is-centered is-rounded" role="navigation" aria-label="pagination">
+	{% if profiles.has_previous %} 
+	<a href="?page={{profiles.previous_page_number}}" class="pagination-previous">Previous</a>
+	{%else%}
+	<!-- <a href="#" class="pagination-previous">Previous</a> -->
+	{% endif %} 
+	
+	{% if profiles.has_next %} 
+		<a href="?page={{profiles.next_page_number}}" class="pagination-next">Next Page</a>
+	{%else%}
+		<!-- <a href="#" class="pagination-next">Next Page</a> -->
+	{% endif %} 
+
+	<ul class="pagination-list">
+		<li>
+			<a class="pagination-link is-current" aria-label="Page 46" aria-current="page">Page {{profiles.number}} of {{profiles.paginator.num_pages}} </a>
+	
+	</ul>
+	
+	
+	
+  </nav>
 
 {% endblock content %}

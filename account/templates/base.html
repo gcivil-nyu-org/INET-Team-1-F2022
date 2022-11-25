@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <html style = 'overflow-y:hidden'></html>
+    
     <title>{% block title %}{% endblock %}</title>
     <link href="{% static "account/base.css" %}" rel="stylesheet">
 </head>
@@ -11,8 +11,20 @@
 href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"> 
 
 <body>
+    
     <div id="header">
-        <span class="logo">Time & Place</span>
+        
+        <span class="logo">
+            <a href="{% url 'main:index' %}">
+                <img src="/static/account/nav_bar_logo.png"
+                width = "220"
+                height = "220" 
+                alt="logo" />
+            </a>
+
+        </span>
+        <br>
+
         {% if request.user.is_authenticated %}
         
                 <ul class="menu">
@@ -32,7 +44,7 @@ href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
                     </li>
 
                     <li {% if section == "suggestions" %}class="selected"{% endif %}>
-                        <a href="{% url "filter_profile_list" %}">Suggestions</a>
+                        <a href="{% url "filter_profile_list" %}">Proposals</a>
                     </li>
                 </ul>
                 {% endif %}
@@ -53,3 +65,5 @@ href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     {% endblock %}
     </div>
 </body>
+
+</html>
