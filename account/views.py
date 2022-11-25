@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -170,6 +170,8 @@ def profile_list(request):
 
 @login_required
 def profile_liked_me(request, pk):
+    if not get_referer(request):
+        raise Http404
     # user = request.user.profile
     user_profile = Profile.objects.get(user_id = pk)
     # user_ids_to_exclude_matches = [userX.user.id for userX in request.user.profile.matches.all()]
@@ -190,6 +192,8 @@ def profile_liked_me(request, pk):
 import datetime
 @login_required
 def profile(request, pk):
+    if not get_referer(request):
+        raise Http404
     if not hasattr(request.user, 'profile'):
         missing_profile = Profile(user=request.user)
         missing_profile.save()
@@ -273,3 +277,11 @@ def filter_profile_list(request):
     return render(request,
                 'profile/filter_profile_list.html',
                 {"profiles" : profile_list, "currentuser" : request.user.profile})
+
+
+
+def get_referer(request):
+    referer = request.META.get('HTTP_REFERER')
+    if not referer:
+        return None
+    return referer
