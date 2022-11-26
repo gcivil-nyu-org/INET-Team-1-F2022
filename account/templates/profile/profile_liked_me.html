@@ -4,7 +4,16 @@
 {% load thumbnail %}
 
 {% block content %}
-
+{% for msg in messages  %}
+<article class="message is-success">
+	{% comment %} <div class="message-header">
+		<button class="delete is-small" aria-label="delete"></button>
+	</div> {% endcomment %}
+	<div class="message-body">
+		{{msg}}
+	</div>
+  </article>
+{% endfor %}
 <div class="column">
     <h1 class="title is-4"> Here's everyone interested in your proposal</h1>
 {% comment %}{% for liker in profile.liked_by.all %}{% endcomment %}

@@ -206,9 +206,13 @@ def profile(request, pk):
         action_for_match_decline = data.get("match")
         if action_for_like_hide == "like":
             current_user_profile.likes.add(profile.id)
+            msg = "You have just liked " + profile.user.first_name + ". We'll let you know if they decide to match with you."
+            messages.success(request, msg)
             return redirect('filter_profile_list')
         elif action_for_like_hide == "hide":
             current_user_profile.hides.add(profile.id)
+            msg = "You have just hidden " + profile.user.first_name + ". Their proposals will no longer appear in this list."
+            messages.success(request, msg)
             return redirect('filter_profile_list')
         elif action_for_match_decline == "match":
             # Clear likes to ensure the users no longer
@@ -222,7 +226,10 @@ def profile(request, pk):
         elif action_for_match_decline == "decline":
             # Add profile id to declined list
             current_user_profile.declines.add(profile.id)
-            return redirect('dashboard')
+            print(request.path)
+            msg = "You have just declined to match with " + profile.user.first_name + ". They will no longer appear in this list.\n Note that they will still be able to like any of your future proposals."
+            messages.success(request, msg)
+            return redirect('profile_liked_me',request.user.id)
 
         current_user_profile.save()
     return render(request,

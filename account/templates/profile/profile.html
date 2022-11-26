@@ -9,17 +9,28 @@
     <div class="columns">
       <div class="column">
         <h2 class="title is-2">{{ profile.user.first_name }}, {{ profile.calc_age }}</h2>
-        <br>
-        <b>Time:</b> {{ profile.proposal_time }}
-        <br>
-        <b>Place:</b> {{ profile.location_dropdown }}
-        <br>
-        <br>
+
         <!--  buttons -->  
         <div class="block">
           <!-- match buttons -->  
           {%if not current_user_profile.matches.exists %}
-          {%if profile in current_user_profile.liked_by.all %}
+          {%if profile in current_user_profile.liked_by.all and profile not in current_user_profile.declines.all  %}
+            <article class="message is-info">
+              {% comment %} <div class="message-header">
+                <button class="delete is-small" aria-label="delete"></button>
+              </div> {% endcomment %}
+              <div class="message-body">
+                {{ profile.user.first_name }} is interested in your proposal: 
+                <br>
+                <br>
+                <b>Time:</b> {{ current_user_profile.proposal_time }}
+                <br>
+                <b>Place:</b> {{ current_user_profile.location_dropdown }}
+                <br>
+                <br>
+                Please decide if you would like to match:
+              </div>
+            </article>
           <form method="post">
               {% csrf_token %}
               <div class="buttons has-addons">
@@ -28,6 +39,12 @@
               </div>
             </form>
           {% else %}
+          <br>
+          <b>Time:</b> {{ profile.proposal_time }}
+          <br>
+          <b>Place:</b> {{ profile.location_dropdown }}
+          <br>
+          <br>
           <!-- not show like hide for yourself -->
           {%if profile != current_user_profile and profile not in current_user_profile.likes.all%}
           <form method="post">

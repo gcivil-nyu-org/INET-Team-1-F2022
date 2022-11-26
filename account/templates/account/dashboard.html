@@ -2,7 +2,13 @@
    {% block title %}Dashboard{% endblock %}
    {% block content %}
      <h1 class="title is-2">Dashboard</h1>
-
+     {% for msg in messages  %}
+     <article class="message is-success">
+       <div class="message-body">
+         {{msg}}
+       </div>
+       </article>
+     {% endfor %}
      <p>Welcome to your dashboard. 
       You can  
       <ul>
@@ -23,11 +29,11 @@
         </li>
       </ul>
 
-      
+      <hr>
      {%if user_profile.matches.all.exists %}
      {%for user in user_profile.matches.all %}
-     <h1> Hey you are matched with  </h1>
-     <h2>{{user.user.first_name}}</h2>
+     <h1 class="title is-3"> Hey you are matched with  </h1>
+     <h2 class="title is-3">{{user.user.first_name}}, {{user.calc_age}}</h2>
      <p><img src="{{ user.photo.url }}" width="250px"></p>
      <div class="block">
       <h3 class="title is-4">

@@ -4,6 +4,17 @@
 {% load thumbnail %}
 {% block content %}
 
+{% for msg in messages  %}
+<article class="message is-success">
+	{% comment %} <div class="message-header">
+		<button class="delete is-small" aria-label="delete"></button>
+	</div> {% endcomment %}
+	<div class="message-body">
+		{{msg}}
+	</div>
+  </article>
+{% endfor %}
+
 <div class="column">
   <h1 class="title is-4">Here are the suggestions based on your preferences!</h1>
   <p>
@@ -28,6 +39,9 @@
                 <h3 class="title is-4">
                   {{ profile.user.first_name  }} , {{ profile.calc_age  }} 
                 </h3>
+				<p class="subtitle is-6">
+					{{ profile.proposal_time }} @{{ profile.location_dropdown }}
+				  </p>
                 <div class="media-left">
                   <div class="user">
                       
@@ -36,9 +50,7 @@
                     
                     </div>
                   </div>
-                <p class="subtitle is-6">
-                  {{ profile.proposal_time }} @{{ profile.location_dropdown }}
-                </p>
+
                 <br>
               </div>
               
