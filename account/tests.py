@@ -261,6 +261,27 @@ class TestProfile(TestCase):
 
 
 
+    def testHide(self):
+        profile1 = Profile.objects.get(user=self.user1)
+        profile2 = Profile.objects.get(user=self.user2)
+        profile2.likes.add(profile1.id)
+
+        # login as user1
+        self.client.login(username="test-profile", password="test-profile")
+        assert self.user1.is_authenticated
+
+        pk2 = profile2.id
+        url_path = '/account/profile/' + str(pk2) + "/"
+        response = self.client.post(
+            url_path,
+            data = {
+                "like" : "hide",
+            },
+        )
+
+        self.assertEquals(profile1.hides.all().first(), profile2)
+        self.assertEquals(profile2.hidden_by.all().first(), profile1)
+
     def testDecline(self):
         profile1 = Profile.objects.get(user=self.user1)
         profile2 = Profile.objects.get(user=self.user2)
