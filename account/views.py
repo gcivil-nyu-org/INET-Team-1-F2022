@@ -41,10 +41,8 @@ def user_login(request):
     if request.method == 'POST': # when user submits form via POST
         form = LoginForm(request.POST) # instantiate form with submitted data
         if form.is_valid():
-
             # Authenticate user against database
             cd = form.cleaned_data
-
             # Returns the User object if authentication successful
             user = authenticate(request,
                                 username=cd['username'],
@@ -58,7 +56,6 @@ def user_login(request):
                     return HttpResponse('Disabled account')
             else:
                 return HttpResponse('Invalid login')
-
     else: # when user_login view is called with a GET request
         form = LoginForm() # instantiate a new login form
     return render(request, 'account/login.html', {'form': form})
@@ -158,19 +155,13 @@ import datetime
 @login_required
 def profile_list(request):
     profiles = Profile.objects.exclude(user=request.user)
-    #age = datetime.datetime.now().date() - profile.date_of_birth
-    #age = age.days // 365
     return render(request,
                 'profile/profile_list.html',
                 {"profiles" : profiles})
 
 @login_required
 def profile_liked_me(request, pk):
-    # user = request.user.profile
     user_profile = Profile.objects.get(user_id = pk)
-    # user_ids_to_exclude_matches = [userX.user.id for userX in request.user.profile.matches.all()]
-    # user_ids_to_exclude_matches.append(request.user.id)
-    # profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_matches)
     return render(request,
                 'profile/profile_liked_me.html',
                 {"profile" : user_profile})
