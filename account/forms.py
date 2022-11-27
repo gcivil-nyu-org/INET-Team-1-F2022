@@ -65,7 +65,7 @@ class NewLocationForm(forms.ModelForm):
         model = Profile
         fields = ('cusine',
                     'boro',
-                  'location_dropdown')
+                    'location_dropdown')
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['location_dropdown'].queryset = newLocation.objects.all()

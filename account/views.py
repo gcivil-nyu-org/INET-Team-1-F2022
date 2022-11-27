@@ -128,10 +128,7 @@ def edit(request):
 
             cur_time, cur_place = user_profile.proposal_time, user_profile.location_dropdown
             if cur_time != prev_time  or cur_place != prev_place:
-                print("--CLEARING LIKED_BY--")
                 user_profile.liked_by.clear()
-                # print("--CLEARING DECLINES--")
-                # user_profile.declined.clear()
             location_form.save()
 
             return redirect('profile',pk=user_id)
@@ -141,6 +138,7 @@ def edit(request):
                                     instance=request.user.profile)
         location_form = NewLocationForm(instance=request.user.profile,
                                     data=request.POST)
+        
     return render(request,
                     'account/edit.html',
                     {'user_form': user_form,

@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, ProfileEditForm, NewLocationForm, UserEditForm
 from django.urls import reverse
 from .forms import LoginForm
 from .models import Profile
@@ -51,6 +51,65 @@ class TestRegister(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+class TestLogin(TestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
+
+    def test_login_page(self):
+        url_path = '/account/login/'
+        response = self.client.get(url_path)
+        self.assertEqual(response.status_code, 200)
+
+    def test_login_process(self):
+        url_path = '/account/login/'
+        response = self.client.post(
+            url_path,
+            data={
+                "username": "test-profile",
+                "password": "test-profile",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+    
+    def test_login_process_success(self):
+        url_path = '/account/login/'
+        response = self.client.post(
+            url_path,
+            data={
+                "username": "test-profile1",
+                "password": "test-profile",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+
+class TestDashboard(TestCase):
+    def test_dashboard_page(self):
+        url_path = ''
+        response = self.client.get(url_path)
+        self.assertEqual(response.status_code, 200)
+
+class TestViews(TestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
+        Profile.objects.create(user=self.user1, date_of_birth=datetime.date(1996, 5, 28))
+
+    def test_edit_redirect(self):
+        response = self.client.get(reverse("edit"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_profile_list_redirect(self):
+        response = self.client.get(reverse("profile_list"))
+        self.assertEqual(response.status_code, 302)
+    
+    def test_profile_liked_me(self):
+        self.client.login(username="test-profile", password="test-profile")
+        profile2 = Profile.objects.get(user=self.user1)
+        pk2 = profile2.id
+        path_to_view = '/account/profile_liked_me/' + str(pk2) + "/"
+        response = self.client.get(path_to_view)
+        self.assertEqual(response.status_code,200)
+        self.assertTemplateUsed(response, 'profile/profile_liked_me.html')
 
 class TestProfile(TestCase):
     def setUp(self):
