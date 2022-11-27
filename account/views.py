@@ -144,7 +144,6 @@ def edit(request):
 
 @login_required   
 def load_locations(request):
-    print(request)
     cusine_id = request.GET.get('cusine_id')
     boro_id = request.GET.get('boro_id')
     locations = newLocation.objects.filter(CUISINE_id=cusine_id,BORO_id = boro_id)

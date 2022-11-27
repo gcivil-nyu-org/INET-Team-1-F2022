@@ -111,6 +111,11 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code,200)
         self.assertTemplateUsed(response, 'profile/profile_liked_me.html')
 
+    def test_load_locations(self):   
+        url_path = 'ajax/load-locations/' + "?cusine_id=1&boro_id=4"
+        response = self.client.post(url_path)
+        self.assertEqual(response.status_code,404)
+
 class TestProfile(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
@@ -244,3 +249,4 @@ class TestProfile(TestCase):
 
         self.assertEquals(profile1.declines.all().first(), profile2)
         self.assertEquals(profile2.declined_by.all().first(), profile1)
+    
