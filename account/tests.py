@@ -94,6 +94,26 @@ class TestViews(TestCase):
         self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
         Profile.objects.create(user=self.user1, date_of_birth=datetime.date(1996, 5, 28))
 
+    def test_main_page(self):
+        url_path = '/account/'
+        response = self.client.get(url_path)
+        self.assertEqual(response.status_code, 302)
+        # login as user1
+        self.client.login(username="test-profile", password="test-profile")
+        assert self.user1.is_authenticated
+        response = self.client.get(url_path)
+        self.assertEqual(response.status_code, 200)
+        
+    
+    def test_pref_page(self):
+        self.client.login(username="test-profile", password="test-profile")
+        profile2 = Profile.objects.get(user=self.user1)
+        pk2 = profile2.id
+        path_to_view = '/account/preferences/' + str(pk2) + "/"
+        response = self.client.get(path_to_view)
+        self.assertEqual(response.status_code,200)
+        self.assertTemplateUsed(response, 'profile/preferences.html')
+
     def test_edit_redirect(self):
         response = self.client.get(reverse("edit"))
         self.assertEqual(response.status_code, 302)
@@ -113,8 +133,20 @@ class TestViews(TestCase):
 
     def test_load_locations(self):   
         url_path = 'ajax/load-locations/' + "?cusine_id=1&boro_id=4"
-        response = self.client.post(url_path)
+        response = self.client.get(url_path)
         self.assertEqual(response.status_code,404)
+
+    def test_edit_pref(self):   
+        response = self.client.get("account/edit_preferences/")
+        self.assertEqual(response.status_code,404)
+
+    def test_edit_page(self):   
+        response = self.client.get("account/edit/")
+        self.assertEqual(response.status_code,404)
+
+    def test_filter_pref(self):   
+        response = self.client.get("/account/filter_profile_list/")
+        self.assertEqual(response.status_code,302)
 
 class TestProfile(TestCase):
     def setUp(self):
