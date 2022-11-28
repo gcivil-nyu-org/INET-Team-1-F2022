@@ -2,92 +2,35 @@
 <!DOCTYPE html>
 <html>
 <head>
+    
     <title>{% block title %}{% endblock %}</title>
     <link href="{% static "account/base.css" %}" rel="stylesheet">
 </head>
 
-<style>
-/* The Modal (background) */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-/* Modal Content */
-.modal-content {
-    position: relative;
-    background-color: #fefefe;
-    margin: auto;
-    padding: 0;
-    border: 1px solid #888;
-    width: 80%;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    -webkit-animation-name: animatetop;
-    -webkit-animation-duration: 0.4s;
-    animation-name: animatetop;
-    animation-duration: 0.4s
-}
-
-/* Add Animation */
-@-webkit-keyframes animatetop {
-    from {top:-300px; opacity:0}
-    to {top:0; opacity:1}
-}
-
-@keyframes animatetop {
-    from {top:-300px; opacity:0}
-    to {top:0; opacity:1}
-}
-
-/* The Close Button */
-.close {
-    color: white;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.modal-header {
-    padding: 2px 16px;
-    background-color: #840fb6;
-    color: white;
-}
-
-.modal-body {padding: 2px 16px;}
-
-.modal-footer {
-    padding: 2px 16px;
-    background-color: #840fb6;
-    color: white;
-}
-</style>
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"> 
 
 <body>
+    
     <div id="header">
-        <span class="logo">Time & Place</span>
+        
+        <span class="logo">
+            <a href="{% url 'main:index' %}">
+                <img src="/static/account/nav_bar_logo.png"
+                width = "220"
+                height = "220" 
+                alt="logo" />
+            </a>
+
+        </span>
+        <br>
+
         {% if request.user.is_authenticated %}
         
                 <ul class="menu">
                     <li {% if section == "dashboard" %}class="selected"{% endif %}>
                     <a href="{% url "dashboard" %}">My dashboard</a>
                     </li>
-
                 </ul>
         {% if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists %} 
                 <ul class="menu">
@@ -97,11 +40,11 @@
                     </li> {% endcomment %}
 
                     <li {% if section == "like_me" %}class="selected"{% endif %}>
-                    <a href=" {% url 'profile_liked_me' pk=request.user.id %}">Liked Me</a>
+                        <a href=" {% url 'profile_liked_me' pk=request.user.id %}">Liked Me</a>
                     </li>
 
                     <li {% if section == "suggestions" %}class="selected"{% endif %}>
-                        <a href="{% url "filter_profile_list" %}">Suggestions</a>
+                        <a href="{% url "filter_profile_list" %}">Proposals</a>
                     </li>
                 </ul>
                 {% endif %}
@@ -115,61 +58,14 @@
                 {% endif %}
         </span>
     </div>
+
+
     <div id="content">
+
     {% block content %}
+    
     {% endblock %}
     </div>
-
-    <!-- The Modal START -->
-    <div id="myModal" class="modal">
-
-        <!-- Modal content -->
-        <div class="modal-content">
-        <div class="modal-header">
-            <span class="close">&times;</span>
-            <h2>This is a popup</h2>
-        </div>
-        <div class="modal-body">
-            <p>Demo/p>
-        </div>
-        <div class="modal-footer">
-        </div>
-        </div>
-
-    </div>
-    <!-- The Modal END -->
-
-    {% comment %} <button class="button is-dark is-outlined is-fullwidth" id="button">
-        a button
-    </button> {% endcomment %}
 </body>
 
-<script>
-    // Get the modal
-    var modal = document.getElementById("myModal");
-
-    // Get the button that opens the modal
-    var btn = document.getElementById("button");
-
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
-
-    // When the user clicks the button, open the modal
-    btn.onclick = function() {
-        console.log("a");
-        console.log(modal)
-      modal.style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-      modal.style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-      if (event.target == modal) {
-        modal.style.display = "none";
-      }
-    }
-</script>
+</html>

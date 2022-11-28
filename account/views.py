@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -14,6 +14,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.contrib import messages
+
+from django.core.paginator import Paginator #for pagination of list views
 
 def register(request):
     if request.method == 'POST':
@@ -160,13 +162,29 @@ def profile_list(request):
 
 @login_required
 def profile_liked_me(request, pk):
+    if not get_referer(request):
+        raise Http404
+    # user = request.user.profile
     user_profile = Profile.objects.get(user_id = pk)
+    # user_ids_to_exclude_matches = [userX.user.id for userX in request.user.profile.matches.all()]
+    # user_ids_to_exclude_matches.append(request.user.id)
+    # profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_matches)
+
+    #Pagination
+    liked_me = user_profile.liked_by.all()
+    p = Paginator(liked_me, 2)
+    page = request.GET.get('page')
+    liked_me_list = p.get_page(page)
+    print(liked_me)
     return render(request,
                 'profile/profile_liked_me.html',
-                {"profile" : user_profile})
+                {"profile" : user_profile,
+                 "liked_me" : liked_me_list})
 import datetime
 @login_required
 def profile(request, pk):
+    if not get_referer(request) and request.method == "GET":
+        raise Http404
     if not hasattr(request.user, 'profile'):
         missing_profile = Profile(user=request.user)
         missing_profile.save()
@@ -179,9 +197,13 @@ def profile(request, pk):
         action_for_match_decline = data.get("match")
         if action_for_like_hide == "like":
             current_user_profile.likes.add(profile.id)
+            msg = "You have just liked " + profile.user.first_name + ". We'll let you know if they decide to match with you."
+            messages.success(request, msg)
             return redirect('filter_profile_list')
         elif action_for_like_hide == "hide":
             current_user_profile.hides.add(profile.id)
+            msg = "You have just hidden " + profile.user.first_name + ". Their proposals will no longer appear in this list."
+            messages.success(request, msg)
             return redirect('filter_profile_list')
         elif action_for_match_decline == "match":
             # Clear likes to ensure the users no longer
@@ -195,7 +217,10 @@ def profile(request, pk):
         elif action_for_match_decline == "decline":
             # Add profile id to declined list
             current_user_profile.declines.add(profile.id)
-            return redirect('dashboard')
+            print(request.path)
+            msg = "You have just declined to match with " + profile.user.first_name + ". They will no longer appear in this list.\n Note that they will still be able to like any of your future proposals."
+            messages.success(request, msg)
+            return redirect('profile_liked_me',request.user.id)
 
         current_user_profile.save()
     return render(request,
@@ -242,6 +267,19 @@ def filter_profile_list(request):
     print(request.user.profile.hides.all())
 
     profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
+    
+    #Pagination
+    p = Paginator(profiles, 2)
+    page = request.GET.get('page')
+    profile_list = p.get_page(page)
     return render(request,
                 'profile/filter_profile_list.html',
-                {"profiles" : profiles, "currentuser" : request.user.profile})
+                {"profiles" : profile_list, "currentuser" : request.user.profile})
+
+
+
+def get_referer(request):
+    referer = request.META.get('HTTP_REFERER')
+    if not referer:
+        return None
+    return referer
