@@ -9,7 +9,6 @@
     <div class="columns">
       <div class="column">
         <h2 class="title is-2">{{ profile.user.first_name }}, {{ profile.calc_age }}</h2>
-
         <!--  buttons -->  
         <div class="block">
           <!-- match buttons -->  
@@ -23,7 +22,7 @@
                 {{ profile.user.first_name }} is interested in your proposal: 
                 <br>
                 <br>
-                <b>Time:</b> {{ current_user_profile.proposal_time }}
+                <b>Time:</b> {{ current_user_profile.proposal_datetime_local }}
                 <br>
                 <b>Place:</b> {{ current_user_profile.location_dropdown }}
                 <br>
@@ -40,7 +39,7 @@
             </form>
           {% else %}
           <br>
-          <b>Time:</b> {{ profile.proposal_time }}
+          <b>Time:</b> {{ profile.proposal_datetime_local }}
           <br>
           <b>Place:</b> {{ profile.location_dropdown }}
           <br>
