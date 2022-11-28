@@ -147,7 +147,7 @@ def edit(request):
                     'profile_form': profile_form,
                     'location_form':location_form})
 
-@login_required   
+@login_required
 def load_locations(request):
     print(request)
     cusine_id = request.GET.get('cusine_id')
@@ -187,6 +187,7 @@ def profile(request, pk):
     current_user_profile = request.user.profile
     if request.method == "POST":
         data = request.POST
+        print(data)
         action_for_like_hide = data.get("like")
         action_for_match_decline = data.get("match")
         if action_for_like_hide == "like":

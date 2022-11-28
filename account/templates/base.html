@@ -5,6 +5,7 @@
     <title>{% block title %}{% endblock %}</title>
     <link href="{% static "account/base.css" %}" rel="stylesheet">
 </head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <style>
 /* The Modal (background) */
@@ -82,14 +83,14 @@
     <div id="header">
         <span class="logo">Time & Place</span>
         {% if request.user.is_authenticated %}
-        
+
                 <ul class="menu">
                     <li {% if section == "dashboard" %}class="selected"{% endif %}>
                     <a href="{% url "dashboard" %}">My dashboard</a>
                     </li>
 
                 </ul>
-        {% if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists %} 
+        {% if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists %}
                 <ul class="menu">
 
                     {% comment %} <li {% if section == "people" %}class="selected"{% endif %}>
@@ -121,9 +122,8 @@
     </div>
 
     <!-- The Modal START -->
-    <div id="myModal" class="modal">
+    <!-- <div id="myModal" class="modal">
 
-        <!-- Modal content -->
         <div class="modal-content">
         <div class="modal-header">
             <span class="close">&times;</span>
@@ -136,7 +136,7 @@
         </div>
         </div>
 
-    </div>
+    </div> -->
     <!-- The Modal END -->
 
     {% comment %} <button class="button is-dark is-outlined is-fullwidth" id="button">
@@ -144,7 +144,7 @@
     </button> {% endcomment %}
 </body>
 
-<script>
+<!-- <script>
     // Get the modal
     var modal = document.getElementById("myModal");
 
@@ -172,4 +172,4 @@
         modal.style.display = "none";
       }
     }
-</script>
+</script> -->

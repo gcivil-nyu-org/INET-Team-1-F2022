@@ -29,17 +29,76 @@
       <button class="button is-success" name="match" value="match">Match</button>
       <button class="button is-danger" name="match" value="decline">Decline</button>
     </div>
+
+  <div id="matchModal" class="modal">
+
+    <div class="modal-content">
+    <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2>You've got a match!</h2>
+    </div>
+
+    <div class="modal-footer">
+    </div>
+  </div>
+
+  </div>
+
+  <div id="declineModal" class="modal">
+
+    <div class="modal-content">
+    <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2>Declined</h2>
+    </div>
+
+    <div class="modal-footer">
+    </div>
+  </div>
+
+  </div>
+
   </form>
 {% else %}
 <!-- not show like hide for yourself -->
 {%if profile != current_user_profile and profile not in current_user_profile.likes.all%}
-<form method="post">
+<form method="post" id="likeForm">
   {% csrf_token %}
-  <div class="buttons has-addons">
+
+  <div class="buttons has-addons" id="buttons">
     <button class="button is-success" name="like" value="like">Like</button>
     <button class="button is-danger" name="like" value="hide">Hide</button>
   </div>
+
+  <div id="likeModal" class="modal">
+
+    <div class="modal-content">
+    <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2>Liked!</h2>
+    </div>
+
+    <div class="modal-footer">
+    </div>
+    </div>
+
+  </div>
+
+  <div id="hideModal" class="modal">
+
+    <div class="modal-content">
+    <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2>Hided!</h2>
+    </div>
+
+    <div class="modal-footer">
+    </div>
+    </div>
+
+  </div>
 </form>
+
 {% endif %}
 {% endif %}
 {% endif %}
@@ -118,5 +177,56 @@
         <a href="{% url "preferences" pk=profile.user_id %}">Preview your preferences</a>
       </li>
     </ul>
+
+  <script>
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+    var modal
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+      location.reload()
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+        location.reload()
+      }
+    }
+
+    function postRequestAjax(inputData, csrfToken) {
+      //console.log(inputData)
+      $.ajax({
+          type: "POST",
+          data: inputData,
+      });
+    }
+
+    $("button").click(function(e) {
+
+      e.preventDefault(); // avoid to execute the actual submit of the form.
+      let bottonVal = $(this).val();
+      let cookie = document.cookie
+      let csrfToken = cookie.substring(cookie.indexOf('=') + 1)
+
+      var inputData = { "csrfmiddlewaretoken": csrfToken }
+
+      if (bottonVal == "like" || bottonVal == "hide") {
+        targetModal = bottonVal + "Modal"
+        inputData['like'] = bottonVal
+      } else {
+        targetModal = bottonVal + "Modal"
+        inputData['match'] = bottonVal
+      }
+
+      modal = document.getElementById(targetModal);
+
+      postRequestAjax(inputData, csrfToken)
+      modal.style.display = "block";
+    });
+  </script>
 
 {% endblock content %}
