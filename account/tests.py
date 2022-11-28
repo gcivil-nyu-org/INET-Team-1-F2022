@@ -174,7 +174,7 @@ class TestProfile(TestCase):
         path_to_view = '/account/profile/' + str(pk2) + "/"
         # print("Path: ",path_to_view)
         response = self.client.get(path_to_view)
-        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.status_code,404)
         self.assertTemplateUsed(response, 'profile/profile.html')
 
     def testHide(self):
@@ -197,6 +197,8 @@ class TestProfile(TestCase):
                 "like" : "like",
             },
         )
+        print("testLike")
+        print(profile1.likes.all())
         
         self.assertEquals(profile1.likes.all().first(), profile2)
         self.assertEquals(response.status_code, 302)
@@ -302,4 +304,3 @@ class TestProfile(TestCase):
 
         self.assertEquals(profile1.declines.all().first(), profile2)
         self.assertEquals(profile2.declined_by.all().first(), profile1)
-    
