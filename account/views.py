@@ -113,7 +113,8 @@ def edit(request):
                                     files=request.FILES)
 
         user_profile = request.user.profile
-        prev_time, prev_place = user_profile.proposal_time, user_profile.location_dropdown
+        print('The user selected this datetime: ', user_profile.proposal_datetime_local)
+        prev_time, prev_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
 
 
         location_form = NewLocationForm(instance=request.user.profile,
@@ -122,10 +123,11 @@ def edit(request):
         user_id = request.user.id
         print(user_id)
         if user_form.is_valid() and profile_form.is_valid() and location_form.is_valid():
+            print(user_profile.proposal_datetime_local)
             user_form.save()
             profile_form.save()
 
-            cur_time, cur_place = user_profile.proposal_time, user_profile.location_dropdown
+            cur_time, cur_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
             if cur_time != prev_time  or cur_place != prev_place:
                 user_profile.liked_by.clear()
             location_form.save()

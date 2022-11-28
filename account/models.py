@@ -56,7 +56,11 @@ class Profile(models.Model):
                         blank=True,
                         default='users/default/user-default.png')
     occupation = models.CharField(max_length = 50,blank=True, null=True)
-    proposal_time = models.CharField(max_length = 50,blank=True, null=True)
+    #proposal_time = models.CharField(max_length = 50,blank=True, null=True)
+    #proposal_datetime = models.DateTimeField(blank=True, null=True)
+    # proposal_date_new = models.DateField(blank=True, null=True)
+    # proposal_time_new = models.TimeField(blank=True, null=True)
+    proposal_datetime_local = models.DateTimeField(blank=True, null=True)
     # proposal_location = models.CharField(max_length = 50,blank=True, null=True)
     about_me = models.CharField(max_length = 100,blank=True, null=True)
     gender_choices = (('Woman', 'Woman'), ('Man', 'Man'), ('Transgender', 'Transgender'), ('Non-binary', 'Non-binary'))
