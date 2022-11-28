@@ -192,7 +192,7 @@ def profile_liked_me(request, pk):
 import datetime
 @login_required
 def profile(request, pk):
-    if not get_referer(request):
+    if not get_referer(request) and request.method == "GET":
         raise Http404
     if not hasattr(request.user, 'profile'):
         missing_profile = Profile(user=request.user)
