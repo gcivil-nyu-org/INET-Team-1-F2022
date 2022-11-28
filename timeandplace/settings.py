@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
+    'easy_thumbnails',
     # 'map.apps.MapConfig'
 ]
 
