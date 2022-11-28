@@ -2,6 +2,7 @@ from .models import Profile,newLocation
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.contrib.admin.widgets import AdminDateWidget
 
 
 # Form will be used to authenticate users against the database.
@@ -44,6 +45,9 @@ class ProfileEditForm(forms.ModelForm):
     date_of_birth = forms.DateField(widget=forms.SelectDateWidget(years=BIRTH_YEAR_CHOICES))
     about_me = forms.CharField(widget=forms.Textarea)
     #proposal_time = forms.DateTimeField(widget=forms.DateTimeInput)
+    # proposal_date_new = forms.DateField(widget=forms.SelectDateWidget(attrs={'type': 'date'}))
+    # proposal_time_new = forms.TimeField()
+    proposal_datetime_local = forms.CharField(widget=forms.TextInput(attrs={'type':'datetime-local'}))
     class Meta:
         model = Profile
         fields = ('date_of_birth',
@@ -52,13 +56,12 @@ class ProfileEditForm(forms.ModelForm):
                   'gender_identity',
                   'sexual_orientation',
                   'photo',
-                  'proposal_time',
+                  'proposal_datetime_local'
                   )
-                # 'age')
-                #   'age_preference_min',
-                #   'age_preference_max',
-                #   'gender_preference',
-                #   'orientation_preference')
+        # widgets = {
+        #     'proposal_date_new': forms.SelectDateWidget(attrs={'type': 'date'}),
+        #     'proposal_time_new': forms.TimeInput(attrs={'type': 'time'})
+        # }
 
 class NewLocationForm(forms.ModelForm):
     class Meta:
