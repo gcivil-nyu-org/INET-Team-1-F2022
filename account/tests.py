@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, ProfileEditForm, NewLocationForm, UserEditForm
 from django.urls import reverse
 from .forms import LoginForm
 from .models import Profile
@@ -51,6 +51,102 @@ class TestRegister(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+class TestLogin(TestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
+
+    def test_login_page(self):
+        url_path = '/account/login/'
+        response = self.client.get(url_path)
+        self.assertEqual(response.status_code, 200)
+
+    def test_login_process(self):
+        url_path = '/account/login/'
+        response = self.client.post(
+            url_path,
+            data={
+                "username": "test-profile",
+                "password": "test-profile",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+    
+    def test_login_process_success(self):
+        url_path = '/account/login/'
+        response = self.client.post(
+            url_path,
+            data={
+                "username": "test-profile1",
+                "password": "test-profile",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+
+class TestDashboard(TestCase):
+    def test_dashboard_page(self):
+        url_path = ''
+        response = self.client.get(url_path)
+        self.assertEqual(response.status_code, 200)
+
+class TestViews(TestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
+        Profile.objects.create(user=self.user1, date_of_birth=datetime.date(1996, 5, 28))
+
+    def test_main_page(self):
+        url_path = '/account/'
+        response = self.client.get(url_path)
+        self.assertEqual(response.status_code, 302)
+        # login as user1
+        self.client.login(username="test-profile", password="test-profile")
+        assert self.user1.is_authenticated
+        response = self.client.get(url_path)
+        self.assertEqual(response.status_code, 200)
+        
+    
+    def test_pref_page(self):
+        self.client.login(username="test-profile", password="test-profile")
+        profile2 = Profile.objects.get(user=self.user1)
+        pk2 = profile2.id
+        path_to_view = '/account/preferences/' + str(pk2) + "/"
+        response = self.client.get(path_to_view)
+        self.assertEqual(response.status_code,200)
+        self.assertTemplateUsed(response, 'profile/preferences.html')
+
+    def test_edit_redirect(self):
+        response = self.client.get(reverse("edit"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_profile_list_redirect(self):
+        response = self.client.get(reverse("profile_list"))
+        self.assertEqual(response.status_code, 302)
+    
+    def test_profile_liked_me(self):
+        self.client.login(username="test-profile", password="test-profile")
+        profile2 = Profile.objects.get(user=self.user1)
+        pk2 = profile2.id
+        path_to_view = '/account/profile_liked_me/' + str(pk2) + "/"
+        response = self.client.get(path_to_view)
+        self.assertEqual(response.status_code,404)
+        # self.assertTemplateUsed(response, 'profile/profile_liked_me.html')
+
+    def test_load_locations(self):   
+        url_path = 'ajax/load-locations/' + "?cusine_id=1&boro_id=4"
+        response = self.client.get(url_path)
+        self.assertEqual(response.status_code,404)
+
+    def test_edit_pref(self):   
+        response = self.client.get("account/edit_preferences/")
+        self.assertEqual(response.status_code,404)
+
+    def test_edit_page(self):   
+        response = self.client.get("account/edit/")
+        self.assertEqual(response.status_code,404)
+
+    def test_filter_pref(self):   
+        response = self.client.get("/account/filter_profile_list/")
+        self.assertEqual(response.status_code,302)
 
 class TestProfile(TestCase):
     def setUp(self):
@@ -166,6 +262,27 @@ class TestProfile(TestCase):
         #                              msg_prefix='', fetch_redirect_response=True)
 
 
+
+    def testHide(self):
+        profile1 = Profile.objects.get(user=self.user1)
+        profile2 = Profile.objects.get(user=self.user2)
+        profile2.likes.add(profile1.id)
+
+        # login as user1
+        self.client.login(username="test-profile", password="test-profile")
+        assert self.user1.is_authenticated
+
+        pk2 = profile2.id
+        url_path = '/account/profile/' + str(pk2) + "/"
+        response = self.client.post(
+            url_path,
+            data = {
+                "like" : "hide",
+            },
+        )
+
+        self.assertEquals(profile1.hides.all().first(), profile2)
+        self.assertEquals(profile2.hidden_by.all().first(), profile1)
 
     def testDecline(self):
         profile1 = Profile.objects.get(user=self.user1)

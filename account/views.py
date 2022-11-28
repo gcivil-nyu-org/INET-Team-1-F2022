@@ -43,10 +43,8 @@ def user_login(request):
     if request.method == 'POST': # when user submits form via POST
         form = LoginForm(request.POST) # instantiate form with submitted data
         if form.is_valid():
-
             # Authenticate user against database
             cd = form.cleaned_data
-
             # Returns the User object if authentication successful
             user = authenticate(request,
                                 username=cd['username'],
@@ -60,7 +58,6 @@ def user_login(request):
                     return HttpResponse('Disabled account')
             else:
                 return HttpResponse('Invalid login')
-
     else: # when user_login view is called with a GET request
         form = LoginForm() # instantiate a new login form
     return render(request, 'account/login.html', {'form': form})
@@ -130,10 +127,7 @@ def edit(request):
 
             cur_time, cur_place = user_profile.proposal_time, user_profile.location_dropdown
             if cur_time != prev_time  or cur_place != prev_place:
-                print("--CLEARING LIKED_BY--")
                 user_profile.liked_by.clear()
-                # print("--CLEARING DECLINES--")
-                # user_profile.declined.clear()
             location_form.save()
 
             return redirect('profile',pk=user_id)
@@ -143,6 +137,7 @@ def edit(request):
                                     instance=request.user.profile)
         location_form = NewLocationForm(instance=request.user.profile,
                                     data=request.POST)
+        
     return render(request,
                     'account/edit.html',
                     {'user_form': user_form,
@@ -151,7 +146,6 @@ def edit(request):
 
 @login_required   
 def load_locations(request):
-    print(request)
     cusine_id = request.GET.get('cusine_id')
     boro_id = request.GET.get('boro_id')
     locations = newLocation.objects.filter(CUISINE_id=cusine_id,BORO_id = boro_id)
@@ -162,8 +156,6 @@ import datetime
 @login_required
 def profile_list(request):
     profiles = Profile.objects.exclude(user=request.user)
-    #age = datetime.datetime.now().date() - profile.date_of_birth
-    #age = age.days // 365
     return render(request,
                 'profile/profile_list.html',
                 {"profiles" : profiles})
@@ -184,7 +176,6 @@ def profile_liked_me(request, pk):
     page = request.GET.get('page')
     liked_me_list = p.get_page(page)
     print(liked_me)
-
     return render(request,
                 'profile/profile_liked_me.html',
                 {"profile" : user_profile,
