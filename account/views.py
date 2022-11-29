@@ -16,6 +16,7 @@ from django.utils.encoding import force_bytes
 from django.contrib import messages
 
 from django.core.paginator import Paginator #for pagination of list views
+from django.utils import timezone
 
 def register(request):
     if request.method == 'POST':
@@ -96,6 +97,20 @@ def password_reset_request(request):
 @login_required
 def dashboard(request):
     user_profile = Profile.objects.get(user_id = request.user.id)
+    print(datetime.datetime.now())
+    time_now = timezone.now()
+    # Check if the user is in a match and check if it has expired
+    if user_profile.matches:
+        print("In a match")
+        print("User profile's proposal date and time:", user_profile.proposal_datetime_local)
+        if time_now > user_profile.proposal_datetime_local:
+            print("Current time is greater than proposed time")
+            #datetime.datetime.now() > user_profile.proposal_datetime_local
+            # need to then clear matches for both user_profile and the other profile
+        else:
+            print("There is still time left for your match/date!")
+    else:
+        print("Not in a match")
     return render(request,
                      'account/dashboard.html',
                      {'section': 'dashboard', "user_profile": user_profile})
