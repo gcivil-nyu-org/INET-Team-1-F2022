@@ -38,7 +38,17 @@ class UserEditForm(forms.ModelForm):
         fields = ('first_name',
                   'last_name',
                   'email')
-
+    def check_username(self):
+        username = self.cleaned_data.get('first_name')
+        undefined = ('@', '.', '-', '+')
+        print(username)
+        if username == "":
+            self.add_error('first_name','First Name cannot be empty!')
+            # raise forms.ValidationError('Username cannot be empty!')
+        if any([char in username for char in undefined]):
+            self.add_error('first_name','Symbols @/./-/+ are not allowed in username.')
+            # raise forms.ValidationError('Symbols @/./-/+ are not allowed in username.')
+        return username
 
 class ProfileEditForm(forms.ModelForm):
     BIRTH_YEAR_CHOICES = list(str(year) for year in list(range(1940, 2004)))
