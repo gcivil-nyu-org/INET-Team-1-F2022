@@ -97,16 +97,29 @@ def password_reset_request(request):
 @login_required
 def dashboard(request):
     user_profile = Profile.objects.get(user_id = request.user.id)
-    print(datetime.datetime.now())
     time_now = timezone.now()
     # Check if the user is in a match and check if it has expired
-    if user_profile.matches:
+    print('Time_now:',time_now)
+
+    if user_profile.matches.all():
         print("In a match")
+        print("User's likes:", user_profile.likes)
+        print("User's liked by:", user_profile.liked_by)
+        print("User's match:", user_profile.matches.first())
+        print("User's matched with:", user_profile.matched_with)
         print("User profile's proposal date and time:", user_profile.proposal_datetime_local)
+
+        # Get the other user profile who user_profile is matched with
+        other_user_profile = user_profile.matches.first()
+        print('Other user:', other_user_profile.about_me)
+        # TO DO: Figure out who matched with who first to compare the appropriate time/place to time_now
         if time_now > user_profile.proposal_datetime_local:
             print("Current time is greater than proposed time")
-            #datetime.datetime.now() > user_profile.proposal_datetime_local
-            # need to then clear matches for both user_profile and the other profile
+            # TO DO: Clear matches for both user_profile and the other profile
+            user_profile.matches.clear()
+            other_user_profile.matches.clear()
+            msg = "Your match with " + other_user_profile.user.first_name + " has expired."
+            messages.success(request, msg)
         else:
             print("There is still time left for your match/date!")
     else:
