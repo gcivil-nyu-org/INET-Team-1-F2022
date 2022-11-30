@@ -158,6 +158,12 @@ def edit(request):
         user_id = request.user.id
         print(user_id)
         if user_form.is_valid() and profile_form.is_valid() and location_form.is_valid():
+            if user_form.check_username() == "":
+                return render(request,
+                'account/edit.html',
+                    {'user_form': user_form,
+                    'profile_form': profile_form,
+                    'location_form':location_form})
             print(user_profile.proposal_datetime_local)
             user_form.save()
             profile_form.save()
