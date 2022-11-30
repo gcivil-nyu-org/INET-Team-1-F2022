@@ -9,10 +9,17 @@
     <h1>Edit your account</h1>
     <p>You can edit your account using the following form:</p>
     <form method="post" id = 'editProfile' data-locations-url= "{% url 'ajax_load_locations' %}" enctype="multipart/form-data">
-    {{ user_form.as_p }}
-    {{ profile_form.as_p }}
-    {{ location_form.as_p }}
+    {% if user_form.errors %}
+        {{ user_form.as_p }}
+        {{ profile_form.as_p }}
+        {{ location_form.as_p }}
     {% csrf_token %}
+    {% else %}
+        {{ user_form.as_p }}
+        {{ profile_form.as_p }}
+        {{ location_form.as_p }}
+        {% csrf_token %}
+    {% endif %}
     <p><input type="submit" value="Save changes" 
         onclick="return confirm('WARNING: Any changes to proposal time and place will clear the likes you have so far received.')" />
     </p>
