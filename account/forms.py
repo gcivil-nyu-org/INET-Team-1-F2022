@@ -64,7 +64,7 @@ class ProfileEditForm(forms.ModelForm):
                   'occupation',
                   'about_me',
                   'gender_identity',
-                  'sexual_orientation',
+                #   'sexual_orientation',
                   'photo',
                   'proposal_datetime_local'
                   )
@@ -98,5 +98,4 @@ class PreferenceEditForm(forms.ModelForm):
         model = Profile
         fields = ('age_preference_min',
                   'age_preference_max',
-                  'gender_preference',
-                  'orientation_preference')
+                  'gender_preference')
