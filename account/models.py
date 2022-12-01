@@ -79,7 +79,7 @@ class Profile(models.Model):
     #location_drawdown = models.ForeignKey(Location,on_delete=models.SET_NULL, blank=True, null=True)
     boro = models.ForeignKey(Boro,on_delete=models.SET_NULL, blank=True, null=True)
     cusine = models.ForeignKey(Cusine,on_delete=models.SET_NULL, blank=True, null=True)
-    location_dropdown  = models.ForeignKey(newLocation,on_delete=models.SET_NULL, blank=True, null=True)
+    location_dropdown  = models.ForeignKey(newLocation, on_delete=models.SET_NULL, blank=False, null=True)
     # age = models.IntegerField(blank=True, null=True)
     # age = datetime.datetime.now() - date_of_birth
     # marital_choices = (('Single', 'Single'), ('Widowed', 'Widowed'), ('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorced', 'Divorced'))
