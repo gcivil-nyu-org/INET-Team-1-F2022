@@ -17,10 +17,16 @@ from django.contrib import messages
 
 from django.core.paginator import Paginator #for pagination of list views
 
+from datetime import date
+
 def register(request):
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
         if user_form.is_valid():
+            # Get the age of user
+            if not user_form.is_adult():
+                return HttpResponse('Go home kid')
+            dob=user_form.cleaned_data['date_of_birth']
             # Create a new user object but avoid saving it yet
             new_user = user_form.save(commit=False)
             # Set the chosen password
@@ -29,7 +35,7 @@ def register(request):
             # Save the User object
             new_user.save()
             # Create the user profile
-            Profile.objects.create(user=new_user)
+            Profile.objects.create(user=new_user, date_of_birth=dob)
             return render(request,
                             'account/registration_done.html',
                             {'new_user': new_user})
@@ -139,14 +145,14 @@ def edit(request):
                                     instance=request.user.profile)
         location_form = NewLocationForm(instance=request.user.profile,
                                     data=request.POST)
-        
+
     return render(request,
                     'account/edit.html',
                     {'user_form': user_form,
                     'profile_form': profile_form,
                     'location_form':location_form})
 
-@login_required   
+@login_required
 def load_locations(request):
     cusine_id = request.GET.get('cusine_id')
     boro_id = request.GET.get('boro_id')
@@ -165,7 +171,7 @@ def profile_list(request):
 @login_required
 def profile_liked_me(request, pk):
     if not get_referer(request):
-        raise Http404
+        c
     # user = request.user.profile
     user_profile = Profile.objects.get(user_id = pk)
     # user_ids_to_exclude_matches = [userX.user.id for userX in request.user.profile.matches.all()]
@@ -269,7 +275,7 @@ def filter_profile_list(request):
     print(request.user.profile.hides.all())
 
     profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
-    
+
     #Pagination
     p = Paginator(profiles, 2)
     page = request.GET.get('page')

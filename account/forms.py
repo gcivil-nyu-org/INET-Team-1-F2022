@@ -3,6 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.admin.widgets import AdminDateWidget
+import datetime
 
 
 # Form will be used to authenticate users against the database.
@@ -21,9 +22,24 @@ class UserRegistrationForm(forms.ModelForm):
     password2 = forms.CharField(label='Repeat password',
                                 widget=forms.PasswordInput)
 
+    years_list = [ i for i in range(1900, 2022) ]
+
+    date_of_birth = forms.DateField(
+        widget = forms.SelectDateWidget(
+            years = years_list,
+            empty_label=("Choose Year", "Choose Month", "Choose Day"),
+        ),
+    )
+
+    def is_adult(self):
+        dob = self.cleaned_data['date_of_birth']
+        if (datetime.date.today() - dob  ) > datetime.timedelta(days=18*365):
+            return True
+        return False
+
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'email')
+        fields = ('username', 'first_name', 'email', 'date_of_birth')
 
     def clean_password2(self):
         cd = self.cleaned_data
