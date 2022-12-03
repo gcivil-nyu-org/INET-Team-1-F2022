@@ -310,15 +310,26 @@ def filter_profile_list(request):
     print(request.user.profile.likes.all())
     print(request.user.profile.hides.all())
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
 
 =======
+=======
+>>>>>>> 4970e47 (unaccessable login/register page after login)
     if (gender_p == "Both"):
         profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(Q(gender_identity = "Man")| Q(gender_identity = "Woman"))#sexual_orientation=oreo_p)
     else:
         profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(gender_identity = gender_p)#sexual_orientation=oreo_p)
+<<<<<<< HEAD
 >>>>>>> f430d74 (fixed sexual orientation bug)
+=======
+=======
+
+    profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
+
+>>>>>>> bdf793e (unaccessable login/register page after login)
+>>>>>>> 4970e47 (unaccessable login/register page after login)
     #Pagination
     p = Paginator(profiles, 2)
     page = request.GET.get('page')
