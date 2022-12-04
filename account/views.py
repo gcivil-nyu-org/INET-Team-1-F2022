@@ -2,7 +2,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth.decorators import login_required
-from .forms import LoginForm, UserRegistrationForm,PreferenceEditForm
+from .forms import LoginForm, UserRegistrationForm,PreferenceEditForm,MatchFeedbackForm
 from .models import Profile,newLocation
 
 from django.core.mail import send_mail, BadHeaderError
@@ -308,7 +308,41 @@ def filter_profile_list(request):
                 'profile/filter_profile_list.html',
                 {"profiles" : profile_list, "currentuser" : request.user.profile})
 
+@login_required
+def submitFeedback(request):
+    if request.method == "POST":
+        feedback_form = MatchFeedbackForm(
+                                    data=request.POST)
+        if feedback_form.is_valid():
+            obj = feedback_form.save(commit=False)
+            print("Submitted Form Object: ",obj)
+            obj.feedback_user = User.objects.get(pk=request.user.id)
+            # obj.matched_user = 
+            if request.user.profile.matches.all():
+                obj.matched_user = request.user.profile.matches.first().user
+                obj.match_date = request.user.profile.proposal_datetime_local
+                obj.match_location = request.user.profile.location_dropdown
+            elif request.user.profile.matched_with.all():
+                obj.matched_user = request.user.profile.matched_with.first().user
+                obj.match_date = request.user.profile.matched_with.first().proposal_datetime_local
+                obj.match_location = request.user.profile.matched_with.first().location_dropdown            
+            print("Feedback User:",obj.feedback_user)
+            print("Match Comments: ", obj.match_comments)
+            obj.save()
+            
+            
+            return redirect("dashboard")
+        else:
+            print("ERROR: Form is invalid")
+            print(feedback_form.errors)
+    else:
+        feedback_form = MatchFeedbackForm(                             
+                                    instance=request.user.profile)
 
+        return render(request,
+                        'account/match_feedback.html',
+                        {'feedback_form': feedback_form})
+    
 
 def get_referer(request):
     referer = request.META.get('HTTP_REFERER')

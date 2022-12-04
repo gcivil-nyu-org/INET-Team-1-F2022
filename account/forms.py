@@ -1,10 +1,9 @@
-from .models import Profile,newLocation
+from .models import Profile,newLocation, Match_Feedback
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.admin.widgets import AdminDateWidget
-
-
+from django.utils.safestring import mark_safe
 # Form will be used to authenticate users against the database.
 
 class LoginForm(forms.Form):
@@ -90,3 +89,46 @@ class PreferenceEditForm(forms.ModelForm):
                   'age_preference_max',
                   'gender_preference',
                   'orientation_preference')
+
+
+
+
+class MatchFeedbackForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.label_suffix = ""  # Removes : as label suffix
+    DATE_HAPPENED_CHOICES = (('Yes', ' We both showed up'), ('No1', ' My match wasn’t there'), ('No2', 'I didn’t go'))
+#     N/A
+# Sexual harrasment
+# Person didn’t match the profile
+# Rude / Unfriendly
+# Made me feel uncomfortable
+
+    BEHAVIOR_CHOICES = (('N/A', ' None'),
+                         ('Uncomfortable', ' Made me feel uncomfortable'), 
+                         ('Rude', ' Rude / Unfriendly'),
+                         ('Catfish',' Person didn’t match the profile'),
+                         ('Advances',  'Made inappropriate advances'),
+                         ('Harrassment', ' Report Harrassment'),
+                         ('Other',' Other')
+                         )
+    RATING_CHOICES = [(x,x) for x in range(0,11)]
+    date_happened = forms.ChoiceField(label=mark_safe('<strong>Did the date take place?</strong>'),
+                                widget=forms.RadioSelect(attrs={'class': 'checkbox'}),
+                                 choices=DATE_HAPPENED_CHOICES,
+                                 )
+    match_rating = forms.ChoiceField(label=mark_safe("<p><strong>Please rate your match on a scale from 0 (bad) to 10 (perfect): </br> </strong> </p>"),
+                                choices=RATING_CHOICES)
+    inappropriate_behavior = forms.ChoiceField(label=mark_safe("<strong>Report inappropriate behavior</strong>"),
+                                widget=forms.RadioSelect(attrs={'label':'Name','class': 'checkbox'}),
+                                 choices=BEHAVIOR_CHOICES)
+
+    match_comments = forms.CharField(label=mark_safe("<strong>Please use this section to provide any personal comments on how the date went. <br> (If you didn't attend, or the match behaved inappropriately, please provide additional details): </strong> "),
+                                widget=forms.Textarea(attrs={'class': 'textarea rows="8"'}))
+    class Meta:
+        model = Match_Feedback
+        fields = ('date_happened',
+                'match_rating',
+                'inappropriate_behavior',
+                'match_comments',)     
+

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Match Feedback{% endblock %}
+
+{% block content %}
+    <h1 class="title is-2">Match Feedback</h1>
+
+    <form method="post" enctype="multipart/form-data">
+    {{ feedback_form.as_p }}
+    {% csrf_token %}
+    <div class="bold-my-labels">{{ form.condition.label_tag }}{{ form.condition }}</div>
+    <style type="text/css">.bold-my-labels label{font-weight:bold;}</style>
+    <p><input type="submit" value="Submit Feedback"></p>
+    </form>
+    
+{% endblock %}
