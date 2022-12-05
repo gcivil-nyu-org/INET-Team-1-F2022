@@ -208,7 +208,7 @@ def profile_list(request):
 @login_required
 def profile_liked_me(request, pk):
     if not get_referer(request):
-        return Http404
+        raise Http404
     # user = request.user.profile
     user_profile = Profile.objects.get(user_id = pk)
     # user_ids_to_exclude_matches = [userX.user.id for userX in request.user.profile.matches.all()]
