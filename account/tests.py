@@ -200,7 +200,7 @@ class TestProfile(TestCase):
             },
         )
         print("testLike")
-        print(profile1.likes.all())
+       
         
         self.assertEquals(profile1.likes.all().first(), profile2)
         self.assertEquals(response.status_code, 302)
@@ -330,17 +330,14 @@ class TestFeedback(TestCase):
 
         self.client.login(username="test-profile", password="test-profile")
 
-        # Go to dashboard
-        url_path = ''
-        response = self.client.get(url_path)
-        self.assertEqual(response.status_code, 200)
-        print("-------Feedback: Dashboard Loaded --------")
-
-
         #Go to feedback form
         url_path = 'match_feedback'
         response = self.client.get(url_path)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+
+
+
+
 
         
 
