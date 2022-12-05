@@ -19,6 +19,8 @@ from django.db.models import Q
 from django.core.paginator import Paginator #for pagination of list views
 from django.utils import timezone
 
+from datetime import date
+
 def register(request):
     if request.user.is_authenticated:
         return redirect('/account')
@@ -26,6 +28,10 @@ def register(request):
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
         if user_form.is_valid():
+            # Get the age of user
+            if not user_form.is_adult():
+                return HttpResponse('Go home kid')
+            dob=user_form.cleaned_data['date_of_birth']
             # Create a new user object but avoid saving it yet
             new_user = user_form.save(commit=False)
             # Set the chosen password
@@ -34,7 +40,7 @@ def register(request):
             # Save the User object
             new_user.save()
             # Create the user profile
-            Profile.objects.create(user=new_user)
+            Profile.objects.create(user=new_user, date_of_birth=dob)
             return render(request,
                             'account/registration_done.html',
                             {'new_user': new_user})
