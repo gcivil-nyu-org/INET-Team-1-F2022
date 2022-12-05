@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 
 {% block title %}Match Feedback{% endblock %}
+{{current_user_profile.feedback_submitted}}
 
 {% block content %}
+{% if current_user_profile.feedback_submitted == False   %}
+{%if current_user_profile.matches.all.exists or current_user_profile.matched_with.all.exists %}
     <h1 class="title is-2">Match Feedback</h1>
-
     <form method="post" enctype="multipart/form-data">
     {{ feedback_form.as_p }}
     {% csrf_token %}
@@ -12,5 +14,10 @@
     <style type="text/css">.bold-my-labels label{font-weight:bold;}</style>
     <p><input type="submit" value="Submit Feedback"></p>
     </form>
-    
+    {% endif %}
+    {% else %}
+
+
+Error: You do not have permission to view this page. Either you have already submitted a form for your current match, or you are not in a match.
+{% endif %}
 {% endblock %}

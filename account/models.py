@@ -108,6 +108,8 @@ class Profile(models.Model):
         blank=True
     )
 
+    feedback_submitted = models.BooleanField(default=False)
+
     @property
     def calc_age(self):
         today = date.today()
@@ -128,6 +130,7 @@ class Match_Feedback(models.Model):
     #match_rating = models.IntegerField(choices=RATING_CHOICES,blank=True, null=True)
     match_rating = models.IntegerField(blank=True, null=True)
     match_comments = models.CharField(max_length = 500,blank=True, null=True)
+    
 
 
     def __str__(self):
