@@ -4,8 +4,9 @@ from . import views
 
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
-    path('', include('django.contrib.auth.urls')),
+    path('login/', views.user_login, name="login"),
     path('register/', views.register, name='register'),
+    path('', include('django.contrib.auth.urls')),
     path('edit/', views.edit, name='edit'),
     path('profile_list/', views.profile_list, name='profile_list'),
     path('profile_liked_me/<int:pk>/', views.profile_liked_me, name='profile_liked_me'),

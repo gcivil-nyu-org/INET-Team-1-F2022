@@ -3,6 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.admin.widgets import AdminDateWidget
+import datetime
 from django.utils.safestring import mark_safe
 # Form will be used to authenticate users against the database.
 
@@ -20,9 +21,24 @@ class UserRegistrationForm(forms.ModelForm):
     password2 = forms.CharField(label='Repeat password',
                                 widget=forms.PasswordInput)
 
+    years_list = [ i for i in range(1900, 2022) ]
+
+    date_of_birth = forms.DateField(
+        widget = forms.SelectDateWidget(
+            years = years_list,
+            empty_label=("Choose Year", "Choose Month", "Choose Day"),
+        ),
+    )
+
+    def is_adult(self):
+        dob = self.cleaned_data['date_of_birth']
+        if (datetime.date.today() - dob  ) > datetime.timedelta(days=18*365):
+            return True
+        return False
+
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'email')
+        fields = ('username', 'first_name', 'email', 'date_of_birth')
 
     def clean_password2(self):
         cd = self.cleaned_data
@@ -37,7 +53,17 @@ class UserEditForm(forms.ModelForm):
         fields = ('first_name',
                   'last_name',
                   'email')
-
+    def check_username(self):
+        username = self.cleaned_data.get('first_name')
+        undefined = ('@', '.', '-', '+')
+        print(username)
+        if username == "":
+            self.add_error('first_name','First Name cannot be empty!')
+            # raise forms.ValidationError('Username cannot be empty!')
+        if any([char in username for char in undefined]):
+            self.add_error('first_name','Symbols @/./-/+ are not allowed in username.')
+            # raise forms.ValidationError('Symbols @/./-/+ are not allowed in username.')
+        return username
 
 class ProfileEditForm(forms.ModelForm):
     BIRTH_YEAR_CHOICES = list(str(year) for year in list(range(1940, 2004)))
@@ -53,7 +79,7 @@ class ProfileEditForm(forms.ModelForm):
                   'occupation',
                   'about_me',
                   'gender_identity',
-                  'sexual_orientation',
+                #   'sexual_orientation',
                   'photo',
                   'proposal_datetime_local'
                   )
@@ -87,8 +113,50 @@ class PreferenceEditForm(forms.ModelForm):
         model = Profile
         fields = ('age_preference_min',
                   'age_preference_max',
-                  'gender_preference',
-                  'orientation_preference')
+                  'gender_preference')
+
+
+
+
+class MatchFeedbackForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.label_suffix = ""  # Removes : as label suffix
+    DATE_HAPPENED_CHOICES = (('Yes', ' We both showed up'), ('No1', ' My match wasn’t there'), ('No2', 'I didn’t go'))
+#     N/A
+# Sexual harrasment
+# Person didn’t match the profile
+# Rude / Unfriendly
+# Made me feel uncomfortable
+
+    BEHAVIOR_CHOICES = (('N/A', ' None'),
+                         ('Uncomfortable', ' Made me feel uncomfortable'), 
+                         ('Rude', ' Rude / Unfriendly'),
+                         ('Catfish',' Person didn’t match the profile'),
+                         ('Advances',  'Made inappropriate advances'),
+                         ('Harrassment', ' Report Harrassment'),
+                         ('Other',' Other')
+                         )
+    RATING_CHOICES = [(x,x) for x in range(0,11)]
+    date_happened = forms.ChoiceField(label=mark_safe('<strong>Did the date take place?</strong>'),
+                                widget=forms.RadioSelect(attrs={'class': 'checkbox'}),
+                                 choices=DATE_HAPPENED_CHOICES,
+                                 )
+    match_rating = forms.ChoiceField(label=mark_safe("<p><strong>Please rate your match on a scale from 0 (bad) to 10 (perfect): </br> </strong> </p>"),
+                                choices=RATING_CHOICES)
+    inappropriate_behavior = forms.ChoiceField(label=mark_safe("<strong>Report inappropriate behavior</strong>"),
+                                widget=forms.RadioSelect(attrs={'label':'Name','class': 'checkbox'}),
+                                 choices=BEHAVIOR_CHOICES)
+
+    match_comments = forms.CharField(label=mark_safe("<strong>Please use this section to provide any personal comments on how the date went. <br> (If you didn't attend, or the match behaved inappropriately, please provide additional details): </strong> "),
+                                widget=forms.Textarea(attrs={'class': 'textarea rows="8"'}))
+    class Meta:
+        model = Match_Feedback
+        fields = ('date_happened',
+                'match_rating',
+                'inappropriate_behavior',
+                'match_comments',)     
+
 
 
 
