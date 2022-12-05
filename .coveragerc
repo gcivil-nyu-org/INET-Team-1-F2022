@@ -1,7 +1,6 @@
 [run]
 omit = 
     timeandplace/settings.py
-    account/tests.py
     timeandplace/wsgi.py
     timeandplace/asgi.py
     timeandplace/urls.py
