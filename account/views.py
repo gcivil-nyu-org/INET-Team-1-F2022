@@ -127,9 +127,13 @@ def dashboard(request):
             other_user_profile.feedback_submitted = False
             msg = "Your match with " + other_user_profile.user.first_name + " has expired."
             messages.success(request, msg)
+            user_profile.save()
+            other_user_profile.save()
         else:
             print("There is still time left for your match/date!")
-            if time_now < user_profile.proposal_datetime_local + timedelta(hours=6) and time_now > user_profile.proposal_datetime_local:
+            if (time_now < user_profile.proposal_datetime_local + timedelta(hours=6) and
+                time_now > user_profile.proposal_datetime_local and
+                user_profile.feedback_submitted == False):
                 feedback_available=True 
     elif user_profile.matched_with.all():
         print("I didn't match, but someone matched with me (matched_with)")
@@ -144,7 +148,9 @@ def dashboard(request):
             messages.success(request, msg)
         else:
             # print("There is still time left for your match/date!")
-            if time_now < other_user_profile.proposal_datetime_local + timedelta(hours=6) and time_now > other_user_profile.proposal_datetime_local:
+            if (time_now < other_user_profile.proposal_datetime_local + timedelta(hours=6) and
+                time_now > other_user_profile.proposal_datetime_local and
+                user_profile.feedback_submitted == False):
                 feedback_available=True 
     else:
         print("Not in a match at all")
@@ -372,7 +378,9 @@ def submitFeedback(request):
 
         return render(request,
                         'account/match_feedback.html',
-                        {'feedback_form': feedback_form})
+                        {'feedback_form': feedback_form,
+                        'current_user_profile': request.user.profile}
+                        )
     
 
 def get_referer(request):
