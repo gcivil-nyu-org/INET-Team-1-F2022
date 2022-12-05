@@ -6,6 +6,8 @@ from .forms import LoginForm
 from .models import Profile
 from . import views
 import datetime
+from django.utils import timezone
+from datetime import date, timedelta
 
 
 # Create your tests here.
@@ -304,3 +306,42 @@ class TestProfile(TestCase):
 
         self.assertEquals(profile1.declines.all().first(), profile2)
         self.assertEquals(profile2.declined_by.all().first(), profile1)
+
+
+class TestFeedback(TestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
+        Profile.objects.create(user=self.user1, 
+                                date_of_birth=datetime.date(1996, 5, 28),
+                                proposal_datetime_local = timezone.now(),
+                                location_dropdown ="Test Location" )
+
+        self.user2 = User.objects.create_user(username="test-profile2", password="test-profile2")
+        Profile.objects.create(user=self.user2, 
+                            date_of_birth=datetime.date(1996, 6, 28),
+                            )
+    
+    def formAvailable(self):
+        print("-------Feedback: Testing Dashboard--------")
+        profile1 = Profile.objects.get(user=self.user1)
+        profile2 = Profile.objects.get(user=self.user2)
+
+        profile1.matches.add(profile2)
+
+        self.client.login(username="test-profile", password="test-profile")
+
+        # Go to dashboard
+        url_path = ''
+        response = self.client.get(url_path)
+        self.assertEqual(response.status_code, 200)
+        print("-------Feedback: Dashboard Loaded --------")
+
+
+        #Go to feedback form
+        url_path = 'match_feedback'
+        response = self.client.get(url_path)
+        self.assertEqual(response.status_code, 200)
+
+        
+
+
