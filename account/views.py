@@ -14,8 +14,10 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.contrib import messages
+from django.db.models import Q
 
 from django.core.paginator import Paginator #for pagination of list views
+from django.utils import timezone
 
 from datetime import date
 
@@ -102,6 +104,35 @@ def password_reset_request(request):
 @login_required
 def dashboard(request):
     user_profile = Profile.objects.get(user_id = request.user.id)
+    time_now = timezone.now()
+    # Check if the user is in a match and check if it has expired
+    print('Time_now:',time_now)
+    if user_profile.matches.all():
+        print("In a match")
+        # Get the other user profile who user_profile is matched with
+        other_user_profile = user_profile.matches.first()
+        # Check time against proposal time
+        if time_now > user_profile.proposal_datetime_local:
+            # Clear matches for both user_profile and the other profile
+            user_profile.matches.clear()
+            other_user_profile.matches.clear()
+            msg = "Your match with " + other_user_profile.user.first_name + " has expired."
+            messages.success(request, msg)
+        else:
+            print("There is still time left for your match/date!")
+    elif user_profile.matched_with.all():
+        print("I didn't match, but someone matched with me (matched_with)")
+        other_user_profile = user_profile.matched_with.first()
+        if time_now > other_user_profile.proposal_datetime_local:
+            # Clear matches for both user_profile and the other profile
+            user_profile.matches.clear()
+            other_user_profile.matches.clear()
+            msg = "Your match with " + other_user_profile.user.first_name + " has expired."
+            messages.success(request, msg)
+        else:
+            print("There is still time left for your match/date!")
+    else:
+        print("Not in a match at all")
     return render(request,
                      'account/dashboard.html',
                      {'section': 'dashboard', "user_profile": user_profile})
@@ -129,6 +160,12 @@ def edit(request):
         user_id = request.user.id
         print(user_id)
         if user_form.is_valid() and profile_form.is_valid() and location_form.is_valid():
+            if user_form.check_username() == "":
+                return render(request,
+                'account/edit.html',
+                    {'user_form': user_form,
+                    'profile_form': profile_form,
+                    'location_form':location_form})
             print(user_profile.proposal_datetime_local)
             user_form.save()
             profile_form.save()
@@ -262,7 +299,7 @@ def filter_profile_list(request):
     age_p_min = request.user.profile.age_preference_min
     age_p_max = request.user.profile.age_preference_max
     gender_p = request.user.profile.gender_preference
-    oreo_p = request.user.profile.orientation_preference
+    # oreo_p = request.user.profile.orientation_preference
 
 
     user_ids_to_exclude_likes = [userX.user.id for userX in request.user.profile.likes.all()]
@@ -273,9 +310,10 @@ def filter_profile_list(request):
     # To-Do: Debug the issue with profile_id not matching user_id
     print(request.user.profile.likes.all())
     print(request.user.profile.hides.all())
-
-    profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(gender_identity = gender_p , sexual_orientation=oreo_p)
-
+    if (gender_p == "Both"):
+        profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(Q(gender_identity = "Man")| Q(gender_identity = "Woman"))#sexual_orientation=oreo_p)
+    else:
+        profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(gender_identity = gender_p)#sexual_orientation=oreo_p)
     #Pagination
     p = Paginator(profiles, 2)
     page = request.GET.get('page')

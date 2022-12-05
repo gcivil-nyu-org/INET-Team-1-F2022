@@ -1,6 +1,8 @@
 # Create your models here.
 from django.db import models
 from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.exceptions import ValidationError
 import datetime
 from datetime import date
 #from smart_selects.db_fields import ChainedForeignKey
@@ -29,7 +31,6 @@ class Cusine(models.Model):
     cusine = models.CharField(max_length=255,blank=True,null=True)
     def __str__(self):
         return self.cusine
-
 
 class newLocation(models.Model):
     DBA = models.CharField(max_length=255,blank=True,null=True)
@@ -65,16 +66,20 @@ class Profile(models.Model):
     about_me = models.CharField(max_length = 100,blank=True, null=True)
     gender_choices = (('Woman', 'Woman'), ('Man', 'Man'), ('Transgender', 'Transgender'), ('Non-binary', 'Non-binary'))
     gender_identity = models.CharField(max_length = 15, choices = gender_choices, blank = True, default="N/A")
-    orientation_choices = (('Lesbian', 'Lesbian'), ('Gay', 'Gay'), ('Bisexual', 'Bisexual'), ('Queer', 'Queer'), ('Asexual', 'Asexual'), ('Straight', 'Straight'),('Other', 'Other'))
-    sexual_orientation = models.CharField(max_length = 15, choices = orientation_choices, blank = True, default="N/A")
-    age_preference_min = models.IntegerField(blank=True, null=True)
-    age_preference_max = models.IntegerField(blank=True, null=True)
-    gender_preference = models.CharField(max_length = 15, choices = gender_choices, blank = True)
-    orientation_preference = models.CharField(max_length = 15, choices = orientation_choices, blank = True)
+    # orientation_choices = (('Lesbian', 'Lesbian'), ('Gay', 'Gay'), ('Bisexual', 'Bisexual'), ('Queer', 'Queer'), ('Asexual', 'Asexual'), ('Straight', 'Straight'),('Other', 'Other'))
+    # sexual_orientation = models.CharField(max_length = 15, choices = orientation_choices, blank = True, default="N/A")
+    age_preference_min = models.PositiveIntegerField(blank=True, null=True, default= 19, validators=[MinValueValidator(18), MaxValueValidator(100)])
+    age_preference_max = models.PositiveIntegerField(blank=True, null=True, default= 20,validators=[MinValueValidator(19), MaxValueValidator(100)])
+    def clean(self):
+        if self.age_preference_max < self.age_preference_min:
+            raise ValidationError("Minimum age has be smaller or equal to the Maximum Age")
+    gender_choices_pref = (('Woman', 'Woman'),('Man', 'Man'), ('Both', 'Both'), ('Transgender', 'Transgender'), ('Non-binary', 'Non-binary'))
+    gender_preference = models.CharField(max_length = 15, choices = gender_choices_pref, blank = True)
+    # orientation_preference = models.CharField(max_length = 15, choices = orientation_choices, blank = True)
     #location_drawdown = models.ForeignKey(Location,on_delete=models.SET_NULL, blank=True, null=True)
     boro = models.ForeignKey(Boro,on_delete=models.SET_NULL, blank=True, null=True)
     cusine = models.ForeignKey(Cusine,on_delete=models.SET_NULL, blank=True, null=True)
-    location_dropdown  = models.ForeignKey(newLocation,on_delete=models.SET_NULL, blank=True, null=True)
+    location_dropdown  = models.ForeignKey(newLocation, on_delete=models.SET_NULL, blank=False, null=True)
     # age = models.IntegerField(blank=True, null=True)
     # age = datetime.datetime.now() - date_of_birth
     # marital_choices = (('Single', 'Single'), ('Widowed', 'Widowed'), ('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorced', 'Divorced'))
