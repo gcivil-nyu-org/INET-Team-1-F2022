@@ -10,7 +10,7 @@ from datetime import date
 
 class Location(models.Model):
     DBA = models.CharField(max_length=255,blank=True,null=True)
-    BORO = models.CharField(max_length=255,blank=True,null=True) 
+    BORO = models.CharField(max_length=255,blank=True,null=True)
     BUILDING = models.CharField(max_length=255,blank=True,null=True)
     STREET = models.CharField(max_length = 255,blank=True,null=True)
     ZIPCODE = models.CharField(max_length=255,blank=True,null=True)
@@ -34,7 +34,7 @@ class Cusine(models.Model):
 
 class newLocation(models.Model):
     DBA = models.CharField(max_length=255,blank=True,null=True)
-    BORO = models.ForeignKey(Boro,on_delete=models.SET_NULL, blank=True, null=True) 
+    BORO = models.ForeignKey(Boro,on_delete=models.SET_NULL, blank=True, null=True)
     BUILDING = models.CharField(max_length=255,blank=True,null=True)
     STREET = models.CharField(max_length = 255,blank=True,null=True)
     ZIPCODE = models.CharField(max_length=255,blank=True,null=True)

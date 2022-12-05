@@ -20,6 +20,9 @@ from django.core.paginator import Paginator #for pagination of list views
 from django.utils import timezone
 
 def register(request):
+    if request.user.is_authenticated:
+        return redirect('/account')
+
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
         if user_form.is_valid():
@@ -42,6 +45,9 @@ def register(request):
                     {'user_form': user_form})
 
 def user_login(request):
+    if request.user.is_authenticated:
+        return redirect('/account')
+
     if request.method == 'POST': # when user submits form via POST
         form = LoginForm(request.POST) # instantiate form with submitted data
         if form.is_valid():
@@ -54,8 +60,7 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user) # set the user in session
-                    return HttpResponse('Authenticated '\
-                                        'successfully')
+                    return redirect('/account')
                 else:
                     return HttpResponse('Disabled account')
             else:
@@ -125,7 +130,7 @@ def dashboard(request):
             messages.success(request, msg)
         else:
             print("There is still time left for your match/date!")
-    else: 
+    else:
         print("Not in a match at all")
     return render(request,
                      'account/dashboard.html',
@@ -176,14 +181,14 @@ def edit(request):
                                     instance=request.user.profile)
         location_form = NewLocationForm(instance=request.user.profile,
                                     data=request.POST)
-        
+
     return render(request,
                     'account/edit.html',
                     {'user_form': user_form,
                     'profile_form': profile_form,
                     'location_form':location_form})
 
-@login_required   
+@login_required
 def load_locations(request):
     cusine_id = request.GET.get('cusine_id')
     boro_id = request.GET.get('boro_id')
