@@ -122,7 +122,9 @@ def dashboard(request):
         if time_now > user_profile.proposal_datetime_local + timedelta(hours=6):
             # Clear matches for both user_profile and the other profile
             user_profile.matches.clear()
+            user_profile.feedback_submitted = False
             other_user_profile.matches.clear()
+            other_user_profile.feedback_submitted = False
             msg = "Your match with " + other_user_profile.user.first_name + " has expired."
             messages.success(request, msg)
         else:
@@ -136,6 +138,8 @@ def dashboard(request):
             # Clear matches for both user_profile and the other profile
             user_profile.matches.clear()
             other_user_profile.matches.clear()
+            user_profile.feedback_submitted = False
+            other_user_profile.feedback_submitted = False
             msg = "Your match with " + other_user_profile.user.first_name + " has expired."
             messages.success(request, msg)
         else:
@@ -354,7 +358,9 @@ def submitFeedback(request):
             print("Feedback User:",obj.feedback_user)
             print("Match Comments: ", obj.match_comments)
             obj.save()
-            
+
+            request.user.profile.feedback_submitted = True
+            request.user.profile.save()
             
             return redirect("dashboard")
         else:

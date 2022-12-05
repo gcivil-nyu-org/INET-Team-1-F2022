@@ -76,8 +76,8 @@
       {%endif%}
       {% endif %}
 
-      {%if feedback_available %}
-  
+      {%if feedback_available and user_profile.feedback_submitted == False %}
+      {{user_profile.feedback_submitted}}
         <div class="block">
           <article class="message is-info">
             Your match will expire 6 hours after the designated proposal time. 
