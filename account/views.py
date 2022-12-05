@@ -76,46 +76,13 @@ def user_login(request):
         form = LoginForm() # instantiate a new login form
     return render(request, 'account/login.html', {'form': form})
 
-def password_reset_request(request):
-    if request.method == "POST":
-        password_reset_form = PasswordResetForm(request.POST)
-        if password_reset_form.is_valid():
-            data = password_reset_form.cleaned_data['email']
-            associated_users = get_user_model().objects.filter(Q(email=data))
-            if associated_users.exists():
-                for user in associated_users:
-                    subject = "Password Reset Requested"
-                    email_template_name = "registration/password_reset_email.txt"
-                    c = {
-                    "email":user.email,
-                    'domain':'timeandplace-dev.eba-ngz3apug.us-west-2.elasticbeanstalk.com',
-                    'site_name': 'Website',
-                    "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                    "user": user,
-                    'token': default_token_generator.make_token(user),
-                    'protocol': 'http',
-                    }
-                    email = render_to_string(email_template_name, c)
-                    try:
-                        send_mail(subject, email, 'timeandplacenyu@gmail.com' , [user.email], fail_silently=False)
-                    except BadHeaderError:
-                        return HttpResponse('Invalid header found.')
-
-                    messages.success(request, 'A message with reset password instructions has been sent to your inbox.')
-                    return redirect ("password_reset/done/")
-            messages.error(request, 'An invalid email has been entered.')
-    password_reset_form = PasswordResetForm()
-    return render(request=request, template_name="registration/password_reset_form.html", context={"form":password_reset_form})
-
 @login_required
 def dashboard(request):
     feedback_available=False
     user_profile = Profile.objects.get(user_id = request.user.id)
     time_now = timezone.now()
     # Check if the user is in a match and check if it has expired
-    print('Time_now:',time_now)
     if user_profile.matches.all():
-        print("In a match")
         # Get the other user profile who user_profile is matched with
         other_user_profile = user_profile.matches.first()
         # Check time against proposal time
@@ -232,9 +199,6 @@ def profile_liked_me(request, pk):
         raise Http404
     # user = request.user.profile
     user_profile = Profile.objects.get(user_id = pk)
-    # user_ids_to_exclude_matches = [userX.user.id for userX in request.user.profile.matches.all()]
-    # user_ids_to_exclude_matches.append(request.user.id)
-    # profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_matches)
 
     #Pagination
     liked_me = user_profile.liked_by.all()
@@ -307,8 +271,13 @@ def edit_preferences(request):
                                     data=request.POST)
         user_id = request.user.id
         if preference_form.is_valid():
-            preference_form.save()
-            return redirect('profile',pk=user_id)
+            if not preference_form.check_age():
+                return render(request,
+                    'profile/edit_preferences.html',
+                    {'preference_form': preference_form})
+            if preference_form.check_age():
+                preference_form.save()
+                return redirect('profile',pk=user_id)
     else:
         preference_form = PreferenceEditForm(
                                     instance=request.user.profile)
