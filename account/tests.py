@@ -6,6 +6,7 @@ from .forms import LoginForm
 from .models import Profile
 from . import views
 import datetime
+from django.utils import timezone
 
 
 # Create your tests here.
@@ -92,14 +93,26 @@ class TestDashboard(TestCase):
         Profile.objects.create(user=self.user2, date_of_birth=datetime.date(1996, 6, 28))
 
     def test_dashboard_page(self):
+        url_path = ''
         profile1 = Profile.objects.get(user=self.user1)
         profile2 = Profile.objects.get(user=self.user2)
         
         profile1.proposal_datetime_local = "December 01, 2022 - 15:48:02"
-        profile2.matches.add(profile1.id)    
-
-        url_path = ''
+        profile2.matches.add(profile1.id)  
+        profile1.matched_with.add(profile2.id)    
         response = self.client.get(url_path)
+
+        time_now = timezone.now()
+        end_date = time_now + datetime.timedelta(days=10)
+        profile1.proposal_datetime_local = end_date
+        profile2.matches.add(profile1.id)  
+        profile1.matched_with.add(profile2.id) 
+        response = self.client.get(url_path)
+
+        profile2.matches.clear()   
+        profile1.matched_with.clear()
+        response = self.client.get(url_path)
+
         self.assertEqual(response.status_code, 200)
 
 class TestViews(TestCase):
