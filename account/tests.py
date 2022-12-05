@@ -327,3 +327,56 @@ class TestProfile(TestCase):
 
         self.assertEquals(profile1.declines.all().first(), profile2)
         self.assertEquals(profile2.declined_by.all().first(), profile1)
+
+class TestForms(TestCase):
+    def test_form_save(self):
+
+        form = UserEditForm()
+        form.cleaned_data = {}
+        form.cleaned_data["first_name"] = "test_first_name"
+        form.cleaned_data["last_name"] = "test_last_name"
+        form.cleaned_data["email"] = "test_email"
+
+        user = form.save()
+        email = form.cleaned_data["email"]
+        print(f"Email is  : {email}")
+        assert email != user.email
+
+    def test_meta(self):
+        form = UserEditForm()
+        meta = form.Meta()
+        assert meta.model == User
+        assert meta.fields == ("first_name", "last_name", "email")
+
+    def test_profile_form_save(self):
+
+        form = ProfileEditForm()
+        form.cleaned_data = {}
+        form.cleaned_data["about_me"] = "Hi!Im new"
+        form.cleaned_data["occupation"] = "dentist"
+
+        user_profile = form.save(False)
+        occu = form.cleaned_data["occupation"]
+        assert occu != user_profile.occupation
+    
+    def test_meta_profile(self):
+        form = ProfileEditForm()
+        meta = form.Meta()
+        assert meta.model == Profile
+        assert meta.fields not in ("about_me", "occupation")
+
+    def test_location_form_save(self):
+        form = NewLocationForm()
+        form.cleaned_data = {}
+        form.cleaned_data["cusine"] = "Mexican"
+        form.cleaned_data["boro"] = "Manhattan"
+
+        user_profile = form.save(False)
+        cuisine = form.cleaned_data["cusine"]
+        assert cuisine != user_profile.cusine
+    
+    def test_meta_location(self):
+        form = NewLocationForm()
+        meta = form.Meta()
+        assert meta.model == Profile
+        assert meta.fields == ("cusine", "boro", "location_dropdown")
