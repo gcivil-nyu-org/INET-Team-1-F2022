@@ -1,9 +1,9 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .forms import UserRegistrationForm, ProfileEditForm, NewLocationForm, UserEditForm
+from .forms import UserRegistrationForm, ProfileEditForm, NewLocationForm, UserEditForm, MatchFeedbackForm
 from django.urls import reverse
 from .forms import LoginForm
-from .models import Profile
+from .models import Profile, Match_Feedback
 from . import views
 import datetime
 from django.utils import timezone
@@ -380,3 +380,41 @@ class TestForms(TestCase):
         meta = form.Meta()
         assert meta.model == Profile
         assert meta.fields == ("cusine", "boro", "location_dropdown")
+
+    def test_location_form_save(self):
+        form = UserRegistrationForm()
+        form.cleaned_data = {}
+        form.cleaned_data["password"] = "Abcd@1234"
+        form.cleaned_data["password2"] = "Abcd@1234"
+
+        user_profile = form.save(False)
+        pswd = form.cleaned_data["password"]
+        pswd2 = form.cleaned_data["password2"]
+        assert pswd == pswd2
+    
+    def test_meta_location(self):
+        form = UserRegistrationForm()
+        meta = form.Meta()
+        assert meta.model == User
+        assert meta.fields == ('username', 'first_name', 'email', 'date_of_birth')
+    
+    def test_location_form_save(self):
+        form = MatchFeedbackForm()
+        form.cleaned_data = {}
+        form.cleaned_data["match_rating"] = 1
+        form.cleaned_data["match_comments"] = "Bad"
+
+        user_profile = form.save(False)
+        rating = form.cleaned_data["match_rating"]
+        assert rating != user_profile.match_rating
+    
+    def test_meta_location(self):
+        form = MatchFeedbackForm()
+        meta = form.Meta()
+        assert meta.model == Match_Feedback
+        assert meta.fields == ('date_happened',
+                  'match_rating',
+                  'inappropriate_behavior',
+                  'match_comments',)
+
+    
