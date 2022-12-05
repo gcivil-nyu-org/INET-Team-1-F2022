@@ -19,7 +19,8 @@ from django.db.models import Q
 from django.core.paginator import Paginator #for pagination of list views
 from django.utils import timezone
 
-from datetime import date
+from datetime import date, timedelta
+
 
 def register(request):
     if request.user.is_authenticated:
@@ -108,6 +109,7 @@ def password_reset_request(request):
 
 @login_required
 def dashboard(request):
+    feedback_available=False
     user_profile = Profile.objects.get(user_id = request.user.id)
     time_now = timezone.now()
     # Check if the user is in a match and check if it has expired
@@ -117,7 +119,7 @@ def dashboard(request):
         # Get the other user profile who user_profile is matched with
         other_user_profile = user_profile.matches.first()
         # Check time against proposal time
-        if time_now > user_profile.proposal_datetime_local:
+        if time_now > user_profile.proposal_datetime_local + timedelta(hours=6):
             # Clear matches for both user_profile and the other profile
             user_profile.matches.clear()
             other_user_profile.matches.clear()
@@ -125,22 +127,26 @@ def dashboard(request):
             messages.success(request, msg)
         else:
             print("There is still time left for your match/date!")
+            if time_now < user_profile.proposal_datetime_local + timedelta(hours=6) and time_now > user_profile.proposal_datetime_local:
+                feedback_available=True 
     elif user_profile.matched_with.all():
         print("I didn't match, but someone matched with me (matched_with)")
         other_user_profile = user_profile.matched_with.first()
-        if time_now > other_user_profile.proposal_datetime_local:
+        if time_now > other_user_profile.proposal_datetime_local + timedelta(hours=6):
             # Clear matches for both user_profile and the other profile
             user_profile.matches.clear()
             other_user_profile.matches.clear()
             msg = "Your match with " + other_user_profile.user.first_name + " has expired."
             messages.success(request, msg)
         else:
-            print("There is still time left for your match/date!")
+            # print("There is still time left for your match/date!")
+            if time_now < other_user_profile.proposal_datetime_local + timedelta(hours=6) and time_now > other_user_profile.proposal_datetime_local:
+                feedback_available=True 
     else:
         print("Not in a match at all")
     return render(request,
                      'account/dashboard.html',
-                     {'section': 'dashboard', "user_profile": user_profile})
+                     {'section': 'dashboard', "user_profile": user_profile, "feedback_available": feedback_available})
 
 
 from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm, NewLocationForm

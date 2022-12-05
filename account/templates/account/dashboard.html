@@ -47,49 +47,52 @@
           Proposal time : {{user_profile.proposal_datetime_local}} <br>
           Proposal location : {{user_profile.location_dropdown}}
       </h3>
-      
-      <div class="block">
-        <article class="message is-info">
-          Your match will expire 6 hours after the designated proposal time. 
-          We strongly encourage you to let us know about how the date went.
-          Please click on the button below to access the match feedback form.
+      <br>
+      {%if feedback_available %}
+      {% comment %} <h1> Feedback Available </h1> {% endcomment %}
+      {% else %}
+      {% comment %} <h1> Feedback not available </h1> {% endcomment %}
+      <article class="message is-info">
+        Once the designated proposal time passes, you will have 6 hours to submit a feedback form before your match expires. 
+      </article>
+      {%endif%}
+      {% comment %} feedback form button {% endcomment %}
   
-        </article>
-        <a href="{% url "submitFeedback" %}">
-        <div class="buttons has-addons is-centered">
-          <button class="button is-link is-outlined">Feedback Form</button>
-        </div>
-        </a>
-      </div>
+    
       {% endfor %}
      {% else %}
      {%if user_profile.matched_with.all.exists%}
      {%for user in user_profile.matched_with.all %}
-     <h1> Hey {{user}} agreed to match with you </h1>
+     <h1 "title is-3" > Hey {{user}} agreed to match with you </h1>
      <p><img src="{{ user.photo.url }}" width="250px"></p>
      <div class="block">
       <h3 class="title is-4">
-          Proposal time : {{user.proposal_time}}
+          Proposal time : {{user.proposal_datetime_local}}
           Proposal location : {{user.location_dropdown}}
       </h3>
-      <div class="block">
-        <article class="message is-info">
-          Your match will expire 6 hours after the designated proposal time. 
-          We strongly encourage you to let us know about how the date went.
-          Please click on the button below to access the match feedback form.
-  
-        </article>
-        <a href="{% url "submitFeedback" %}">
-        <div class="buttons has-addons is-centered">
-          <button class="button is-link is-outlined">Feedback Form</button>
-        </div>
-        </a>
-      </div>
-    </div>
+     
       
       {% endfor %}
       {%endif%}
       {% endif %}
+
+      {%if feedback_available %}
+  
+        <div class="block">
+          <article class="message is-info">
+            Your match will expire 6 hours after the designated proposal time. 
+            We strongly encourage you to let us know about how the date went.
+            Please click on the button below to access the match feedback form.
+    
+          </article>
+          <a href="{% url "submitFeedback" %}">
+          <div class="buttons has-addons is-centered">
+            <button class="button is-link is-outlined">Feedback Form</button>
+          </div>
+          </a>
+        </div>
+      {% endif %}
+
 
 
 
