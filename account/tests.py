@@ -10,6 +10,7 @@ from django.utils import timezone
 from datetime import date, timedelta
 
 
+
 # Create your tests here.
 class Test_is_user_auth(TestCase):
     def setUp(self):
@@ -86,9 +87,34 @@ class TestLogin(TestCase):
         self.assertEqual(response.status_code, 200)
 
 class TestDashboard(TestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
+        Profile.objects.create(user=self.user1, date_of_birth=datetime.date(1996, 5, 28))
+
+        self.user2 = User.objects.create_user(username="test-profile2", password="test-profile2")
+        Profile.objects.create(user=self.user2, date_of_birth=datetime.date(1996, 6, 28))
+
     def test_dashboard_page(self):
         url_path = ''
+        profile1 = Profile.objects.get(user=self.user1)
+        profile2 = Profile.objects.get(user=self.user2)
+        
+        profile1.proposal_datetime_local = "December 01, 2022 - 15:48:02"
+        profile2.matches.add(profile1.id)  
+        profile1.matched_with.add(profile2.id)    
         response = self.client.get(url_path)
+
+        time_now = timezone.now()
+        end_date = time_now + datetime.timedelta(days=10)
+        profile1.proposal_datetime_local = end_date
+        profile2.matches.add(profile1.id)  
+        profile1.matched_with.add(profile2.id) 
+        response = self.client.get(url_path)
+
+        profile2.matches.clear()   
+        profile1.matched_with.clear()
+        response = self.client.get(url_path)
+
         self.assertEqual(response.status_code, 200)
 
 class TestViews(TestCase):
@@ -178,9 +204,6 @@ class TestProfile(TestCase):
         response = self.client.get(path_to_view)
         self.assertEqual(response.status_code,404)
         #self.assertTemplateUsed(response, 'profile/profile.html')
-
-    def testHide(self):
-        pass
 
     def testLike(self):
         self.client.login(username="test-profile", password="test-profile")
@@ -308,6 +331,7 @@ class TestProfile(TestCase):
         self.assertEquals(profile2.declined_by.all().first(), profile1)
 
 
+
 class TestFeedback(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
@@ -342,3 +366,56 @@ class TestFeedback(TestCase):
         
 
 
+
+class TestForms(TestCase):
+    def test_form_save(self):
+
+        form = UserEditForm()
+        form.cleaned_data = {}
+        form.cleaned_data["first_name"] = "test_first_name"
+        form.cleaned_data["last_name"] = "test_last_name"
+        form.cleaned_data["email"] = "test_email"
+
+        user = form.save()
+        email = form.cleaned_data["email"]
+        print(f"Email is  : {email}")
+        assert email != user.email
+
+    def test_meta(self):
+        form = UserEditForm()
+        meta = form.Meta()
+        assert meta.model == User
+        assert meta.fields == ("first_name", "last_name", "email")
+
+    def test_profile_form_save(self):
+
+        form = ProfileEditForm()
+        form.cleaned_data = {}
+        form.cleaned_data["about_me"] = "Hi!Im new"
+        form.cleaned_data["occupation"] = "dentist"
+
+        user_profile = form.save(False)
+        occu = form.cleaned_data["occupation"]
+        assert occu != user_profile.occupation
+    
+    def test_meta_profile(self):
+        form = ProfileEditForm()
+        meta = form.Meta()
+        assert meta.model == Profile
+        assert meta.fields not in ("about_me", "occupation")
+
+    def test_location_form_save(self):
+        form = NewLocationForm()
+        form.cleaned_data = {}
+        form.cleaned_data["cusine"] = "Mexican"
+        form.cleaned_data["boro"] = "Manhattan"
+
+        user_profile = form.save(False)
+        cuisine = form.cleaned_data["cusine"]
+        assert cuisine != user_profile.cusine
+    
+    def test_meta_location(self):
+        form = NewLocationForm()
+        meta = form.Meta()
+        assert meta.model == Profile
+        assert meta.fields == ("cusine", "boro", "location_dropdown")
