@@ -84,7 +84,20 @@ class TestLogin(TestCase):
         self.assertEqual(response.status_code, 200)
 
 class TestDashboard(TestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
+        Profile.objects.create(user=self.user1, date_of_birth=datetime.date(1996, 5, 28))
+
+        self.user2 = User.objects.create_user(username="test-profile2", password="test-profile2")
+        Profile.objects.create(user=self.user2, date_of_birth=datetime.date(1996, 6, 28))
+
     def test_dashboard_page(self):
+        profile1 = Profile.objects.get(user=self.user1)
+        profile2 = Profile.objects.get(user=self.user2)
+        
+        profile1.proposal_datetime_local = "December 01, 2022 - 15:48:02"
+        profile2.matches.add(profile1.id)    
+
         url_path = ''
         response = self.client.get(url_path)
         self.assertEqual(response.status_code, 200)
@@ -176,9 +189,6 @@ class TestProfile(TestCase):
         response = self.client.get(path_to_view)
         self.assertEqual(response.status_code,404)
         #self.assertTemplateUsed(response, 'profile/profile.html')
-
-    def testHide(self):
-        pass
 
     def testLike(self):
         self.client.login(username="test-profile", password="test-profile")
