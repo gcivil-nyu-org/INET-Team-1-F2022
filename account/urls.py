@@ -15,7 +15,7 @@ urlpatterns = [
     path('edit_preferences/', views.edit_preferences, name='edit_preferences'),
     path('filter_profile_list/', views.filter_profile_list, name='filter_profile_list'),
     path('ajax/load-locations/', views.load_locations, name='ajax_load_locations'), # AJAX
-
+    path('match_feedback/', views.submitFeedback, name='submitFeedback'),
 
     path("password_reset", views.password_reset_request, name="password_reset"),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),

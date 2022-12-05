@@ -118,3 +118,20 @@ class Profile(models.Model):
     def __str__(self):
         return f'Profile for user {self.user.username}'
 
+class Match_Feedback(models.Model):
+    DATE_HAPPENED_CHOICES = (('Yes', 'We both showed up'), ('No1', 'My match wasn’t there'), ('No2', 'I didn’t go'))
+    # RATING_CHOICES = [(x,x) for x in range(0,11)]
+    feedback_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="feedback_by_user",null=True,on_delete=models.SET_NULL)
+    matched_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="matched_by_user",null=True, on_delete=models.SET_NULL)
+    match_date = models.DateTimeField(blank=True, null=True)
+    match_location = models.ForeignKey(newLocation,on_delete=models.SET_NULL, blank=True, null=True)
+    date_happened = models.CharField(max_length = 50,choices = DATE_HAPPENED_CHOICES, blank=True, null=True)
+    #inappropriate_behavior = models.CharField(max_length = 50, choices=(('No','No'),('Yes','Yes')),default="N/A")
+    inappropriate_behavior = models.CharField(max_length = 50,blank=True, null=True)
+    #match_rating = models.IntegerField(choices=RATING_CHOICES,blank=True, null=True)
+    match_rating = models.IntegerField(blank=True, null=True)
+    match_comments = models.CharField(max_length = 500,blank=True, null=True)
+
+
+    def __str__(self):
+        return f'Feedback by {self.feedback_user} for {self.matched_user}. Comments: {self.match_comments}'

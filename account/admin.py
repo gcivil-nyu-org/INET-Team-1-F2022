@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Profile,Location,Cusine,newLocation,Boro
+from .models import Profile,Location,Cusine,newLocation,Boro,Match_Feedback
 
 
 @admin.register(Profile)
@@ -23,3 +23,12 @@ class ProfileAdmin(admin.ModelAdmin):
 @admin.register(Boro)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['boro']
+
+
+@admin.register(Match_Feedback)
+class MatchFeedbackAdmin(admin.ModelAdmin):
+    list_display = ['feedback_user', 'matched_user', 'match_date','match_location','date_happened',
+                'match_rating',
+                'inappropriate_behavior',
+                ]     
+

@@ -82,7 +82,7 @@
 
 <br>
 
-{%if not current_user_profile.matches.exists %}
+{% comment %} {%if not current_user_profile.matches.exists %}
 <div class="block">
   <a href="{% url 'filter_profile_list' %}">
       <button class="button is-dark is-outlined ">
@@ -90,6 +90,6 @@
       </button>
   </a>
 </div>
-{%endif%}
+{%endif%} {% endcomment %}
 
 {% endblock content %}
