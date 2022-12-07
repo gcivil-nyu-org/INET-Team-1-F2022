@@ -1,0 +1,97 @@
+
+{% extends "base.html" %}
+{% comment %} <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
+<script src="{% static 'smart-selects/admin/js/chainedm2m.js' %}"></script> {% endcomment %}
+{% block title %}Edit your time and place{% endblock %}
+
+{% block content %}
+{%if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists%}
+    <h1>Edit your Time and Place</h1>
+        <p style="color:red">Note: If you are a new user, You need to set a Time and Place for Match! </p>
+    <br>
+    <form method="post" id = 'editProfile' data-locations-url= "{% url 'ajax_load_locations' %}" enctype="multipart/form-data">
+
+        <p>Your previous selected time was:</p>
+        {% if time_form.errors %}
+                {{ time_form.as_p }}
+        {% else %}
+             {%if not request.user.profile.proposal_datetime_local.exists %}
+                    {{ request.user.profile.proposal_datetime_local }}
+            {% else %}
+                <p style="color:red">You need to set up a Time for Match!</p>
+            {% endif %}
+        {% endif %}
+        <!-- {%if not request.user.profile.proposal_datetime_local.exists %}
+             {{ request.user.profile.proposal_datetime_local }}
+        {% else %}
+            {% if time_form.errors %}
+                {{ time_form.as_p }}
+            {% endif %}
+        {%endif%} -->
+
+
+        <p >Your previous selected location was:</p>
+        {% if location_form.errors %}
+                {{ location_dropdown.as_p }}
+        {% else %}
+            {%if prev_place %}
+                {{ prev_place }}
+            {% else %}
+                <p style="color:red">You need to set up a Location for Match!</p>
+            {% endif %}
+        {% endif %}
+        <!-- {%if not request.user.profile.location_dropdown.exists %}
+             {{ request.user.profile.location_dropdown }}
+        {% else %}
+            {% if location_form.errors %}
+                {{ location_form.as_p }}
+            {% endif %}
+        {% endif %} -->
+        <br>
+
+        <br>
+        <h2>You can edit your Time and Place using the following form:</h2>
+        <br>
+
+        {{ time_form.as_p }}
+        {{ location_form.as_p }}
+        {% csrf_token %}
+
+    <p><input type="submit" value="Save changes" 
+        onclick="return confirm('WARNING: Any changes to proposal time and place will clear the likes you have so far received.')" />
+    </p>
+
+{% else %}
+Oops! It looks like you are currently in a match. You won't be able to edit your time and place until the match expires.
+<a href="{% url 'dashboard' %}">Go back to dashboard</a>
+{%endif%}
+    <!-- <p><input type="submit" value="Save changes"></p> -->
+    </form>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $("#id_cusine,#id_boro").change(function () {
+            const url = $("#editProfile").attr("data-locations-url");  // get the url of the `load_cities` view
+            
+            var cusineId = $('#id_cusine').val();
+            var boroId = $('#id_boro').val();
+            $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= /persons/ajax/load-cities/ )
+                data: {
+                    'cusine_id': cusineId, // set the country
+                    'boro_id': boroId,
+                          // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                    $("#id_location_dropdown").html(data);  // replace the contents of the city input with the data that came from the server
+
+                }
+            });
+        });
+
+        $("#editProfile").submit(function () {
+
+        });
+    </script>
+
+{% endblock %}
+

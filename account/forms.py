@@ -70,29 +70,43 @@ class UserEditForm(forms.ModelForm):
 
 class ProfileEditForm(forms.ModelForm):
     BIRTH_YEAR_CHOICES = list(str(year) for year in list(range(1940, 2004)))
-    date_of_birth = forms.DateField(widget=forms.SelectDateWidget(years=BIRTH_YEAR_CHOICES))
+    # date_of_birth = forms.DateField(widget=forms.SelectDateWidget(years=BIRTH_YEAR_CHOICES))
     about_me = forms.CharField(widget=forms.Textarea)
     #proposal_time = forms.DateTimeField(widget=forms.DateTimeInput)
     # proposal_date_new = forms.DateField(widget=forms.SelectDateWidget(attrs={'type': 'date'}))
     # proposal_time_new = forms.TimeField()
-    proposal_datetime_local = forms.CharField(
-        widget=forms.TextInput(attrs={'type': 'datetime-local'}))
+    # proposal_datetime_local = forms.CharField(
+    #     widget=forms.TextInput(attrs={'type': 'datetime-local'}))
 
     class Meta:
         model = Profile
-        fields = ('date_of_birth',
+        fields = ( #   'date_of_birth',
                   'occupation',
                   'about_me',
                   'gender_identity',
-                  #   'sexual_orientation',
+                    #   'sexual_orientation',
                   'photo',
-                  'proposal_datetime_local'
+                    #  'proposal_datetime_local'
                   )
         # widgets = {
         #     'proposal_date_new': forms.SelectDateWidget(attrs={'type': 'date'}),
         #     'proposal_time_new': forms.TimeInput(attrs={'type': 'time'})
         # }
 
+class TimeEditForm(forms.ModelForm):
+    proposal_datetime_local = forms.CharField(
+        widget=forms.TextInput(attrs={'type': 'datetime-local'}))
+
+    class Meta:
+        model = Profile
+        fields = ('proposal_datetime_local',)
+    def check_time_filled(self):
+        time = self.cleaned_data.get('proposal_datetime_local')
+        if not time:
+            self.add_error('proposal_datetime_local', 'Proposal Time needs to be set for Match!')
+            return False
+        else:
+            return True
 
 class NewLocationForm(forms.ModelForm):
     class Meta:
@@ -104,7 +118,7 @@ class NewLocationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['location_dropdown'].queryset = newLocation.objects.all()
-
+        
         if 'cusine' and 'boro' in self.data:
             try:
                 cusine_id = int(self.data.get('cusine'))
@@ -113,9 +127,19 @@ class NewLocationForm(forms.ModelForm):
                     CUISINE_id=cusine_id, BORO_id=boro_id)
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset
-        # elif self.instance.pk:
-        #     self.fields['city'].queryset = self.instance.country.city_set.order_by('name')
-
+        # elif self.location:
+        #     print("im here!")
+        #     self.fields['location_dropdown'] = self.location 
+            # print(self.instance.user.profile.location_dropdown)
+            # self.fields['location_dropdown'] = self.instance.location_dropdown
+    def check_location_filled(self):
+        location = self.cleaned_data.get('location_dropdown')
+        # print(location)
+        if not location:
+            self.add_error('location_dropdown', 'Proposal Location needs to be set for Match! If previously filled, kindly set it back to same.')
+            return False
+        else:
+            return True
 
 class PreferenceEditForm(forms.ModelForm):
     class Meta:

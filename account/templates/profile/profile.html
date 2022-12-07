@@ -45,7 +45,7 @@
           <br>
           <br>
           <!-- not show like hide for yourself -->
-          {%if profile != current_user_profile and profile not in current_user_profile.likes.all%}
+          {%if profile != current_user_profile and profile not in current_user_profile.likes.all and profile not in current_user_profile.hides.all%}
           <form method="post">
             {% csrf_token %}
             <div class="buttons">
