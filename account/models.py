@@ -65,7 +65,7 @@ class Profile(models.Model):
     # proposal_location = models.CharField(max_length = 50,blank=True, null=True)
     about_me = models.CharField(max_length = 100,blank=True, null=True)
     gender_choices = (('Woman', 'Woman'), ('Man', 'Man'), ('Transgender', 'Transgender'), ('Non-binary', 'Non-binary'))
-    gender_identity = models.CharField(max_length = 15, choices = gender_choices, blank = True, default="N/A")
+    gender_identity = models.CharField(max_length = 15, choices = gender_choices, blank = False, default="N/A")
     # orientation_choices = (('Lesbian', 'Lesbian'), ('Gay', 'Gay'), ('Bisexual', 'Bisexual'), ('Queer', 'Queer'), ('Asexual', 'Asexual'), ('Straight', 'Straight'),('Other', 'Other'))
     # sexual_orientation = models.CharField(max_length = 15, choices = orientation_choices, blank = True, default="N/A")
     age_preference_min = models.PositiveIntegerField(blank=True, null=True, default= 19, validators=[MinValueValidator(18), MaxValueValidator(100)])
