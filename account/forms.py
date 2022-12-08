@@ -117,7 +117,7 @@ class NewLocationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['location_dropdown'].queryset = newLocation.objects.all()
+        self.fields['location_dropdown'].queryset = newLocation.objects.none()
         
         if 'cusine' and 'boro' in self.data:
             try:
