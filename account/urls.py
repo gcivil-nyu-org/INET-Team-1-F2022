@@ -13,6 +13,7 @@ urlpatterns = [
     path('profile/<int:pk>/', views.profile, name="profile"),
     path('preferences/<int:pk>/', views.preferences, name="preferences"),
     path('edit_preferences/', views.edit_preferences, name='edit_preferences'),
+    path('edit_timenplace/', views.edittimenplace, name='edit_timenplace'),
     path('filter_profile_list/', views.filter_profile_list, name='filter_profile_list'),
     path('ajax/load-locations/', views.load_locations, name='ajax_load_locations'), # AJAX
     path('match_feedback/', views.submitFeedback, name='submitFeedback'),
