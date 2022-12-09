@@ -7,56 +7,33 @@
 {% block content %}
 {%if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists%}
     <h1>Edit your Time and Place</h1>
-        <p style="color:red">Note: If you are a new user, You need to set a Time and Place for Match! </p>
     <br>
     <form method="post" id = 'editProfile' data-locations-url= "{% url 'ajax_load_locations' %}" enctype="multipart/form-data">
-
-        <p>Your previous selected time was:</p>
-        {% if time_form.errors %}
-                {{ time_form.as_p }}
-        {% else %}
-             {%if not request.user.profile.proposal_datetime_local.exists %}
-                    {{ request.user.profile.proposal_datetime_local }}
-            {% else %}
-                <p style="color:red">You need to set up a Time for Match!</p>
-            {% endif %}
-        {% endif %}
-        <!-- {%if not request.user.profile.proposal_datetime_local.exists %}
-             {{ request.user.profile.proposal_datetime_local }}
-        {% else %}
-            {% if time_form.errors %}
-                {{ time_form.as_p }}
-            {% endif %}
-        {%endif%} -->
-
-
-        <p >Your previous selected location was:</p>
-        {% if location_form.errors %}
-                {{ location_dropdown.as_p }}
-        {% else %}
-            {%if prev_place %}
-                {{ prev_place }}
-            {% else %}
-                <p style="color:red">You need to set up a Location for Match!</p>
-            {% endif %}
-        {% endif %}
-        <!-- {%if not request.user.profile.location_dropdown.exists %}
-             {{ request.user.profile.location_dropdown }}
-        {% else %}
-            {% if location_form.errors %}
-                {{ location_form.as_p }}
-            {% endif %}
-        {% endif %} -->
+        {%if not prev_place and not prev_time %}
         <br>
-
-        <br>
-        <h2>You can edit your Time and Place using the following form:</h2>
+        <!-- new user -->
+        <h2>You can set your Time and Place using the following form:</h2>
+        <p style="color:red">Note: If you are a new user, You need to set a Time and Place for Match! </p>
         <br>
 
         {{ time_form.as_p }}
         {{ location_form.as_p }}
         {% csrf_token %}
-
+        <!-- old user wanting to change time or place -->
+        {%elif prev_place and prev_time %}
+        <p >Your previous selected time was:</p>
+         {{request.user.profile.proposal_datetime_local}}
+        <p >Your previous selected location was:</p>
+         {{request.user.profile.location_dropdown}}
+        <br>
+        <br>
+         <a href="{% url "edit_time" %}">Edit your Time here</a>
+         <br>
+         <br>
+         <a href="{% url "edit_place" %}">Edit your Place here</a>
+         <br>
+         <br>
+        {% endif %}
     <p><input type="submit" value="Save changes" 
         onclick="return confirm('WARNING: Any changes to proposal time and place will clear the likes you have so far received.')" />
     </p>

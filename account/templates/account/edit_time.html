@@ -1,0 +1,30 @@
+
+{% extends "base.html" %}
+{% comment %} <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
+<script src="{% static 'smart-selects/admin/js/chainedm2m.js' %}"></script> {% endcomment %}
+{% block title %}Edit your time{% endblock %}
+
+{% block content %}
+{%if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists%}
+    <h1>Edit your Time</h1>
+    <br>
+    <form method="post" enctype="multipart/form-data">
+        <p >Your previous selected time was:</p>
+         {{request.user.profile.proposal_datetime_local}}
+        <br>
+        <br>
+        <br>
+         {{time_form.as_p}}
+         {% csrf_token %}
+         <br>
+         <br>
+    <p><input type="submit" value="Save changes" 
+        onclick="return confirm('WARNING: Any changes to proposal time and place will clear the likes you have so far received.')" />
+    </p>
+
+{% else %}
+Oops! It looks like you are currently in a match. You won't be able to edit your time and place until the match expires.
+<a href="{% url 'dashboard' %}">Go back to dashboard</a>
+{%endif%}
+{% endblock %}
+

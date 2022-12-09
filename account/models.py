@@ -61,7 +61,7 @@ class Profile(models.Model):
     #proposal_datetime = models.DateTimeField(blank=True, null=True)
     # proposal_date_new = models.DateField(blank=True, null=True)
     # proposal_time_new = models.TimeField(blank=True, null=True)
-    proposal_datetime_local = models.DateTimeField(blank=True, null=True)
+    proposal_datetime_local = models.DateTimeField(blank=False, null=False)
     # proposal_location = models.CharField(max_length = 50,blank=True, null=True)
     about_me = models.CharField(max_length = 100,blank=True, null=True)
     gender_choices = (('Woman', 'Woman'), ('Man', 'Man'), ('Transgender', 'Transgender'), ('Non-binary', 'Non-binary'))
@@ -76,7 +76,7 @@ class Profile(models.Model):
     #location_drawdown = models.ForeignKey(Location,on_delete=models.SET_NULL, blank=True, null=True)
     boro = models.ForeignKey(Boro,on_delete=models.SET_NULL, blank=True, null=True)
     cusine = models.ForeignKey(Cusine,on_delete=models.SET_NULL, blank=True, null=True)
-    location_dropdown  = models.ForeignKey(newLocation, on_delete=models.SET_NULL, blank=True, null=True)
+    location_dropdown  = models.ForeignKey(newLocation, on_delete=models.SET_NULL, blank=False, null=True)
     # age = models.IntegerField(blank=True, null=True)
     # age = datetime.datetime.now() - date_of_birth
     # marital_choices = (('Single', 'Single'), ('Widowed', 'Widowed'), ('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorced', 'Divorced'))

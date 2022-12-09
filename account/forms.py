@@ -100,13 +100,6 @@ class TimeEditForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('proposal_datetime_local',)
-    def check_time_filled(self):
-        time = self.cleaned_data.get('proposal_datetime_local')
-        if not time:
-            self.add_error('proposal_datetime_local', 'Proposal Time needs to be set for Match!')
-            return False
-        else:
-            return True
 
 class NewLocationForm(forms.ModelForm):
     class Meta:
@@ -132,14 +125,6 @@ class NewLocationForm(forms.ModelForm):
         #     self.fields['location_dropdown'] = self.location 
             # print(self.instance.user.profile.location_dropdown)
             # self.fields['location_dropdown'] = self.instance.location_dropdown
-    def check_location_filled(self):
-        location = self.cleaned_data.get('location_dropdown')
-        # print(location)
-        if not location:
-            self.add_error('location_dropdown', 'Proposal Location needs to be set for Match! If previously filled, kindly set it back to same.')
-            return False
-        else:
-            return True
 
 class PreferenceEditForm(forms.ModelForm):
     class Meta:
