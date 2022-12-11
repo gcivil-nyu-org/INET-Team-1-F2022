@@ -6,3 +6,8 @@ class TestViews(TestCase):
         url_path = ''
         response = self.client.get(url_path)
         self.assertEqual(response.status_code, 200)
+
+    def test_main_home(self):
+        url_path = ''
+        response = self.client.get(url_path)
+        self.assertEqual(response.status_code, 200)
