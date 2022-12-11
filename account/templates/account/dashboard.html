@@ -96,13 +96,11 @@
         </div>
       {% endif %}
 
-
-
-
-
-
+      <div class="buttons has-addons">
+        <a href="{% url 'delete_account' %}" class="button is-danger"
+        onclick="return confirm('WARNING: This will permanently delete your account and you will not be able to get it back. Do you wish to proceed?')">Delete My Account</a>
+      </div>
       
-       
 {% endblock %}
 
 
