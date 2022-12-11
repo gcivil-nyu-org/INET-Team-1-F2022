@@ -20,7 +20,7 @@
         {{ location_form.as_p }}
         {% csrf_token %}
         <!-- old user wanting to change time or place -->
-        {%elif prev_place and prev_time %}
+        {%elif prev_place or prev_time %}
         <p >Your previous selected time was:</p>
          {{request.user.profile.proposal_datetime_local}}
         <p >Your previous selected location was:</p>
