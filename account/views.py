@@ -456,3 +456,12 @@ def get_referer(request):
     if not referer:
         return None
     return referer
+
+@login_required
+def delete_account(request):
+    # Get user object
+    curr_user = User.objects.get(pk=request.user.id)
+    curr_user.delete()
+    # redirect to home
+    # return render(request=request, template_name="main/home.html")
+    return redirect("logout")
