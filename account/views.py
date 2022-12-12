@@ -7,7 +7,7 @@ from .forms import LoginForm, UserRegistrationForm, PreferenceEditForm, MatchFee
 from .models import Profile, newLocation
 
 from django.core.mail import send_mail, BadHeaderError
-from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from django.db.models.query_utils import Q
@@ -191,7 +191,7 @@ def edittimenplace(request):
         prev_time, prev_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
         print(prev_place)
         location_form = NewLocationForm(instance=request.user.profile,
-                                        data=request.POST, 
+                                        data=request.POST,
                                         files=request.FILES)
 
         user_id = request.user.id
@@ -199,7 +199,7 @@ def edittimenplace(request):
         if time_form.is_valid() and location_form.is_valid():
             # print(user_profile.proposal_datetime_local)
             print(prev_time, prev_place)
-            
+
             time_form.save()
             cur_time, cur_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
             if cur_time != prev_time or cur_place != prev_place:
@@ -217,8 +217,8 @@ def edittimenplace(request):
     return render(request,
                   'account/edittimenplace.html',
                   {'time_form': time_form,
-                   'location_form': location_form, 
-                   "prev_time": prev_time, 
+                   'location_form': location_form,
+                   "prev_time": prev_time,
                    "prev_place": prev_place})
 
 
@@ -465,3 +465,26 @@ def delete_account(request):
     # redirect to home
     # return render(request=request, template_name="main/home.html")
     return redirect("logout")
+
+@login_required
+def password_change(request):
+        user = request.user
+        if request.method == 'POST':
+            form = PasswordChangeForm(user, request.POST)
+
+            # added error if old and new passwords are the same
+            if request.POST.get("old_password", '0') == request.POST.get("new_password1", '0'):
+                form.errors['same_pass'] = "Passwords can't be the same as the old one"
+                return HttpResponse("Passwords can't be the same as the old one")
+
+            #print(list(form.errors.values()))
+            if form.is_valid() and len(form.errors.values()) == 0:
+                form.save()
+                messages.success(request, "Your password has been changed")
+                return redirect('login')
+            else:
+                for error in list(form.errors.values()):
+                    messages.error(request, error)
+
+        form = PasswordChangeForm(user)
+        return render(request, 'registration/password_change_form.html', {'form': form})
