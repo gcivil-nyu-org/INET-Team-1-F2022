@@ -422,8 +422,12 @@ class TestForms(TestCase):
 
     def test_pref_edit_form(self):
         form = PreferenceEditForm()
-        # Set min age > max age to throw error / return false
+        # Set min age > max age to return false
         form.cleaned_data = {}
         form.cleaned_data["age_preference_min"] = 25
         form.cleaned_data["age_preference_max"] = 20
         self.assertEqual(False, form.check_age())
+        # Set min age < max age to return True
+        form.cleaned_data["age_preference_min"] = 25
+        form.cleaned_data["age_preference_max"] = 30
+        self.assertEqual(True, form.check_age())
