@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .forms import UserRegistrationForm, ProfileEditForm, NewLocationForm, UserEditForm
+from .forms import UserRegistrationForm, ProfileEditForm, NewLocationForm, UserEditForm, PreferenceEditForm
 from django.urls import reverse
 from .forms import LoginForm
 from .models import Profile
@@ -419,3 +419,35 @@ class TestForms(TestCase):
         meta = form.Meta()
         assert meta.model == Profile
         assert meta.fields == ("cusine", "boro", "location_dropdown")
+
+    def test_pref_edit_form_age_preference(self):
+        form = PreferenceEditForm()
+        # Set min age > max age to return false
+        form.cleaned_data = {}
+        form.cleaned_data["age_preference_min"] = 25
+        form.cleaned_data["age_preference_max"] = 20
+        self.assertEqual(False, form.check_age())
+        # Set min age < max age to return True
+        form.cleaned_data["age_preference_min"] = 25
+        form.cleaned_data["age_preference_max"] = 30
+        self.assertEqual(True, form.check_age())
+    
+    def test_user_registration_form_dob(self):
+        form = UserRegistrationForm()
+        form.cleaned_data = {}
+        # test out dob making someone an adult
+        form.cleaned_data["date_of_birth"] = date(1988, 5, 26)
+        self.assertEqual(True, form.is_adult())
+        # test out dob making someone a minor (not an adult)
+        form.cleaned_data["date_of_birth"] = date(2005, 5, 26)
+        self.assertEqual(False, form.is_adult())
+
+    def test_user_edit_username(self):
+        form = UserEditForm()
+        form.cleaned_data = {}
+        # Make blank username and check if check_username catches blank username
+        form.cleaned_data["first_name"] = ""
+        self.assertEqual("", form.check_username())
+        # This should raise a validation error
+        #self.assertTrue('First Name cannot be empty!')
+        
