@@ -431,3 +431,10 @@ class TestForms(TestCase):
         form.cleaned_data["age_preference_min"] = 25
         form.cleaned_data["age_preference_max"] = 30
         self.assertEqual(True, form.check_age())
+    
+    def test_user_registration_form(self):
+        form = UserRegistrationForm()
+        form.cleaned_data = {}
+        # test out dob making someone an adult
+        form.cleaned_data["date_of_birth"] = date(1988, 5, 26)
+        self.assertEqual(True, form.is_adult())
