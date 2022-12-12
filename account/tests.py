@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .forms import UserRegistrationForm, ProfileEditForm, NewLocationForm, UserEditForm
+from .forms import UserRegistrationForm, ProfileEditForm, NewLocationForm, UserEditForm, PreferenceEditForm
 from django.urls import reverse
 from .forms import LoginForm
 from .models import Profile
@@ -419,3 +419,11 @@ class TestForms(TestCase):
         meta = form.Meta()
         assert meta.model == Profile
         assert meta.fields == ("cusine", "boro", "location_dropdown")
+
+    def test_pref_edit_form(self):
+        form = PreferenceEditForm()
+        # Set min age > max age to throw error / return false
+        form.cleaned_data = {}
+        form.cleaned_data["age_preference_min"] = 25
+        form.cleaned_data["age_preference_max"] = 20
+        self.assertEqual(False, form.check_age())
