@@ -284,6 +284,15 @@ def profile_liked_me(request, pk):
     # user = request.user.profile
     user_profile = Profile.objects.get(user_id=pk)
 
+    # Check if current user's time has expired (is in past) then clear liked_me list
+    time_now = timezone.now()
+    if user_profile.proposal_datetime_local != None:
+        if user_profile.proposal_datetime_local < time_now:
+            # Clear liked_me list
+            user_profile.liked_by.clear()
+            msg = "Your proposal time has expired (is in the past). Because of this, all the likes you received have been cleared. Please update your proposal time ASAP."
+            messages.success(request, msg)
+
     # Pagination
     liked_me = user_profile.liked_by.all()
     p = Paginator(liked_me, 2)
