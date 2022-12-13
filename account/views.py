@@ -403,16 +403,26 @@ def filter_profile_list(request):
     user_ids_to_exclude_likes.extend(user_ids_to_exclude_hides)
 
     # To-Do: Debug the issue with profile_id not matching user_id
-    print(request.user.profile.likes.all())
-    print(request.user.profile.hides.all())
+    # print(request.user.profile.likes.all())
+    # print(request.user.profile.hides.all())
+
+    # Add filter/check if proposal time > current system time, only then include these profiles as well
+    time_now = timezone.now()
     if (gender_p == "Both"):
         profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(
-            Q(gender_identity="Man") | Q(gender_identity="Woman"))  # sexual_orientation=oreo_p)
+            Q(gender_identity="Man") | Q(gender_identity="Woman"))
     else:
         profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(
-            gender_identity=gender_p)  # sexual_orientation=oreo_p)
+            gender_identity=gender_p)
+
+    profilesWithValidTime = []
+    for profile in profiles:
+        if profile.proposal_datetime_local != None:
+            if profile.proposal_datetime_local > time_now:
+                profilesWithValidTime.append(profile)
+
     # Pagination
-    p = Paginator(profiles, 2)
+    p = Paginator(profilesWithValidTime, 2)
     page = request.GET.get('page')
     profile_list = p.get_page(page)
     return render(request,
