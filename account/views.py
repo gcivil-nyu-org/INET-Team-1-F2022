@@ -246,10 +246,19 @@ def edittime(request):
         time_form = TimeEditForm(instance=request.user.profile,
                                  data=request.POST,
                                  files=request.FILES)
-        prev_time = request.user.profile.proposal_datetime_local
-        time_form.save()
         user_id = request.user.id
-        return redirect('profile', pk=user_id)
+        # Check if time is not valid
+        if time_form.is_valid():
+            if not time_form.check_time_is_valid():
+                prev_time = None
+                return render(request,
+                  'account/edit_time.html',
+                  {'time_form': time_form,
+                   "prev_place": prev_time})
+            if time_form.check_time_is_valid():
+                prev_time = request.user.profile.proposal_datetime_local
+                time_form.save()
+                return redirect('profile', pk=user_id)
     else:
         time_form = TimeEditForm(instance=request.user.profile,
                                  data=request.POST,
