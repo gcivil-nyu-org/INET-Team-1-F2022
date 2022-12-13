@@ -140,12 +140,6 @@ def edit(request):
             files=request.FILES)
 
         user_profile = request.user.profile
-        # print('The user selected this datetime: ', user_profile.proposal_datetime_local)
-        # prev_time, prev_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
-
-        # location_form = NewLocationForm(instance=request.user.profile,
-        #                             data=request.POST)
-
         user_id = request.user.id
         # print(user_id)
         if user_form.is_valid() and profile_form.is_valid():
@@ -158,11 +152,6 @@ def edit(request):
             # print(user_profile.proposal_datetime_local)
             user_form.save()
             profile_form.save()
-
-            # cur_time, cur_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
-            # if cur_time != prev_time  or cur_place != prev_place:
-            #     user_profile.liked_by.clear()
-            # location_form.save()
 
             return redirect('profile', pk=user_id)
     else:
@@ -189,7 +178,6 @@ def edittimenplace(request):
         user_profile = request.user.profile
         # print('The user selected this datetime: ', user_profile.proposal_datetime_local)
         prev_time, prev_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
-        print(prev_place)
         location_form = NewLocationForm(instance=request.user.profile,
                                         data=request.POST,
                                         files=request.FILES)
@@ -198,8 +186,6 @@ def edittimenplace(request):
         # print(user_id)
         if time_form.is_valid() and location_form.is_valid():
             # print(user_profile.proposal_datetime_local)
-            print(prev_time, prev_place)
-
             time_form.save()
             cur_time, cur_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
             if cur_time != prev_time or cur_place != prev_place:
@@ -208,7 +194,6 @@ def edittimenplace(request):
 
             return redirect('profile', pk=user_id)
     else:
-        print(request.user.profile.location_dropdown)
         prev_time, prev_place = request.user.profile.proposal_datetime_local, request.user.profile.location_dropdown
         time_form = TimeEditForm(instance=request.user.profile)
         location_form = NewLocationForm(instance=request.user.profile,
@@ -273,7 +258,6 @@ def edittime(request):
 def load_locations(request):
     cusine_id = request.GET.get('cusine_id')
     boro_id = request.GET.get('boro_id')
-    print(request)
     locations = newLocation.objects.filter(CUISINE_id=cusine_id, BORO_id=boro_id)
     return render(request, 'profile/location_drop_down.html', {'locations': locations})
     # return JsonResponse(list(cities.values('id', 'name')), safe=False)
@@ -299,7 +283,6 @@ def profile_liked_me(request, pk):
     p = Paginator(liked_me, 2)
     page = request.GET.get('page')
     liked_me_list = p.get_page(page)
-    print(liked_me)
     return render(request,
                   'profile/profile_liked_me.html',
                   {"profile": user_profile,
@@ -344,7 +327,6 @@ def profile(request, pk):
         elif action_for_match_decline == "decline":
             # Add profile id to declined list
             current_user_profile.declines.add(profile.id)
-            print(request.path)
             msg = "You have just declined to match with " + profile.user.first_name + \
                 ". They will no longer appear in this list.\n Note that they will still be able to like any of your future proposals."
             messages.success(request, msg)
@@ -390,10 +372,7 @@ def edit_preferences(request):
 
 @login_required
 def filter_profile_list(request):
-    age_p_min = request.user.profile.age_preference_min
-    age_p_max = request.user.profile.age_preference_max
     gender_p = request.user.profile.gender_preference
-    # oreo_p = request.user.profile.orientation_preference
 
     user_ids_to_exclude_likes = [
         userX.user.id for userX in request.user.profile.likes.all()]
@@ -401,10 +380,6 @@ def filter_profile_list(request):
     user_ids_to_exclude_hides = [
         userX.user.id for userX in request.user.profile.hides.all()]
     user_ids_to_exclude_likes.extend(user_ids_to_exclude_hides)
-
-    # To-Do: Debug the issue with profile_id not matching user_id
-    # print(request.user.profile.likes.all())
-    # print(request.user.profile.hides.all())
 
     # Add filter/check if proposal time > current system time, only then include these profiles as well
     time_now = timezone.now()
@@ -437,9 +412,7 @@ def submitFeedback(request):
             data=request.POST)
         if feedback_form.is_valid():
             obj = feedback_form.save(commit=False)
-            print("Submitted Form Object: ", obj)
             obj.feedback_user = User.objects.get(pk=request.user.id)
-            # obj.matched_user =
             if request.user.profile.matches.all():
                 obj.matched_user = request.user.profile.matches.first().user
                 obj.match_date = request.user.profile.proposal_datetime_local
@@ -448,8 +421,6 @@ def submitFeedback(request):
                 obj.matched_user = request.user.profile.matched_with.first().user
                 obj.match_date = request.user.profile.matched_with.first().proposal_datetime_local
                 obj.match_location = request.user.profile.matched_with.first().location_dropdown
-            print("Feedback User:", obj.feedback_user)
-            print("Match Comments: ", obj.match_comments)
             obj.save()
 
             request.user.profile.feedback_submitted = True
@@ -457,7 +428,6 @@ def submitFeedback(request):
 
             return redirect("dashboard")
         else:
-            print("ERROR: Form is invalid")
             print(feedback_form.errors)
     else:
         feedback_form = MatchFeedbackForm(
