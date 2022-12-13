@@ -89,22 +89,23 @@ def dashboard(request):
         # Get the other user profile who user_profile is matched with
         other_user_profile = user_profile.matches.first()
         # Check time against proposal time
-        if time_now > user_profile.proposal_datetime_local + timedelta(hours=6):
-            # Clear matches for both user_profile and the other profile
-            user_profile.matches.clear()
-            user_profile.feedback_submitted = False
-            other_user_profile.matches.clear()
-            other_user_profile.feedback_submitted = False
-            msg = "Your match with " + other_user_profile.user.first_name + " has expired."
-            messages.success(request, msg)
-            user_profile.save()
-            other_user_profile.save()
-        else:
-            print("There is still time left for your match/date!")
-            if (time_now < user_profile.proposal_datetime_local + timedelta(hours=6) and
-                time_now > user_profile.proposal_datetime_local and
-                    user_profile.feedback_submitted == False):
-                feedback_available = True
+        if user_profile.proposal_datetime_local != None:
+            if time_now > user_profile.proposal_datetime_local + timedelta(hours=6):
+                # Clear matches for both user_profile and the other profile
+                user_profile.matches.clear()
+                user_profile.feedback_submitted = False
+                other_user_profile.matches.clear()
+                other_user_profile.feedback_submitted = False
+                msg = "Your match with " + other_user_profile.user.first_name + " has expired."
+                messages.success(request, msg)
+                user_profile.save()
+                other_user_profile.save()
+            else:
+                print("There is still time left for your match/date!")
+                if (time_now < user_profile.proposal_datetime_local + timedelta(hours=6) and
+                    time_now > user_profile.proposal_datetime_local and
+                        user_profile.feedback_submitted == False):
+                    feedback_available = True
     elif user_profile.matched_with.all():
         print("I didn't match, but someone matched with me (matched_with)")
         other_user_profile = user_profile.matched_with.first()
@@ -124,6 +125,11 @@ def dashboard(request):
                 feedback_available = True
     else:
         print("Not in a match at all")
+        # Check if the user's time is now expired because proposal time < curr time
+        if user_profile.proposal_datetime_local < time_now:
+            msg = "Your proposal time " + str(user_profile.proposal_datetime_local) + " has now expired because it's in the past. Please update your time as soon as possible."
+            messages.success(request, msg)
+
     return render(request,
                   'account/dashboard.html',
                   {'section': 'dashboard', "user_profile": user_profile, "feedback_available": feedback_available})
