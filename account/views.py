@@ -429,6 +429,10 @@ def submitFeedback(request):
                 obj.matched_user = request.user.profile.matched_with.first().user
                 obj.match_date = request.user.profile.matched_with.first().proposal_datetime_local
                 obj.match_location = request.user.profile.matched_with.first().location_dropdown
+            # if the user rated the matched user less than 5 , increment the warning of matched user
+            if feedback_form.cleaned_data.get('match_rating') < 5 or feedback_form.cleaned_data.get('inappropriate_behavior') != None:
+                request.user.profile.matches.first().user.profile.warning_count += 1
+            
             print("Feedback User:", obj.feedback_user)
             print("Match Comments: ", obj.match_comments)
             obj.save()

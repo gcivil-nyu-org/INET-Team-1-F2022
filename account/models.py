@@ -77,7 +77,7 @@ class Profile(models.Model):
     boro = models.ForeignKey(Boro,on_delete=models.SET_NULL, blank=True, null=True)
     cusine = models.ForeignKey(Cusine,on_delete=models.SET_NULL, blank=True, null=True)
     location_dropdown  = models.ForeignKey(newLocation, on_delete=models.SET_NULL, blank=False, null=True)
-    # age = models.IntegerField(blank=True, null=True)
+    warning_count = models.PositiveIntegerField(blank=True, null=True, default= 0)
     # age = datetime.datetime.now() - date_of_birth
     # marital_choices = (('Single', 'Single'), ('Widowed', 'Widowed'), ('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorced', 'Divorced'))
     # marital_status = models.CharField(max_length = 10, choices = marital_choices, blank = True)
@@ -130,8 +130,6 @@ class Match_Feedback(models.Model):
     #match_rating = models.IntegerField(choices=RATING_CHOICES,blank=True, null=True)
     match_rating = models.IntegerField(blank=True, null=True)
     match_comments = models.CharField(max_length = 500,blank=True, null=True)
-    
-
 
     def __str__(self):
         return f'Feedback by {self.feedback_user} for {self.matched_user}. Comments: {self.match_comments}'
