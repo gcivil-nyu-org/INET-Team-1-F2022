@@ -126,9 +126,10 @@ def dashboard(request):
     else:
         print("Not in a match at all")
         # Check if the user's time is now expired because proposal time < curr time
-        if user_profile.proposal_datetime_local < time_now:
-            msg = "Your proposal time " + str(user_profile.proposal_datetime_local) + " has now expired because it's in the past. Please update your time as soon as possible."
-            messages.success(request, msg)
+        if user_profile.proposal_datetime_local != None:
+            if user_profile.proposal_datetime_local < time_now:
+                msg = "Your proposal time " + str(user_profile.proposal_datetime_local) + " has now expired because it's in the past. Please update your time as soon as possible."
+                messages.success(request, msg)
 
     return render(request,
                   'account/dashboard.html',
