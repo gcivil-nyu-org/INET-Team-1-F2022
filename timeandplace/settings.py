@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'easy_thumbnails',
-    # 'map.apps.MapConfig'
+    # For chat app
+    'chat.apps.ChatConfig',
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -73,6 +75,18 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'timeandplace.wsgi.application'
+
+# Settings for asgi app
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+    }
+}
+
+ASGI_APPLICATION = 'timeandplace.asgi.application'
 
 
 # Database
