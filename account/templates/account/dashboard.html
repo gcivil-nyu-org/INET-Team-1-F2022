@@ -14,8 +14,9 @@
 
   </div>
   <script src="/static/account/dashboard.js"></script>
+  {%if user_profile.warning_count < 4 %}
      <p>Welcome to your dashboard. 
-      You can  
+      You can
       <ul>
         <li>
           <a href="{% url 'profile' pk=user.id %}">Preview your profile</a>, or 
@@ -36,8 +37,11 @@
           <a href="{% url "password_change" %}">Change your password</a>.</p>
         </li>
       </ul>
+  {%else%}
+    <p>You are banned!</p>
+  {%endif%}
 
-      <hr>
+      <br>
       
 
      {%if user_profile.matches.all.exists %}
@@ -100,7 +104,33 @@
         <a href="{% url 'delete_account' %}" class="button is-danger"
         onclick="return confirm('WARNING: This will permanently delete your account and you will not be able to get it back. Do you wish to proceed?')">Delete My Account</a>
       </div>
-      
+      <style>
+        #bottom {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+        }
+        p.thicker {
+            font-weight: 900;
+        }
+      </style>
+      {%if user_profile.warning_count < 3 %}
+      <div id="bottom">
+        <p class="thicker">WARNING COUNT: {{user_profile.warning_count}}</p>
+      </div>
+      {%elif user_profile.warning_count == 3 %}
+      <div id="bottom">
+        <p class="thicker">WARNING COUNT: {{user_profile.warning_count}}</p>
+        <p style="color:red">Beware! One more bad rating and you risk losing access to our app.</p>
+      </div>
+      {%else%}
+      <div id="bottom">
+        <p class="thicker">WARNING COUNT: {{user_profile.warning_count}}</p>
+        <p style="color:red">Your account has been temporarily deactivated!</p>
+        <p style="color:red">You have been flagged inappropriate or rated bad too many times!</p>
+        <p style="color:red">Your account is being reviewed by the admin!</p>
+      </div>
+      {%endif%}
 {% endblock %}
 
 
