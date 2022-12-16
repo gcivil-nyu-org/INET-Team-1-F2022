@@ -126,7 +126,9 @@
       {%else%}
       <div id="bottom">
         <p class="thicker">WARNING COUNT: {{user_profile.warning_count}}</p>
-        <p style="color:red">Your account has been deactivated!</p>
+        <p style="color:red">Your account has been temporarily deactivated!</p>
+        <p style="color:red">You have been flagged inappropriate or rated bad too many times!</p>
+        <p style="color:red">Your account is being reviewed by the admin!</p>
       </div>
       {%endif%}
 {% endblock %}
