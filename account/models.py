@@ -1,8 +1,10 @@
 # Create your models here.
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 import datetime
 from datetime import date
 #from smart_selects.db_fields import ChainedForeignKey
@@ -130,8 +132,55 @@ class Match_Feedback(models.Model):
     #match_rating = models.IntegerField(choices=RATING_CHOICES,blank=True, null=True)
     match_rating = models.IntegerField(blank=True, null=True)
     match_comments = models.CharField(max_length = 500,blank=True, null=True)
-    
-
 
     def __str__(self):
         return f'Feedback by {self.feedback_user} for {self.matched_user}. Comments: {self.match_comments}'
+
+class Chatroom(models.Model):
+    STATUS_CHOICES = (
+    ('draft', 'Draft'),
+    ('published', 'Published'),
+    )
+    name = models.CharField(max_length=250)
+    body = models.TextField()
+    slug = models.SlugField(max_length=250, unique_for_date='publish', default="publicChat")
+    publish = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(default=timezone.now)
+    updated = models.DateTimeField(default=timezone.now)
+
+    status = models.CharField(max_length=10,choices=STATUS_CHOICES,default='draft')
+
+    class Meta:
+        ordering = ('-publish',)
+
+    def __str__(self):
+        return self.body
+
+    def get_absolute_url(self):
+        return reverse('chatroom_detail',args=[self.slug])
+
+    # added after get_absolute_url function
+    # to get comment with parent is none and active is true, we can use this in template
+    def get_comments(self):
+        return self.comments.filter(parent=None).filter(active=True)
+
+# comment model
+class Comment(models.Model):
+    chatroom=models.ForeignKey(Chatroom,on_delete=models.CASCADE, related_name="comments")
+    name=models.CharField(max_length=50)
+    email=models.EmailField()
+    parent=models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
+    body = models.TextField()
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ('created',)
+
+    def __str__(self):
+        return self.body
+
+    def get_comments(self):
+        return Comment.objects.filter(parent=self).filter(active=True)

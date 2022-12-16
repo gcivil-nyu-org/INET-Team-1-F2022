@@ -7,6 +7,7 @@ import datetime
 from django.utils.safestring import mark_safe
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
+from .models import Comment
 # Form will be used to authenticate users against the database.
 
 
@@ -102,7 +103,7 @@ class TimeEditForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('proposal_datetime_local',)
-    
+
     def check_time_is_valid(self):
         time_proposal = self.cleaned_data.get('proposal_datetime_local')
         time_now = timezone.now()
@@ -124,7 +125,7 @@ class NewLocationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['location_dropdown'].queryset = newLocation.objects.none()
-        
+
         if 'cusine' and 'boro' in self.data:
             try:
                 cusine_id = int(self.data.get('cusine'))
@@ -135,7 +136,7 @@ class NewLocationForm(forms.ModelForm):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset
         # elif self.location:
         #     print("im here!")
-        #     self.fields['location_dropdown'] = self.location 
+        #     self.fields['location_dropdown'] = self.location
             # print(self.instance.user.profile.location_dropdown)
             # self.fields['location_dropdown'] = self.instance.location_dropdown
 
@@ -241,3 +242,15 @@ class MatchFeedbackForm(forms.ModelForm):
                   'match_rating',
                   'inappropriate_behavior',
                   'match_comments',)
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('name', 'email', 'body')
+
+    # overriding default form setting and adding bootstrap class
+    def __init__(self, *args, **kwargs):
+        super(CommentForm, self).__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs = {'placeholder': 'Enter name','class':'form-control'}
+        self.fields['email'].widget.attrs = {'placeholder': 'Enter email', 'class':'form-control'}
+        self.fields['body'].widget.attrs = {'placeholder': 'Comment here...', 'class':'form-control', 'rows':'5'}

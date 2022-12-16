@@ -1,10 +1,10 @@
 import datetime
 from django.http import HttpResponse, Http404
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth.decorators import login_required
-from .forms import LoginForm, UserRegistrationForm, PreferenceEditForm, MatchFeedbackForm, TimeEditForm, NewLocationForm, UserEditForm, ProfileEditForm
-from .models import Profile, newLocation
+from .forms import LoginForm, UserRegistrationForm, PreferenceEditForm, MatchFeedbackForm, TimeEditForm, NewLocationForm, UserEditForm, ProfileEditForm, CommentForm
+from .models import Profile, newLocation, Comment, Chatroom
 
 from django.core.mail import send_mail, BadHeaderError
 from django.contrib.auth.forms import PasswordChangeForm
@@ -493,3 +493,46 @@ def password_change(request):
 
         form = PasswordChangeForm(user)
         return render(request, 'registration/password_change_form.html', {'form': form})
+
+@login_required
+def chatroom_detail(request, chatroom):
+    chatroom=get_object_or_404(Chatroom,slug=chatroom,status='published')
+    # List of active comments for this chatroom
+    comments = chatroom.comments.filter(active=True)
+    new_comment = None
+    if request.method == 'POST':
+        # A comment was posted
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            # Create Comment object but don't save to database yet
+            new_comment = comment_form.save(commit=False)
+            # Assign the current chatroom to the comment
+            new_comment.chatroom = chatroom
+            # Save the comment to the database
+            new_comment.save()
+            # redirect to same page and focus on that comment
+            return redirect(chatroom.get_absolute_url()+'#'+str(new_comment.id))
+    else:
+        comment_form = CommentForm()
+    return render(request, 'comment/chatroom_detail.html',{'chatroom':chatroom,'comments': comments,'comment_form':comment_form})
+
+# handling reply, reply view
+def reply_page(request):
+    if request.method == "POST":
+
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            chatroom_id = request.POST.get('chatroom_id')  # from hidden input
+            parent_id = request.POST.get('parent')  # from hidden input
+            chatroom_url = request.POST.get('chatroom_url')  # from hidden input
+
+            reply = form.save(commit=False)
+
+            reply.chatroom = Chatroom(id=chatroom_id)
+            reply.parent = Comment(id=parent_id)
+            reply.save()
+
+            return redirect(post_url+'#'+str(reply.id))
+
+    return redirect("/")
