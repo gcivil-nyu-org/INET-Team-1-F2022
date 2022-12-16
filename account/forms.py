@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.admin.widgets import AdminDateWidget
 import datetime
 from django.utils.safestring import mark_safe
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 # Form will be used to authenticate users against the database.
 
 
@@ -100,6 +102,17 @@ class TimeEditForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('proposal_datetime_local',)
+    
+    def check_time_is_valid(self):
+        time_proposal = self.cleaned_data.get('proposal_datetime_local')
+        time_now = timezone.now()
+        time_proposal_datetime_obj = parse_datetime(time_proposal)
+        if time_proposal_datetime_obj > time_now:
+            return True
+        else:
+            self.add_error('proposal_datetime_local',
+                           "Proposal time must be in the future! Please select another time:")
+            return False
 
 class NewLocationForm(forms.ModelForm):
     class Meta:

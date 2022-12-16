@@ -14,8 +14,13 @@
         <br>
         <br>
         <br>
-         {{time_form.as_p}}
-         {% csrf_token %}
+        {% if user_form.errors %}
+            {{ time_form.as_p }}
+            {% csrf_token %}
+        {% else %}
+            {{ time_form.as_p }}
+            {% csrf_token %}
+        {% endif %}
          <br>
          <br>
     <p><input type="submit" value="Save changes" 

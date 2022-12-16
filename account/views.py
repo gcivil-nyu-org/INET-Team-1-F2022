@@ -89,22 +89,23 @@ def dashboard(request):
         # Get the other user profile who user_profile is matched with
         other_user_profile = user_profile.matches.first()
         # Check time against proposal time
-        if time_now > user_profile.proposal_datetime_local + timedelta(hours=6):
-            # Clear matches for both user_profile and the other profile
-            user_profile.matches.clear()
-            user_profile.feedback_submitted = False
-            other_user_profile.matches.clear()
-            other_user_profile.feedback_submitted = False
-            msg = "Your match with " + other_user_profile.user.first_name + " has expired."
-            messages.success(request, msg)
-            user_profile.save()
-            other_user_profile.save()
-        else:
-            print("There is still time left for your match/date!")
-            if (time_now < user_profile.proposal_datetime_local + timedelta(hours=6) and
-                time_now > user_profile.proposal_datetime_local and
-                    user_profile.feedback_submitted == False):
-                feedback_available = True
+        if user_profile.proposal_datetime_local != None:
+            if time_now > user_profile.proposal_datetime_local + timedelta(hours=6):
+                # Clear matches for both user_profile and the other profile
+                user_profile.matches.clear()
+                user_profile.feedback_submitted = False
+                other_user_profile.matches.clear()
+                other_user_profile.feedback_submitted = False
+                msg = "Your match with " + other_user_profile.user.first_name + " has expired."
+                messages.success(request, msg)
+                user_profile.save()
+                other_user_profile.save()
+            else:
+                print("There is still time left for your match/date!")
+                if (time_now < user_profile.proposal_datetime_local + timedelta(hours=6) and
+                    time_now > user_profile.proposal_datetime_local and
+                        user_profile.feedback_submitted == False):
+                    feedback_available = True
     elif user_profile.matched_with.all():
         print("I didn't match, but someone matched with me (matched_with)")
         other_user_profile = user_profile.matched_with.first()
@@ -124,6 +125,12 @@ def dashboard(request):
                 feedback_available = True
     else:
         print("Not in a match at all")
+        # Check if the user's time is now expired because proposal time < curr time
+        if user_profile.proposal_datetime_local != None:
+            if user_profile.proposal_datetime_local < time_now:
+                msg = "Your proposal time " + str(user_profile.proposal_datetime_local) + " has now expired because it's in the past. Please update your time as soon as possible."
+                messages.success(request, msg)
+
     return render(request,
                   'account/dashboard.html',
                   {'section': 'dashboard', "user_profile": user_profile, "feedback_available": feedback_available})
@@ -140,12 +147,6 @@ def edit(request):
             files=request.FILES)
 
         user_profile = request.user.profile
-        # print('The user selected this datetime: ', user_profile.proposal_datetime_local)
-        # prev_time, prev_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
-
-        # location_form = NewLocationForm(instance=request.user.profile,
-        #                             data=request.POST)
-
         user_id = request.user.id
         # print(user_id)
         if user_form.is_valid() and profile_form.is_valid():
@@ -158,11 +159,6 @@ def edit(request):
             # print(user_profile.proposal_datetime_local)
             user_form.save()
             profile_form.save()
-
-            # cur_time, cur_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
-            # if cur_time != prev_time  or cur_place != prev_place:
-            #     user_profile.liked_by.clear()
-            # location_form.save()
 
             return redirect('profile', pk=user_id)
     else:
@@ -189,7 +185,6 @@ def edittimenplace(request):
         user_profile = request.user.profile
         # print('The user selected this datetime: ', user_profile.proposal_datetime_local)
         prev_time, prev_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
-        print(prev_place)
         location_form = NewLocationForm(instance=request.user.profile,
                                         data=request.POST,
                                         files=request.FILES)
@@ -198,8 +193,6 @@ def edittimenplace(request):
         # print(user_id)
         if time_form.is_valid() and location_form.is_valid():
             # print(user_profile.proposal_datetime_local)
-            print(prev_time, prev_place)
-
             time_form.save()
             cur_time, cur_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
             if cur_time != prev_time or cur_place != prev_place:
@@ -208,7 +201,6 @@ def edittimenplace(request):
 
             return redirect('profile', pk=user_id)
     else:
-        print(request.user.profile.location_dropdown)
         prev_time, prev_place = request.user.profile.proposal_datetime_local, request.user.profile.location_dropdown
         time_form = TimeEditForm(instance=request.user.profile)
         location_form = NewLocationForm(instance=request.user.profile,
@@ -247,10 +239,19 @@ def edittime(request):
         time_form = TimeEditForm(instance=request.user.profile,
                                  data=request.POST,
                                  files=request.FILES)
-        prev_time = request.user.profile.proposal_datetime_local
-        time_form.save()
         user_id = request.user.id
-        return redirect('profile', pk=user_id)
+        # Check if time is not valid
+        if time_form.is_valid():
+            if not time_form.check_time_is_valid():
+                prev_time = None
+                return render(request,
+                  'account/edit_time.html',
+                  {'time_form': time_form,
+                   "prev_place": prev_time})
+            if time_form.check_time_is_valid():
+                prev_time = request.user.profile.proposal_datetime_local
+                time_form.save()
+                return redirect('profile', pk=user_id)
     else:
         time_form = TimeEditForm(instance=request.user.profile,
                                  data=request.POST,
@@ -266,7 +267,6 @@ def edittime(request):
 def load_locations(request):
     cusine_id = request.GET.get('cusine_id')
     boro_id = request.GET.get('boro_id')
-    print(request)
     locations = newLocation.objects.filter(CUISINE_id=cusine_id, BORO_id=boro_id)
     return render(request, 'profile/location_drop_down.html', {'locations': locations})
     # return JsonResponse(list(cities.values('id', 'name')), safe=False)
@@ -287,12 +287,20 @@ def profile_liked_me(request, pk):
     # user = request.user.profile
     user_profile = Profile.objects.get(user_id=pk)
 
+    # Check if current user's time has expired (is in past) then clear liked_me list
+    time_now = timezone.now()
+    if user_profile.proposal_datetime_local != None:
+        if user_profile.proposal_datetime_local < time_now:
+            # Clear liked_me list
+            user_profile.liked_by.clear()
+            msg = "Your proposal time has expired (is in the past). Because of this, all the likes you received have been cleared. Please update your proposal time ASAP."
+            messages.success(request, msg)
+
     # Pagination
     liked_me = user_profile.liked_by.all()
     p = Paginator(liked_me, 2)
     page = request.GET.get('page')
     liked_me_list = p.get_page(page)
-    print(liked_me)
     return render(request,
                   'profile/profile_liked_me.html',
                   {"profile": user_profile,
@@ -337,7 +345,6 @@ def profile(request, pk):
         elif action_for_match_decline == "decline":
             # Add profile id to declined list
             current_user_profile.declines.add(profile.id)
-            print(request.path)
             msg = "You have just declined to match with " + profile.user.first_name + \
                 ". They will no longer appear in this list.\n Note that they will still be able to like any of your future proposals."
             messages.success(request, msg)
@@ -383,10 +390,7 @@ def edit_preferences(request):
 
 @login_required
 def filter_profile_list(request):
-    age_p_min = request.user.profile.age_preference_min
-    age_p_max = request.user.profile.age_preference_max
     gender_p = request.user.profile.gender_preference
-    # oreo_p = request.user.profile.orientation_preference
 
     user_ids_to_exclude_likes = [
         userX.user.id for userX in request.user.profile.likes.all()]
@@ -395,17 +399,23 @@ def filter_profile_list(request):
         userX.user.id for userX in request.user.profile.hides.all()]
     user_ids_to_exclude_likes.extend(user_ids_to_exclude_hides)
 
-    # To-Do: Debug the issue with profile_id not matching user_id
-    print(request.user.profile.likes.all())
-    print(request.user.profile.hides.all())
+    # Add filter/check if proposal time > current system time, only then include these profiles as well
+    time_now = timezone.now()
     if (gender_p == "Both"):
         profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(
-            Q(gender_identity="Man") | Q(gender_identity="Woman"))  # sexual_orientation=oreo_p)
+            Q(gender_identity="Man") | Q(gender_identity="Woman"))
     else:
         profiles = Profile.objects.exclude(user_id__in=user_ids_to_exclude_likes).filter(
-            gender_identity=gender_p)  # sexual_orientation=oreo_p)
+            gender_identity=gender_p)
+
+    profilesWithValidTime = []
+    for profile in profiles:
+        if profile.proposal_datetime_local != None:
+            if profile.proposal_datetime_local > time_now:
+                profilesWithValidTime.append(profile)
+
     # Pagination
-    p = Paginator(profiles, 2)
+    p = Paginator(profilesWithValidTime, 2)
     page = request.GET.get('page')
     profile_list = p.get_page(page)
     return render(request,
@@ -420,9 +430,7 @@ def submitFeedback(request):
             data=request.POST)
         if feedback_form.is_valid():
             obj = feedback_form.save(commit=False)
-            print("Submitted Form Object: ", obj)
             obj.feedback_user = User.objects.get(pk=request.user.id)
-            # obj.matched_user =
             if request.user.profile.matches.all():
                 obj.matched_user = request.user.profile.matches.first().user
                 obj.match_date = request.user.profile.proposal_datetime_local
@@ -444,10 +452,8 @@ def submitFeedback(request):
 
             request.user.profile.feedback_submitted = True
             request.user.profile.save()
-
             return redirect("dashboard")
         else:
-            print("ERROR: Form is invalid")
             print(feedback_form.errors)
     else:
         feedback_form = MatchFeedbackForm(
