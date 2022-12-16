@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .forms import UserRegistrationForm, ProfileEditForm, NewLocationForm, UserEditForm, PreferenceEditForm
+from .forms import UserRegistrationForm, ProfileEditForm, NewLocationForm, UserEditForm, PreferenceEditForm, TimeEditForm
 from django.urls import reverse
 from .forms import LoginForm
 from .models import Profile
@@ -176,6 +176,62 @@ class TestViews(TestCase):
         response = self.client.get("/account/filter_profile_list/")
         self.assertEqual(response.status_code,302)
 
+    def test_edit_time(self):   
+        response = self.client.get("/account/edit_time/")
+        self.assertEqual(response.status_code,302)
+    
+    def test_edit_place(self):   
+        response = self.client.get("/account/edit_place/")
+        self.assertEqual(response.status_code,302)
+
+    def test_edit_time_post(self):
+        time_form = TimeEditForm()
+        time_form.cleaned_data = {}
+        time_form.cleaned_data["proposal_datetime_local"] = timezone.now()
+
+        url_path = '/account/edit_time/'
+        response = self.client.post(
+            url_path,
+            data = {'time_form': time_form},
+        )
+        self.assertEqual(response.status_code, 302)
+    
+    def test_edit_place_post(self):
+        location_form = NewLocationForm()
+        location_form.cleaned_data = {}
+        location_form.cleaned_data["cusine"] = "Mexican"
+        location_form.cleaned_data["boro"] = "Manhattan"
+
+        url_path = '/account/edit_place/'
+        response = self.client.post(
+            url_path,
+            data = {'location_form': location_form},
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_edit_timenplace_post(self):
+        # new User
+        self.user2 = User.objects.create_user(username="test-profile2", password="test-profile2")
+        Profile.objects.create(user=self.user2, date_of_birth=datetime.date(1996, 5, 28))
+
+        location_form = NewLocationForm()
+        location_form.cleaned_data = {}
+        location_form.cleaned_data["cusine"] = "Mexican"
+        location_form.cleaned_data["boro"] = "Manhattan"
+
+        time_form = TimeEditForm()
+        time_form.cleaned_data = {}
+        time_form.cleaned_data["proposal_datetime_local"] = timezone.now()
+
+        url_path = '/account/edit_timenplace/'
+        response = self.client.post(
+            url_path,
+            data = {'time_form': time_form,
+                   'location_form': location_form},
+        )
+        self.assertEqual(response.status_code, 302)
+    
+
 class TestProfile(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
@@ -330,8 +386,6 @@ class TestProfile(TestCase):
         self.assertEquals(profile1.declines.all().first(), profile2)
         self.assertEquals(profile2.declined_by.all().first(), profile1)
 
-
-
 class TestFeedback(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
@@ -358,14 +412,6 @@ class TestFeedback(TestCase):
         url_path = 'match_feedback'
         response = self.client.get(url_path)
         self.assertEqual(response.status_code, 302)
-
-
-
-
-
-        
-
-
 
 class TestForms(TestCase):
     def test_form_save(self):
@@ -450,4 +496,17 @@ class TestForms(TestCase):
         self.assertEqual("", form.check_username())
         # This should raise a validation error
         #self.assertTrue('First Name cannot be empty!')
+
+    def test_meta_time(self):
+        form = TimeEditForm()
+        meta = form.Meta()
+        assert meta.model == Profile
+        assert meta.fields != ("proposal_datetime_local")
+
+    def test_edit_time_form(self):
+        form = TimeEditForm()
+        form.cleaned_data = {}
+        form.cleaned_data["proposal_datetime_local"] = timezone.now()
+        self.assertNotEqual(timezone.now(), form.cleaned_data["proposal_datetime_local"])
+
         
