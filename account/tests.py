@@ -292,7 +292,6 @@ class TestViews(TestCase):
         response = self.client.get("/account/profile_list/")
         self.assertEqual(response.status_code,302)
 
-
     def test_filter_pref(self):   
         response = self.client.get("/account/filter_profile_list/")
         self.assertEqual(response.status_code,302)

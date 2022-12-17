@@ -256,7 +256,6 @@ def edittime(request):
                   'account/edit_time.html',
                   {'time_form': time_form})
 
-
 @login_required
 def load_locations(request):
     cusine_id = request.GET.get('cusine_id')
@@ -265,14 +264,12 @@ def load_locations(request):
     return render(request, 'profile/location_drop_down.html', {'locations': locations})
     # return JsonResponse(list(cities.values('id', 'name')), safe=False)
 
-
 @login_required
 def profile_list(request):
     profiles = Profile.objects.exclude(user=request.user)
     return render(request,
                   'profile/profile_list.html',
                   {"profiles": profiles})
-
 
 @login_required
 def profile_liked_me(request, pk):
