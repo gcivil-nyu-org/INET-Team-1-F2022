@@ -10,10 +10,11 @@ import datetime
 from django.utils import timezone
 from datetime import date, timedelta
 import requests
-from django.http import HttpRequest
+from django.http import HttpRequest, Http404
 from django.test.client import RequestFactory
 from django.core.handlers.wsgi import WSGIRequest
-from .views import edittimenplace
+from .views import edittimenplace, profile,load_locations,dashboard,edit, register, editplace, edittime,profile_liked_me, \
+preferences, edit_preferences,filter_profile_list,get_referer,submitFeedback, delete_account,password_change
 
 
 
@@ -94,38 +95,86 @@ class TestLogin(TestCase):
 class TestDashboard(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
-        Profile.objects.create(user=self.user1, date_of_birth=datetime.date(1996, 5, 28))
+        Profile.objects.create(user=self.user1, date_of_birth=datetime.date(1996, 5, 28), proposal_datetime_local ='2025-12-31T20:23')
 
         self.user2 = User.objects.create_user(username="test-profile2", password="test-profile2")
-        Profile.objects.create(user=self.user2, date_of_birth=datetime.date(1996, 6, 28))
+        Profile.objects.create(user=self.user2, date_of_birth=datetime.date(1996, 6, 28),proposal_datetime_local ='2025-12-31T20:23')
 
     def test_dashboard_page(self):
-        url_path = ''
         profile1 = Profile.objects.get(user=self.user1)
         profile2 = Profile.objects.get(user=self.user2)
-        
-        profile1.proposal_datetime_local = "December 01, 2022 - 15:48:02"
-        profile2.matches.add(profile1.id)  
-        profile1.matched_with.add(profile2.id)    
+
+        # check path
+        url_path = '/account/'
+        response = self.client.get(url_path)
+        self.assertEquals(response.status_code, 302)
+
+        # check path
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        response = dashboard(req)
+        assert response.status_code == 200
+
+        # first if condition
+        profile1.proposal_datetime_local = ['2025-12-31T20:23']
+        profile1.matches.add(profile2.id)   
+        self.assertEquals(profile1.matches.all().first(), profile2)
         response = self.client.get(url_path)
 
-        time_now = timezone.now()
-        end_date = time_now + datetime.timedelta(days=10)
-        profile1.proposal_datetime_local = end_date
-        profile2.matches.add(profile1.id)  
-        profile1.matched_with.add(profile2.id) 
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        response = dashboard(req)
+        assert response.status_code == 200
+
+        #  elif condition
+        profile1.proposal_datetime_local = ['2025-12-31T20:23']
+        profile1.matches.clear()
+        self.assertEquals(profile1.matches.all().first(), None)
+        profile1.matched_with.add(profile2.id)   
+        self.assertEquals(profile1.matched_with.all().first(), profile2)
         response = self.client.get(url_path)
 
-        profile2.matches.clear()   
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        response = dashboard(req)
+        assert response.status_code == 200
+
+        #else 
+        profile1.proposal_datetime_local = ['2025-12-31T20:23']
         profile1.matched_with.clear()
+        profile1.matches.clear()
+        self.assertEquals(profile1.matched_with.all().first(), None)
+        self.assertEquals(profile1.matches.all().first(), None)
         response = self.client.get(url_path)
 
-        self.assertEqual(response.status_code, 200)
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        response = dashboard(req)
+        assert response.status_code == 200
 
 class TestViews(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(username="test-profile", password="test-profile")
         Profile.objects.create(user=self.user1, date_of_birth=datetime.date(1996, 5, 28))
+    
+    def register_get(self):
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        response = register(req)
+        assert response.status_code == 200
+    
+    def register_post(self):
+        req = HttpRequest()
+        req.method = "POST"
+        req.user = self.user1
+        req.POST = {'username': ['testuser_test'], 'first_name': ['testuser_test'], 'email': ['testuser_test@gmail.com'], 'date_of_birth_month': ['1'], 'date_of_birth_day': ['1'], 'date_of_birth_year': ['1998'], 'password': ['abcd@123'], 'password2': ['abcd@123'], 'csrfmiddlewaretoken': ['sN2x4QTGgimFVsy2JP10CMh8YRXB5wiqjmxhOAE5zWRAjau7Ip5NM4F7wEVBTDwD']}
+        response = register(req)
+        assert response.status_code == 200
 
     def test_main_page(self):
         url_path = '/account/'
@@ -146,9 +195,47 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code,200)
         self.assertTemplateUsed(response, 'profile/preferences.html')
 
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        profile1 = Profile.objects.get(user=self.user1)
+        pk1 = profile1.id
+        response = preferences(req, pk1)
+        assert response.status_code == 200
+
+    def test_edit_pref_post(self):
+        req = HttpRequest()
+        req.method = "POST"
+        req.user = self.user1
+        req.POST = {'age_preference_min': ['19'], 'age_preference_max': ['31'], 'gender_preference': ['Man'], 'csrfmiddlewaretoken': ['ZhI9Y5cQqmdHqZ6tUqe6klE75KdBkwvjClhNQo1jexKqAlWufcdgKxnZ4QaRYGTZ']}
+        response = edit_preferences(req)
+        assert response.status_code == 200
+
+    def test_edit_pref_get(self):
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        response = edit_preferences(req)
+        assert response.status_code == 200
+        
     def test_edit_redirect(self):
         response = self.client.get(reverse("edit"))
         self.assertEqual(response.status_code, 302)
+
+    def test_edit_post(self):
+        req = HttpRequest()
+        req.method = "POST"
+        req.user = self.user1
+        req.GET = {'first_name': ['Immonica'], 'last_name': ['Geller'], 'email': ['drc351@nyu.edu'], 'occupation': ['Chef'], 'about_me': ["I needed a plan, a plan to get over my man. And what's the opposite of man? Jam."], 'gender_identity': ['Woman'], 'photo': [''], 'csrfmiddlewaretoken': ['jJDc4NH9a1IpoOR3XnznFAL6ajVq8Yqpai8WOxsytFdkMwN8WXDaPS95I6TqW5EC']}
+        response = edit(req)
+        assert response.status_code == 200
+
+    def test_edit_get(self):
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        response = edit(req)
+        assert response.status_code == 200
 
     def test_profile_list_redirect(self):
         response = self.client.get(reverse("profile_list"))
@@ -163,10 +250,36 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code,404)
         # self.assertTemplateUsed(response, 'profile/profile_liked_me.html')
 
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        response = get_referer(req)
+        assert response == None
+
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        profile1 = Profile.objects.get(user=self.user1)
+        pk1 = profile1.id
+        referer = req.META.get('HTTP_REFERER')
+        req.META['HTTP_REFERER'] = 'http://127.0.0.1:8082/account/'
+        # req.META['HTTP_REFERER'] = 'http://timeandplacenyu-dev.eba-is5hjkxj.us-east-1.elasticbeanstalk.com/account/'
+        response = profile_liked_me(req, pk1)
+        self.assertEqual(response.status_code, 200)
+
+
     def test_load_locations(self):   
         url_path = 'ajax/load-locations/' + "?cusine_id=1&boro_id=4"
         response = self.client.get(url_path)
         self.assertEqual(response.status_code,404)
+
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        req.GET = {'cusine_id': 2,
+                   'boro_id': 4}
+        response = load_locations(req)
+        assert response.status_code == 200
 
     def test_edit_pref(self):   
         response = self.client.get("account/edit_preferences/")
@@ -180,17 +293,46 @@ class TestViews(TestCase):
         response = self.client.get("/account/filter_profile_list/")
         self.assertEqual(response.status_code,302)
 
-    def test_edit_time(self):   
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+
+        # set preferences before filtering
+        req.POST = {'age_preference_min': ['19'], 'age_preference_max': ['31'], 'gender_preference': ['Man'], 'csrfmiddlewaretoken': ['ZhI9Y5cQqmdHqZ6tUqe6klE75KdBkwvjClhNQo1jexKqAlWufcdgKxnZ4QaRYGTZ']}
+        response = edit_preferences(req)
+
+        response = filter_profile_list(req)
+        assert response.status_code == 200
+        
+    def test_edit_time_get(self):   
         response = self.client.get("/account/edit_time/")
         self.assertEqual(response.status_code,302)
+
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        response = edittime(req)
+        assert response.status_code == 200
     
-    def test_edit_place(self):   
+    def test_edit_place_get(self):   
         response = self.client.get("/account/edit_place/")
         self.assertEqual(response.status_code,302)
+
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        response = editplace(req)
+        assert response.status_code == 200
     
-    def test_edit_time_place(self):   
+    def test_edit_time_place_get(self):   
         response = self.client.get("/account/edit_timenplace/")
         self.assertEqual(response.status_code,302)
+
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        response = edittimenplace(req)
+        assert response.status_code == 200
 
     def test_edit_time_post(self):
         time_form = TimeEditForm()
@@ -232,7 +374,6 @@ class TestViews(TestCase):
         req.user = self.user1
         response = edittimenplace(req)
         assert response.status_code == 200
-
 
     def test_edit_timenplace_post(self):
         location_form = NewLocationForm()
@@ -297,6 +438,7 @@ class TestProfile(TestCase):
         profile2 = Profile.objects.get(user=self.user2)
         print(views.profile)
         pk2 = profile2.id
+        pk1 = profile1.id
         # print("Profile2 id: ",pk2)
         # print("User2 id: ",profile2.user_id)
         url_path = '/account/profile/' + str(pk2) + "/"
@@ -307,14 +449,18 @@ class TestProfile(TestCase):
                 "like" : "like",
             },
         )
-        print("testLike")
+        req = HttpRequest()
+        req.method = "POST"
+        req.POST = {'like': ['like']}
+        req.user = self.user1
+        response = profile(req, pk1)
+        assert response.status_code == 200   
        
-        
         self.assertEquals(profile1.likes.all().first(), profile2)
-        self.assertEquals(response.status_code, 302)
-        self.assertRedirects(response, reverse('filter_profile_list'), 
-                                    status_code=302, target_status_code=200,
-                                     msg_prefix='', fetch_redirect_response=True)
+        self.assertEquals(response.status_code, 200)
+        # self.assertRedirects(response, reverse('filter_profile_list'), 
+        #                             status_code=302, target_status_code=200,
+        #                              msg_prefix='', fetch_redirect_response=True)
 
     def testHideRiderect(self): 
         pass
@@ -441,6 +587,44 @@ class TestFeedback(TestCase):
         url_path = 'match_feedback'
         response = self.client.get(url_path)
         self.assertEqual(response.status_code, 302)
+
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user1
+        response = submitFeedback(req)
+        assert response.status_code == 200 
+
+    def feedback_form_post(self):  
+        req = HttpRequest()
+        req.method = "POST"
+        req.user = self.user1
+        req.POST = {'date_happened': ['Yes'], 'match_rating': ['3'], 'inappropriate_behavior': ['Uncomfortable'], 'match_comments': ['not comfy'], 'csrfmiddlewaretoken': ['WBA9cswIxf9gqMyOoQAGHYpuptPkYoxl8Q0yrVwIplABb4SWFXvxgGf4GO7wafOO']}
+        response = submitFeedback(req)
+        assert response.status_code == 200
+    
+    def delete_account_get(self):  
+        req = HttpRequest()
+        req.method = "GET"
+        req.user = self.user2
+        response = delete_account(req)
+        assert response.status_code == 200
+    
+    def password_change_post(self):  
+        req = HttpRequest()
+        req.method = "POST"
+        req.user = self.user2
+        req.POST = {'old_password': ['abcd@123'], 'new_password1': ['abcd@1234'], 'new_password2': ['abcd@1234'], 'csrfmiddlewaretoken': ['qLkcRcO6JCm2ba17kfXvhcXOxJrjIh8dVBkDNbqI6qRMPO1GsijovP9OyfRWhWjX']}
+        response = password_change(req)
+        assert response.status_code == 200
+
+        # password too short , not 8 chars
+        req = HttpRequest()
+        req.method = "POST"
+        req.user = self.user2
+        req.POST = {'old_password': ['abcd@123'], 'new_password1': ['1'], 'new_password2': ['1'], 'csrfmiddlewaretoken': ['qLkcRcO6JCm2ba17kfXvhcXOxJrjIh8dVBkDNbqI6qRMPO1GsijovP9OyfRWhWjX']}
+        response = password_change(req)
+        assert response.status_code == 200
+    
 
 class TestForms(TestCase):
     def test_form_save(self):
