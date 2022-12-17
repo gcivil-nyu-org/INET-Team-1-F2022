@@ -14,7 +14,7 @@ from django.http import HttpRequest, Http404
 from django.test.client import RequestFactory
 from django.core.handlers.wsgi import WSGIRequest
 from .views import edittimenplace, profile,load_locations,dashboard,edit, register, editplace, edittime,profile_liked_me, \
-preferences, edit_preferences,filter_profile_list,get_referer,submitFeedback, delete_account,password_change
+preferences,profile_list, edit_preferences,filter_profile_list,get_referer,submitFeedback, delete_account,password_change
 
 
 
