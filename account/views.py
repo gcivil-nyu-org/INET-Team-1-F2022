@@ -289,9 +289,7 @@ def profile_liked_me(request, pk):
             user_profile.liked_by.clear()
             msg = "Your proposal time has expired (is in the past). Because of this, all the likes you received have been cleared. Please update your proposal time ASAP."
             messages.success(request, msg)
-
-    # Pagination
-    liked_me = user_profile.liked_by.all()
+    liked_me = user_profile.liked_by.all() # Pagination
     p = Paginator(liked_me, 2)
     page = request.GET.get('page')
     liked_me_list = p.get_page(page)
@@ -328,9 +326,7 @@ def profile(request, pk):
             messages.success(request, msg)
             return redirect('filter_profile_list')
         elif action_for_match_decline == "match":
-            # Clear likes to ensure the users no longer
-            # appear in any 'Liked Me' list
-            current_user_profile.likes.clear()
+            current_user_profile.likes.clear() # Clear likes to ensure the users no longer appear in any 'Liked Me' list
             current_user_profile.liked_by.clear()
             current_user_profile.matches.add(profile.id)
             profile.likes.clear()

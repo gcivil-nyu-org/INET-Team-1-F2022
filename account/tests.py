@@ -267,7 +267,6 @@ class TestViews(TestCase):
         response = profile_liked_me(req, pk1)
         self.assertEqual(response.status_code, 200)
 
-
     def test_load_locations(self):   
         url_path = 'ajax/load-locations/' + "?cusine_id=1&boro_id=4"
         response = self.client.get(url_path)
@@ -308,7 +307,6 @@ class TestViews(TestCase):
         response = self.client.get("/account/edit_time/")
         self.assertEqual(response.status_code,302)
        
-
         req = HttpRequest()
         req.method = "GET"
         req.user = self.user1
@@ -544,8 +542,6 @@ class TestProfile(TestCase):
         #                             status_code=302, target_status_code=200,
         #                              msg_prefix='', fetch_redirect_response=True)
 
-
-
     def testHide(self):
         profile1 = Profile.objects.get(user=self.user1)
         profile2 = Profile.objects.get(user=self.user2)
@@ -566,6 +562,7 @@ class TestProfile(TestCase):
 
         self.assertEquals(profile1.hides.all().first(), profile2)
         self.assertEquals(profile2.hidden_by.all().first(), profile1)
+        self.assertEqual(response.status_code, 302)
 
     def testDecline(self):
         profile1 = Profile.objects.get(user=self.user1)
