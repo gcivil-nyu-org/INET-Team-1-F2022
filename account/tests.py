@@ -288,6 +288,11 @@ class TestViews(TestCase):
         response = self.client.get("account/edit/")
         self.assertEqual(response.status_code,404)
 
+    def test_profile_list(self):
+        response = self.client.get("/account/profile_list/")
+        self.assertEqual(response.status_code,302)
+
+
     def test_filter_pref(self):   
         response = self.client.get("/account/filter_profile_list/")
         self.assertEqual(response.status_code,302)
@@ -550,6 +555,8 @@ class TestProfile(TestCase):
         self.assertEqual(len(profile3.likes.all()), 0)
         self.assertFalse(profile1.liked_by.exists())
         self.assertFalse(profile1.likes.exists())
+        self.assertFalse(profile2.likes.exists())
+        self.assertFalse(profile3.likes.exists())
 
         #TODO: Test redirection to dashboard
         # self.assertRedirects(response, reverse('filter_profile_list'), 
