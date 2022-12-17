@@ -166,7 +166,6 @@ class TestViews(TestCase):
         req.user = self.user1
         response = register(req)
         assert response.status_code == 200
-        self.assertTemplateUsed(response, 'account/register.html')
     
     def register_post(self):
         req = HttpRequest()
