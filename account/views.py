@@ -34,8 +34,7 @@ def register(request):
             if not user_form.is_adult():
                 return HttpResponse('Go home kid')
             dob = user_form.cleaned_data['date_of_birth']
-            # Create a new user object but avoid saving it yet
-            new_user = user_form.save(commit=False)
+            new_user = user_form.save(commit=False) # Create a new user object but avoid saving it yet
             # Set the chosen password
             new_user.set_password(
                 user_form.cleaned_data['password'])

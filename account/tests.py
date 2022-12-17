@@ -58,7 +58,6 @@ class TestRegister(TestCase):
                 "password2": "foobar123123ABC@",
             },
         )
-
         self.assertEqual(response.status_code, 200)
 
 class TestLogin(TestCase):
@@ -167,6 +166,7 @@ class TestViews(TestCase):
         req.user = self.user1
         response = register(req)
         assert response.status_code == 200
+        self.assertTemplateUsed(response, 'account/register.html')
     
     def register_post(self):
         req = HttpRequest()
