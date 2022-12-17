@@ -183,6 +183,10 @@ class TestViews(TestCase):
     def test_edit_place(self):   
         response = self.client.get("/account/edit_place/")
         self.assertEqual(response.status_code,302)
+    
+    def test_edit_time_place(self):   
+        response = self.client.get("/account/edit_timenplace/")
+        self.assertEqual(response.status_code,302)
 
     def test_edit_time_post(self):
         time_form = TimeEditForm()
@@ -210,10 +214,7 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_edit_timenplace_post(self):
-        # new User
-        self.user2 = User.objects.create_user(username="test-profile2", password="test-profile2")
-        Profile.objects.create(user=self.user2, date_of_birth=datetime.date(1996, 5, 28))
-
+        
         location_form = NewLocationForm()
         location_form.cleaned_data = {}
         location_form.cleaned_data["cusine"] = "Mexican"

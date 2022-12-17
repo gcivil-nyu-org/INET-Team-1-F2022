@@ -183,16 +183,13 @@ def edittimenplace(request):
                                  files=request.FILES)
 
         user_profile = request.user.profile
-        # print('The user selected this datetime: ', user_profile.proposal_datetime_local)
         prev_time, prev_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
         location_form = NewLocationForm(instance=request.user.profile,
                                         data=request.POST,
                                         files=request.FILES)
 
         user_id = request.user.id
-        # print(user_id)
         if time_form.is_valid() and location_form.is_valid():
-            # print(user_profile.proposal_datetime_local)
             time_form.save()
             cur_time, cur_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
             if cur_time != prev_time or cur_place != prev_place:
@@ -220,9 +217,10 @@ def editplace(request):
         location_form = NewLocationForm(instance=request.user.profile,
                                         data=request.POST)
         prev_place = request.user.profile.location_dropdown
-        location_form.save()
-        user_id = request.user.id
-        return redirect('profile', pk=user_id)
+        if location_form.is_valid():
+            location_form.save()
+            user_id = request.user.id
+            return redirect('profile', pk=user_id)
     else:
         location_form = NewLocationForm(instance=request.user.profile,
                                         data=request.POST)
