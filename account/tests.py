@@ -226,7 +226,7 @@ class TestViews(TestCase):
         req = HttpRequest()
         req.method = "POST"
         req.user = self.user1
-        req.GET = {'first_name': ['Immonica'], 'last_name': ['Geller'], 'email': ['drc351@nyu.edu'], 'occupation': ['Chef'], 'about_me': ["I needed a plan, a plan to get over my man. And what's the opposite of man? Jam."], 'gender_identity': ['Woman'], 'photo': [''], 'csrfmiddlewaretoken': ['jJDc4NH9a1IpoOR3XnznFAL6ajVq8Yqpai8WOxsytFdkMwN8WXDaPS95I6TqW5EC']}
+        req.POST= {'first_name': ['Immonica'], 'last_name': ['Geller'], 'email': ['drc351@nyu.edu'], 'occupation': ['Chef'], 'about_me': ["I needed a plan, a plan to get over my man. And what's the opposite of man? Jam."], 'gender_identity': ['Woman'], 'photo': [''], 'csrfmiddlewaretoken': ['jJDc4NH9a1IpoOR3XnznFAL6ajVq8Yqpai8WOxsytFdkMwN8WXDaPS95I6TqW5EC']}
         response = edit(req)
         assert response.status_code == 200
 
@@ -350,7 +350,13 @@ class TestViews(TestCase):
         req.method = "POST"
         req.POST = {'time_form': time_form}
         req.user = self.user1
-        response = edittimenplace(req)
+        response = edittime(req)
+        assert response.status_code == 200
+
+        req.POST = {'proposal_datetime_local': ['2022-12-17T20:23'], 'csrfmiddlewaretoken': ['oeUyACL20WNyvOBNqCPZ5wdRjQmF4LmXVVuupA7XuA5mEhA3BWqvcAohYWmEJZg5']}
+        # req.send(json.stringify(parameters))
+        req.user = self.user1
+        response = edittime(req)
         assert response.status_code == 200
     
     def test_edit_place_post(self):
@@ -369,10 +375,10 @@ class TestViews(TestCase):
 
         req = HttpRequest()
         req.method = "POST"
-        req.POST = {'proposal_datetime_local': ['2022-12-17T20:23'], 'cusine': ['2'], 'boro': ['2'], 'location_dropdown': ['957'], 'csrfmiddlewaretoken': ['oeUyACL20WNyvOBNqCPZ5wdRjQmF4LmXVVuupA7XuA5mEhA3BWqvcAohYWmEJZg5']}
+        req.POST = {'cusine': ['2'], 'boro': ['2'], 'location_dropdown': ['957'], 'csrfmiddlewaretoken': ['oeUyACL20WNyvOBNqCPZ5wdRjQmF4LmXVVuupA7XuA5mEhA3BWqvcAohYWmEJZg5']}
         # req.send(json.stringify(parameters))
         req.user = self.user1
-        response = edittimenplace(req)
+        response = editplace(req)
         assert response.status_code == 200
 
     def test_edit_timenplace_post(self):
@@ -398,6 +404,15 @@ class TestViews(TestCase):
         req.method = "POST"
         req.POST = {'time_form': time_form,
                    'location_form': location_form}
+        req.user = self.user1
+        response = edittimenplace(req)
+        assert response.status_code == 200
+
+
+        req = HttpRequest()
+        req.method = "POST"
+        req.POST = {'proposal_datetime_local': ['2022-12-17T20:23'], 'cusine': ['2'], 'boro': ['2'], 'location_dropdown': ['957'], 'csrfmiddlewaretoken': ['oeUyACL20WNyvOBNqCPZ5wdRjQmF4LmXVVuupA7XuA5mEhA3BWqvcAohYWmEJZg5']}
+        # req.send(json.stringify(parameters))
         req.user = self.user1
         response = edittimenplace(req)
         assert response.status_code == 200   
