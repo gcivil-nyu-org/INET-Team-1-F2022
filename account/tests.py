@@ -8,6 +8,11 @@ from . import views
 import datetime
 from django.utils import timezone
 from datetime import date, timedelta
+import requests
+from django.http import HttpRequest
+from django.test.client import RequestFactory
+from django.core.handlers.wsgi import WSGIRequest
+from .views import edittimenplace
 
 
 
@@ -35,7 +40,6 @@ class Test_is_user_auth(TestCase):
         self.client.login(username="test", password="test")
         response = self.client.get('/account/',follow=True)
         self.assertEquals(response.status_code, 200)
-
 
 class TestRegister(TestCase):
     def test_register_page(self):
@@ -130,8 +134,7 @@ class TestViews(TestCase):
         self.client.login(username="test-profile", password="test-profile")
         assert self.user1.is_authenticated
         response = self.client.get(url_path)
-        self.assertEqual(response.status_code, 200)
-        
+        self.assertEqual(response.status_code, 200)  
     
     def test_pref_page(self):
         self.client.login(username="test-profile", password="test-profile")
@@ -199,6 +202,13 @@ class TestViews(TestCase):
             data = {'time_form': time_form},
         )
         self.assertEqual(response.status_code, 302)
+
+        req = HttpRequest()
+        req.method = "POST"
+        req.POST = {'time_form': time_form}
+        req.user = self.user1
+        response = edittimenplace(req)
+        assert response.status_code == 200
     
     def test_edit_place_post(self):
         location_form = NewLocationForm()
@@ -213,8 +223,15 @@ class TestViews(TestCase):
         )
         self.assertEqual(response.status_code, 302)
 
+        req = HttpRequest()
+        req.method = "POST"
+        req.POST = {'location_form': location_form}
+        req.user = self.user1
+        response = edittimenplace(req)
+        assert response.status_code == 200
+
+
     def test_edit_timenplace_post(self):
-        
         location_form = NewLocationForm()
         location_form.cleaned_data = {}
         location_form.cleaned_data["cusine"] = "Mexican"
@@ -225,13 +242,22 @@ class TestViews(TestCase):
         time_form.cleaned_data["proposal_datetime_local"] = timezone.now()
 
         url_path = '/account/edit_timenplace/'
+
+        
         response = self.client.post(
             url_path,
             data = {'time_form': time_form,
                    'location_form': location_form},
         )
         self.assertEqual(response.status_code, 302)
-    
+
+        req = HttpRequest()
+        req.method = "POST"
+        req.POST = {'time_form': time_form,
+                   'location_form': location_form}
+        req.user = self.user1
+        response = edittimenplace(req)
+        assert response.status_code == 200   
 
 class TestProfile(TestCase):
     def setUp(self):
@@ -509,5 +535,3 @@ class TestForms(TestCase):
         form.cleaned_data = {}
         form.cleaned_data["proposal_datetime_local"] = timezone.now()
         self.assertNotEqual(timezone.now(), form.cleaned_data["proposal_datetime_local"])
-
-        
