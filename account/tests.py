@@ -195,7 +195,7 @@ class TestViews(TestCase):
     def test_edit_time_post(self):
         time_form = TimeEditForm()
         time_form.cleaned_data = {}
-        time_form.cleaned_data["proposal_datetime_local"] = timezone.now()
+        time_form.cleaned_data["proposal_datetime_local"] = ['2022-12-17T20:23']
 
         url_path = '/account/edit_time/'
         response = self.client.post(
@@ -214,8 +214,9 @@ class TestViews(TestCase):
     def test_edit_place_post(self):
         location_form = NewLocationForm()
         location_form.cleaned_data = {}
-        location_form.cleaned_data["cusine"] = "Mexican"
-        location_form.cleaned_data["boro"] = "Manhattan"
+        location_form.cleaned_data["cusine"] = ['2']
+        location_form.cleaned_data["boro"] = ['2']
+        location_form.cleaned_data["location_dropdown"] = ['957']
 
         url_path = '/account/edit_place/'
         response = self.client.post(
@@ -236,16 +237,15 @@ class TestViews(TestCase):
     def test_edit_timenplace_post(self):
         location_form = NewLocationForm()
         location_form.cleaned_data = {}
-        location_form.cleaned_data["cusine"] = "Mexican"
-        location_form.cleaned_data["boro"] = "Manhattan"
+        location_form.cleaned_data["cusine"] = ['2']
+        location_form.cleaned_data["boro"] = ['2']
+        location_form.cleaned_data["location_dropdown"] = ['957']
 
         time_form = TimeEditForm()
         time_form.cleaned_data = {}
-        time_form.cleaned_data["proposal_datetime_local"] = timezone.now()
+        time_form.cleaned_data["proposal_datetime_local"] = ['2022-12-17T20:23']
 
         url_path = '/account/edit_timenplace/'
-
-        
         response = self.client.post(
             url_path,
             data = {'time_form': time_form,
