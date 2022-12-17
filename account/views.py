@@ -216,7 +216,7 @@ def editplace(request):
     if request.method == 'POST':
         location_form = NewLocationForm(instance=request.user.profile,
                                         data=request.POST)
-        prev_place = request.user.profile.location_dropdown
+        # prev_place = request.user.profile.location_dropdown
         if location_form.is_valid():
             location_form.save()
             user_id = request.user.id
@@ -224,11 +224,10 @@ def editplace(request):
     else:
         location_form = NewLocationForm(instance=request.user.profile,
                                         data=request.POST)
-        prev_place = request.user.profile.location_dropdown
+        # prev_place = request.user.profile.location_dropdown
     return render(request,
                   'account/edit_place.html',
-                  {'location_form': location_form,
-                   "prev_place": prev_place})
+                  {'location_form': location_form})
 
 
 @login_required
@@ -241,11 +240,9 @@ def edittime(request):
         # Check if time is not valid
         if time_form.is_valid():
             if not time_form.check_time_is_valid():
-                prev_time = None
                 return render(request,
                   'account/edit_time.html',
-                  {'time_form': time_form,
-                   "prev_place": prev_time})
+                  {'time_form': time_form})
             if time_form.check_time_is_valid():
                 prev_time = request.user.profile.proposal_datetime_local
                 time_form.save()
@@ -254,11 +251,10 @@ def edittime(request):
         time_form = TimeEditForm(instance=request.user.profile,
                                  data=request.POST,
                                  files=request.FILES)
-        prev_time = request.user.profile.proposal_datetime_local
+        # prev_time = request.user.profile.proposal_datetime_local
     return render(request,
                   'account/edit_time.html',
-                  {'time_form': time_form,
-                   "prev_place": prev_time})
+                  {'time_form': time_form})
 
 
 @login_required

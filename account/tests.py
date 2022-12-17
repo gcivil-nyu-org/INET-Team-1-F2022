@@ -354,8 +354,6 @@ class TestViews(TestCase):
         assert response.status_code == 200
 
         req.POST = {'proposal_datetime_local': ['2022-12-17T20:23'], 'csrfmiddlewaretoken': ['oeUyACL20WNyvOBNqCPZ5wdRjQmF4LmXVVuupA7XuA5mEhA3BWqvcAohYWmEJZg5']}
-        # req.send(json.stringify(parameters))
-        req.user = self.user1
         response = edittime(req)
         assert response.status_code == 200
     
