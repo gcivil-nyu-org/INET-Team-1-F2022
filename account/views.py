@@ -1,4 +1,4 @@
-import datetime
+import datetime, random, time
 from django.http import HttpResponse, Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import authenticate, login, get_user_model
@@ -21,7 +21,6 @@ from django.core.paginator import Paginator  # for pagination of list views
 from django.utils import timezone
 
 from datetime import date, timedelta
-
 
 def register(request):
     if request.user.is_authenticated:
@@ -339,6 +338,16 @@ def profile(request, pk):
             current_user_profile.matches.add(profile.id)
             profile.likes.clear()
             profile.liked_by.clear()
+
+            # Create a new Chatroom
+            chatroom_id = hash(str(random.random()) + str(time.time()))
+            Chatroom.objects.create(
+                name=chatroom_id,
+                slug=chatroom_id,
+                attendees_one=current_user_profile.user.email,
+                attendees_two=profile.user.email,
+                status='published')
+
             return redirect('dashboard')
         elif action_for_match_decline == "decline":
             # Add profile id to declined list
@@ -497,6 +506,13 @@ def password_change(request):
 @login_required
 def chatroom_detail(request, chatroom):
     chatroom=get_object_or_404(Chatroom,slug=chatroom,status='published')
+
+    # Check if the request is the attendee of the chatroom
+    # If not, redirect to the dashboard
+    user = User.objects.get(pk=request.user.id)
+    if  user.email not in [chatroom.attendees_one, chatroom.attendees_two]:
+        return redirect("dashboard")
+
     # List of active comments for this chatroom
     comments = chatroom.comments.filter(active=True)
     new_comment = None
@@ -516,6 +532,7 @@ def chatroom_detail(request, chatroom):
         comment_form = CommentForm()
     return render(request, 'comment/chatroom_detail.html',{'chatroom':chatroom,'comments': comments,'comment_form':comment_form})
 
+@login_required
 # handling reply, reply view
 def reply_page(request):
     if request.method == "POST":

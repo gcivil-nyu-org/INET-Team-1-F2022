@@ -34,7 +34,7 @@ class MatchFeedbackAdmin(admin.ModelAdmin):
 
 @admin.register(Chatroom)
 class ChatroomAdmin(admin.ModelAdmin):
-    list_display=['name', 'body']
+    list_display=['name']
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):

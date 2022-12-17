@@ -1,20 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-   <h3>Add Comment</h3>
-    <form method="post" action="">
-        {% csrf_token %}
-        {{ comment_form.as_p }}
-        <button type="submit" class="btn btn-primary">Comment</button>
-    </form>
-
-
-    {% with comments.count as total_comments %}
-        <h3 class="mt-5">
-            {{ total_comments }} comment{{ total_comments|pluralize }}
-        </h3>
-    {% endwith %}
-
     {% if not chatroom.comments.all %}
         No comments yet
 
@@ -23,5 +9,12 @@
             {% include 'comment/comment.html' with comment=comment %}
         {% endfor %}
     {% endif %}
+
+    <h3>Add Comment</h3>
+    <form method="post" action="">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 
 {% endblock content %}

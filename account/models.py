@@ -141,20 +141,24 @@ class Chatroom(models.Model):
     ('draft', 'Draft'),
     ('published', 'Published'),
     )
+
+    # Chatroom info
     name = models.CharField(max_length=250)
-    body = models.TextField()
     slug = models.SlugField(max_length=250, unique_for_date='publish', default="publicChat")
     publish = models.DateTimeField(default=timezone.now)
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(default=timezone.now)
+    status = models.CharField(max_length=10,choices=STATUS_CHOICES, default='draft')
 
-    status = models.CharField(max_length=10,choices=STATUS_CHOICES,default='draft')
+    # Related users info
+    attendees_one = models.CharField(max_length=250, default="nobody")
+    attendees_two = models.CharField(max_length=250, default="nobody")
 
     class Meta:
         ordering = ('-publish',)
 
     def __str__(self):
-        return self.body
+        return self.name
 
     def get_absolute_url(self):
         return reverse('chatroom_detail',args=[self.slug])
