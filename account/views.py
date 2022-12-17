@@ -290,7 +290,7 @@ def profile_liked_me(request, pk):
             msg = "Your proposal time has expired (is in the past). Because of this, all the likes you received have been cleared. Please update your proposal time ASAP."
             messages.success(request, msg)
     liked_me = user_profile.liked_by.all() # Pagination
-    p = Paginator(liked_me, 2)
+    p = Paginator(liked_me, 5)
     page = request.GET.get('page')
     liked_me_list = p.get_page(page)
     return render(request,
@@ -405,7 +405,7 @@ def filter_profile_list(request):
                 profilesWithValidTime.append(profile)
 
     # Pagination
-    p = Paginator(profilesWithValidTime, 2)
+    p = Paginator(profilesWithValidTime, 5)
     page = request.GET.get('page')
     profile_list = p.get_page(page)
     return render(request,
