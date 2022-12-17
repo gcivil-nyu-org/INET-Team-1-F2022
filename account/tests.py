@@ -290,6 +290,7 @@ class TestViews(TestCase):
 
     def test_profile_list(self):
         response = self.client.get("/account/profile_list/")
+        self.assertTemplateUsed('profile/profile_list.html')
         self.assertEqual(response.status_code,302)
 
     def test_filter_pref(self):   
@@ -393,7 +394,7 @@ class TestViews(TestCase):
         response = self.client.get("/account/edit_timenplace/")
         self.assertEqual(response.status_code,302)
         #assert response.status_code == 200
-
+        self.assertTemplateNotUsed( 'account/edit_place.html')
 
     def test_edit_timenplace_post(self):
         location_form = NewLocationForm()
