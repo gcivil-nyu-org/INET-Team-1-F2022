@@ -1,3 +1,4 @@
+import json
 from django.test import TestCase
 from django.contrib.auth.models import User
 from .forms import UserRegistrationForm, ProfileEditForm, NewLocationForm, UserEditForm, PreferenceEditForm, TimeEditForm
@@ -225,7 +226,8 @@ class TestViews(TestCase):
 
         req = HttpRequest()
         req.method = "POST"
-        req.POST = {'location_form': location_form}
+        req.POST = {'proposal_datetime_local': ['2022-12-17T20:23'], 'cusine': ['2'], 'boro': ['2'], 'location_dropdown': ['957'], 'csrfmiddlewaretoken': ['oeUyACL20WNyvOBNqCPZ5wdRjQmF4LmXVVuupA7XuA5mEhA3BWqvcAohYWmEJZg5']}
+        # req.send(json.stringify(parameters))
         req.user = self.user1
         response = edittimenplace(req)
         assert response.status_code == 200
