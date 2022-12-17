@@ -636,6 +636,9 @@ class TestFeedback(TestCase):
         req.user = self.user2
         req.POST = {'old_password': ['abcd@123'], 'new_password1': ['1'], 'new_password2': ['1'], 'csrfmiddlewaretoken': ['qLkcRcO6JCm2ba17kfXvhcXOxJrjIh8dVBkDNbqI6qRMPO1GsijovP9OyfRWhWjX']}
         response = password_change(req)
+        self.assertEqual(response.content, "This password is too short. It must contain at least 8 characters. \
+                                            This password is too common. \
+                                            This password is entirely numeric.")
         assert response.status_code == 200
     
 
