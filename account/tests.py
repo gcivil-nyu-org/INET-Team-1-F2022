@@ -307,6 +307,7 @@ class TestViews(TestCase):
     def test_edit_time_get(self):   
         response = self.client.get("/account/edit_time/")
         self.assertEqual(response.status_code,302)
+       
 
         req = HttpRequest()
         req.method = "GET"
@@ -316,12 +317,13 @@ class TestViews(TestCase):
     
     def test_edit_place_get(self):   
         response = self.client.get("/account/edit_place/")
-        self.assertEqual(response.status_code,302)
+        self.assertEqual(response.status_code,302)        
 
         req = HttpRequest()
         req.method = "GET"
         req.user = self.user1
         response = editplace(req)
+        
         assert response.status_code == 200
     
     def test_edit_time_place_get(self):   
@@ -333,6 +335,7 @@ class TestViews(TestCase):
         req.user = self.user1
         response = edittimenplace(req)
         assert response.status_code == 200
+        
 
     def test_edit_time_post(self):
         time_form = TimeEditForm()
@@ -377,7 +380,18 @@ class TestViews(TestCase):
         # req.send(json.stringify(parameters))
         req.user = self.user1
         response = editplace(req)
+        
         assert response.status_code == 200
+        
+    def test_editplace_get(self):
+        response = self.client.get("/account/editplace/")
+        self.assertEqual(response.status_code,404)
+        #response = editplace(req)
+        print("EDIT PLACE", response.status_code)
+        response = self.client.get("/account/edit_timenplace/")
+        self.assertEqual(response.status_code,302)
+        #assert response.status_code == 200
+
 
     def test_edit_timenplace_post(self):
         location_form = NewLocationForm()
