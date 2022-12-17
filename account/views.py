@@ -298,7 +298,6 @@ def profile_liked_me(request, pk):
                   {"profile": user_profile,
                    "liked_me": liked_me_list})
 
-
 @login_required
 def profile(request, pk):
     if not get_referer(request) and request.method == "GET":
