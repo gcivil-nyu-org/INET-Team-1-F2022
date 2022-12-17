@@ -458,7 +458,6 @@ def get_referer(request):
         return None
     return referer
 
-
 @login_required
 def delete_account(request):
     # Get user object
@@ -467,7 +466,6 @@ def delete_account(request):
     # redirect to home
     # return render(request=request, template_name="main/home.html")
     return redirect("logout")
-
 
 @login_required
 def password_change(request):
