@@ -548,6 +548,8 @@ class TestProfile(TestCase):
         self.assertEqual(len(profile1.likes.all()), 0)
         self.assertEqual(len(profile2.likes.all()), 0)
         self.assertEqual(len(profile3.likes.all()), 0)
+        self.assertFalse(profile1.liked_by.exists())
+        self.assertFalse(profile1.likes.exists())
 
         #TODO: Test redirection to dashboard
         # self.assertRedirects(response, reverse('filter_profile_list'), 
