@@ -171,8 +171,7 @@ class Chatroom(models.Model):
 # comment model
 class Comment(models.Model):
     chatroom=models.ForeignKey(Chatroom,on_delete=models.CASCADE, related_name="comments")
-    name=models.CharField(max_length=50)
-    email=models.EmailField()
+    name=models.CharField(max_length=50, default="x")
     parent=models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
     body = models.TextField()
 

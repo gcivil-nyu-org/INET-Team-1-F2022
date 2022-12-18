@@ -519,14 +519,14 @@ def chatroom_detail(request, chatroom):
     if request.method == 'POST':
         # A comment was posted
         comment_form = CommentForm(data=request.POST)
+
         if comment_form.is_valid():
             # Create Comment object but don't save to database yet
             new_comment = comment_form.save(commit=False)
-            # Assign the current chatroom to the comment
             new_comment.chatroom = chatroom
-            # Save the comment to the database
+            new_comment.name = request.user.username
             new_comment.save()
-            # redirect to same page and focus on that comment
+
             return redirect(chatroom.get_absolute_url()+'#'+str(new_comment.id))
     else:
         comment_form = CommentForm()

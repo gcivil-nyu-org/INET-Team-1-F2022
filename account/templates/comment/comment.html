@@ -24,7 +24,7 @@
         </div>
     </div>
     {% for comment in comment.get_comments %}
-        {% include 'comment.html' with comment=comment %}
+        {% include 'comment/comment.html' with comment=comment %}
     {% endfor %}
 </div>
 <script>
