@@ -28,5 +28,4 @@ urlpatterns = [
     path('delete_account/', views.delete_account, name='delete_account'),
 
     path('<slug:chatroom>/',views.chatroom_detail, name="chatroom_detail"),
-    path('comment/reply/', views.reply_page, name="reply"),
 ]

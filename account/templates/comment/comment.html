@@ -7,37 +7,8 @@
     </div>
     <div class="border p-2 rounded">
         <div class="message my-message">{{comment.body}}</div>
-
-        <div id="reply-form-container-{{comment.id}}" style="display:none">
-
-            <form method="chatroom" action="{% url 'reply' %}" class="mt-3">
-                {% csrf_token %}
-                <input type="hidden" name="chatroom_id" value="{{chatroom.id}}">
-                <input type="hidden" name="parent" value="{{comment.id}}">
-                <input type="hidden" name="chatroom_url" value="{{chatroom.get_absolute_url}}">
-                {{comment_form.as_p}}
-                <div>
-                    <button type="button" onclick="handleCancel({{comment.id}})" class="btn btn-light border btn-sm">Cancel</button>
-                    <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-                </div>
-            </form>
-        </div>
     </div>
     {% for comment in comment.get_comments %}
         {% include 'comment/comment.html' with comment=comment %}
     {% endfor %}
 </div>
-<script>
-    function handleReply(response_id) {
-    const reply_form_container = document.querySelector(`#reply-form-container-${response_id}`)
-    if (reply_form_container) {
-        reply_form_container.style.display = 'block';
-    }
-    }
-    function handleCancel(response_id) {
-        const reply_form_container = document.querySelector(`#reply-form-container-${response_id}`)
-        if (reply_form_container) {
-            reply_form_container.style.display = 'none';
-        }
-    }
-</script>

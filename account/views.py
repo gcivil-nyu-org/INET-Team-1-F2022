@@ -541,25 +541,3 @@ def chatroom_detail(request, chatroom):
         'comments': comments,
         'comment_form':comment_form,
     })
-
-@login_required
-# handling reply, reply view
-def reply_page(request):
-    if request.method == "POST":
-
-        form = CommentForm(request.POST)
-
-        if form.is_valid():
-            chatroom_id = request.POST.get('chatroom_id')  # from hidden input
-            parent_id = request.POST.get('parent')  # from hidden input
-            chatroom_url = request.POST.get('chatroom_url')  # from hidden input
-
-            reply = form.save(commit=False)
-
-            reply.chatroom = Chatroom(id=chatroom_id)
-            reply.parent = Comment(id=parent_id)
-            reply.save()
-
-            return redirect(post_url+'#'+str(reply.id))
-
-    return redirect("/")
