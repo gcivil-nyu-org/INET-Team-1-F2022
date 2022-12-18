@@ -339,7 +339,7 @@ def profile(request, pk):
             profile.likes.clear()
             profile.liked_by.clear()
 
-            # Create a new Chatroom
+            # Create a new chatroom
             chatroom_id = hash(str(random.random()) + str(time.time()))
             Chatroom.objects.create(
                 name=chatroom_id,
@@ -347,6 +347,10 @@ def profile(request, pk):
                 attendees_one=current_user_profile.user.email,
                 attendees_two=profile.user.email,
                 status='published')
+
+            # Assign the chatroom url to both matched profile
+            current_user_profile.chatroom_slug = chatroom_id
+            profile.chatroom_slug = chatroom_id
 
             return redirect('dashboard')
         elif action_for_match_decline == "decline":

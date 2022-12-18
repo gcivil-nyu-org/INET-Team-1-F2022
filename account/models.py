@@ -84,6 +84,10 @@ class Profile(models.Model):
     # marital_choices = (('Single', 'Single'), ('Widowed', 'Widowed'), ('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorced', 'Divorced'))
     # marital_status = models.CharField(max_length = 10, choices = marital_choices, blank = True)
     # users_like = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='users_liked', blank=True)
+
+    # Only one chatroom url for each person at a time should be enough
+    chatroom_slug = models.CharField(max_length=150, blank=True, default="")
+
     likes = models.ManyToManyField(
         "self",
         related_name="liked_by",

@@ -10,35 +10,38 @@
        </article>
      {% endfor %}
 
-       
+
 
   </div>
   <script src="/static/account/dashboard.js"></script>
-     <p>Welcome to your dashboard. 
-      You can  
+     <p>Welcome to your dashboard.
+      You can
       <ul>
         <li>
-          <a href="{% url 'profile' pk=user.id %}">Preview your profile</a>, or 
+          <a href="{% url 'profile' pk=user.id %}">Preview your profile</a>, or
         </li>
         <li>
           <a href="{% url 'preferences' pk=user.id %}">Preview your preferences</a>,  or
         </li>
-        <li> 
+        <li>
           <a href="{% url "edit" %}">Edit your profile</a>, or
         </li>
-        <li> 
+        <li>
           <a href="{% url "edit_preferences" %}">Edit your preferences</a>, or
-        </li> 
-        <li> 
+        </li>
+        <li>
           <a href="{% url "edit_timenplace" %}">Edit your Time and Place</a>, or
-        </li> 
+        </li>
         <li>
           <a href="{% url "password_change" %}">Change your password</a>.</p>
+        </li>
+        <li>
+          <a href="{{ user.profile.chatroom_slug }}">Go to your chatroom</a>
         </li>
       </ul>
 
       <hr>
-      
+
 
      {%if user_profile.matches.all.exists %}
      {%for user in user_profile.matches.all %}
@@ -56,12 +59,12 @@
       {% else %}
       {% comment %} <h1> Feedback not available </h1> {% endcomment %}
       <article class="message is-info">
-        Once the designated proposal time passes, you will have 6 hours to submit a feedback form before your match expires. 
+        Once the designated proposal time passes, you will have 6 hours to submit a feedback form before your match expires.
       </article>
       {%endif%}
       {% comment %} feedback form button {% endcomment %}
-  
-    
+
+
       {% endfor %}
      {% else %}
      {%if user_profile.matched_with.all.exists%}
@@ -73,20 +76,20 @@
           Proposal time : {{user.proposal_datetime_local}}
           Proposal location : {{user.location_dropdown}}
       </h3>
-     
-      
+
+
       {% endfor %}
       {%endif%}
       {% endif %}
 
       {%if feedback_available %}
-      
+
         <div class="block">
           <article class="message is-info">
-            Your match will expire 6 hours after the designated proposal time. 
+            Your match will expire 6 hours after the designated proposal time.
             We strongly encourage you to let us know about how the date went.
             Please click on the button below to access the match feedback form.
-    
+
           </article>
           <a href="{% url "submitFeedback" %}">
           <div class="buttons has-addons is-centered">
@@ -100,7 +103,7 @@
         <a href="{% url 'delete_account' %}" class="button is-danger"
         onclick="return confirm('WARNING: This will permanently delete your account and you will not be able to get it back. Do you wish to proceed?')">Delete My Account</a>
       </div>
-      
+
 {% endblock %}
 
 
