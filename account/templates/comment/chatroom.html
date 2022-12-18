@@ -23,9 +23,9 @@
                 </div>
                 <div class="chat-message clearfix">
                     <div class="input-group mb-0">
-                        <form method="post" action="">
+                        <form method="post" action="" id="commentForm">
                             {% csrf_token %}
-                            <div class="col-xs-12 mg-btm-10">
+                            <div class="col-xs-12 mg-btm-10" onkeypress="pressEnter(event)">
                                 {{ comment_form.as_table }}
                             </div>
                             <button type="submit" class="button is-success"><i class="fa fa-send"> Send</i></button>
@@ -37,6 +37,14 @@
     </div>
 </div>
 </div>
+
+<script>
+    function pressEnter(e, textarea) {
+        if (e.code == "Enter") {
+            document.getElementById("commentForm").submit()
+        }
+    }
+</script>
 
 <style>
 body{
