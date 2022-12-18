@@ -51,7 +51,6 @@ def register(request):
                   'account/register.html',
                   {'user_form': user_form})
 
-
 def user_login(request):
     if request.user.is_authenticated:
         return redirect('/account')
@@ -62,9 +61,7 @@ def user_login(request):
             # Authenticate user against database
             cd = form.cleaned_data
             # Returns the User object if authentication successful
-            user = authenticate(request,
-                                username=cd['username'],
-                                password=cd['password'])
+            user = authenticate(request, username=cd['username'], password=cd['password'])
             if user is not None:
                 if user.is_active:
                     login(request, user)  # set the user in session
