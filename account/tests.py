@@ -413,7 +413,18 @@ class TestViews(TestCase):
         # req.send(json.stringify(parameters))
         req.user = self.user1
         response = edittimenplace(req)
-        assert response.status_code == 200   
+        assert response.status_code == 200 
+
+
+    def test_password_change(self):
+        #repeat password
+        req = HttpRequest()
+        req.method = 'POST'
+        req.user = self.user1
+        req.POST = {'old_password': ['abcd@123'], 'new_password1': ['abcd@1234'], 'new_password2': ['abcd@1234']}
+        response = password_change(req)
+        assert response.status_code == 200
+
 
 class TestProfile(TestCase):
     def setUp(self):
