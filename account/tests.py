@@ -421,7 +421,7 @@ class TestViews(TestCase):
         req = HttpRequest()
         req.method = 'POST'
         req.user = self.user1
-        req.POST = {'old_password': ['abcd@123'], 'new_password1': ['abcd@1234'], 'new_password2': ['abcd@1234'], 'csrfmiddlewaretoken': ['oeUyACL20WNyvOBNqCPZ5wdRjQmF4LmXVVuupA7XuA5mEhA3BWqvcAohYWmEJZg5']}
+        req.POST = {'old_password': ['test-profile'], 'new_password1': ['test-profile'], 'new_password2': ['test-profile'], 'csrfmiddlewaretoken': ['oeUyACL20WNyvOBNqCPZ5wdRjQmF4LmXVVuupA7XuA5mEhA3BWqvcAohYWmEJZg5']}
         response = password_change(req)
         assert response.status_code == 200
 
