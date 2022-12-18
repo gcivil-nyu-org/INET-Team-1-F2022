@@ -24,7 +24,7 @@ class UserRegistrationForm(forms.ModelForm):
     password2 = forms.CharField(label='Repeat password',
                                 widget=forms.PasswordInput)
 
-    years_list = [i for i in range(1900, 2022)]
+    years_list = [i for i in range(1922, 2023)]
 
     date_of_birth = forms.DateField(
         widget=forms.SelectDateWidget(
@@ -102,7 +102,7 @@ class TimeEditForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('proposal_datetime_local',)
-    
+
     def check_time_is_valid(self):
         time_proposal = self.cleaned_data.get('proposal_datetime_local')
         time_now = timezone.now()
@@ -124,7 +124,7 @@ class NewLocationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['location_dropdown'].queryset = newLocation.objects.none()
-        
+
         if 'cusine' and 'boro' in self.data:
             try:
                 cusine_id = int(self.data.get('cusine'))
@@ -135,7 +135,7 @@ class NewLocationForm(forms.ModelForm):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset
         # elif self.location:
         #     print("im here!")
-        #     self.fields['location_dropdown'] = self.location 
+        #     self.fields['location_dropdown'] = self.location
             # print(self.instance.user.profile.location_dropdown)
             # self.fields['location_dropdown'] = self.instance.location_dropdown
 
