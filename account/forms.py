@@ -106,8 +106,8 @@ class TimeEditForm(forms.ModelForm):
     def check_time_is_valid(self):
         time_proposal = self.cleaned_data.get('proposal_datetime_local')
         time_now = timezone.now()
-        time_proposal_datetime_obj = parse_datetime(time_proposal)
-        if time_proposal_datetime_obj > time_now:
+        # time_proposal_datetime_obj = parse_datetime(time_proposal)
+        if time_proposal > time_now:
             return True
         else:
             self.add_error('proposal_datetime_local',
