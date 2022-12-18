@@ -540,4 +540,5 @@ def chatroom_detail(request, chatroom):
         'chatroom':chatroom,
         'comments': comments,
         'comment_form':comment_form,
+        'user': user,
     })

@@ -17,9 +17,16 @@
                 <div class="chat-history">
                     <ul class="m-b-0">
                         {% for comment in chatroom.get_comments %}
-                            {% include 'comment/comment.html' with comment=comment %}
+                            {% include 'comment/comment.html' with comment=comment user=user %}
                         {% endfor %}
                     </ul>
+                </div>
+                <div class="chat-header clearfix">
+                    <div class="row">
+                        <div class="col-lg-6">
+                        </div>
+                    </div>
+                    <br>
                 </div>
                 <div class="chat-message clearfix">
                     <div class="input-group mb-0">
@@ -214,7 +221,7 @@ body{
 
 .chat .chat-history .other-message:after {
     border-bottom-color: #e8f1f3;
-    left: 93%
+    left: auto
 }
 
 .chat .chat-message {
