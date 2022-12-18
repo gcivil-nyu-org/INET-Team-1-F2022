@@ -1,12 +1,12 @@
 <div class="border-0 border-start border-2 ps-2" id="{{comment.id}}">
-    <div class="mt-3">
+    <div class="message-data text-right">
+        <img src="{{ comment.profile.photo.url }}">
         <strong>{{comment.name}}</strong>
         {% if  comment.parent.name%} to <strong>{{comment.parent.name}}</strong>{% endif %}
         <small class="text-muted">On {{ comment.created.date }}</small>
     </div>
     <div class="border p-2 rounded">
-        <p>{{comment.body}}</p>
-        <!--<button class="btn btn-primary btn-sm" onclick="handleReply({{comment.id}})">Reply</button>-->
+        <div class="message my-message">{{comment.body}}</div>
 
         <div id="reply-form-container-{{comment.id}}" style="display:none">
 

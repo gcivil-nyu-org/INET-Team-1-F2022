@@ -248,8 +248,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ('body',)
 
-    # overriding default form setting and adding bootstrap class
     def __init__(self, *args, **kwargs):
         super(CommentForm, self).__init__(*args, **kwargs)
-        #self.fields['name'].widget.attrs = {'placeholder': 'Enter name','class':'form-control'}
-        self.fields['body'].widget.attrs = {'placeholder': 'Comment here...', 'class':'form-control', 'rows':'2'}
+        self.fields['body'].label = "" # Hide the body lable
+        self.fields['body'].widget.attrs = {'placeholder': 'Enter text here...', 'class':'form-control', 'rows':'2'}

@@ -506,10 +506,11 @@ def password_change(request):
 @login_required
 def chatroom_detail(request, chatroom):
     chatroom=get_object_or_404(Chatroom,slug=chatroom,status='published')
+    user = User.objects.get(pk=request.user.id)
+    profile = user.profile
 
     # Check if the request is the attendee of the chatroom
     # If not, redirect to the dashboard
-    user = User.objects.get(pk=request.user.id)
     if  user.email not in [chatroom.attendees_one, chatroom.attendees_two]:
         return redirect("dashboard")
 
@@ -524,13 +525,18 @@ def chatroom_detail(request, chatroom):
             # Create Comment object but don't save to database yet
             new_comment = comment_form.save(commit=False)
             new_comment.chatroom = chatroom
-            new_comment.name = request.user.username
+            new_comment.profile = profile
+            new_comment.name = user.username
             new_comment.save()
 
             return redirect(chatroom.get_absolute_url()+'#'+str(new_comment.id))
     else:
         comment_form = CommentForm()
-    return render(request, 'comment/chatroom_detail.html',{'chatroom':chatroom,'comments': comments,'comment_form':comment_form})
+    return render(request, 'comment/chatroom.html',{
+        'chatroom':chatroom,
+        'comments': comments,
+        'comment_form':comment_form,
+    })
 
 @login_required
 # handling reply, reply view
