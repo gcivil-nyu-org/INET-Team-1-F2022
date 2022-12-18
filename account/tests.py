@@ -756,6 +756,8 @@ class TestForms(TestCase):
         self.assertEqual("", form.check_username())
         # This should raise a validation error
         #self.assertTrue('First Name cannot be empty!')
+        form.cleaned_data["first_name"] = "@"
+        self.assertTrue("Symbols @/./-/+ are not allowed in username.", form.check_username())
 
     def test_meta_time(self):
         form = TimeEditForm()
@@ -768,3 +770,20 @@ class TestForms(TestCase):
         form.cleaned_data = {}
         form.cleaned_data["proposal_datetime_local"] = timezone.now()
         self.assertNotEqual(timezone.now(), form.cleaned_data["proposal_datetime_local"])
+    
+    def test_time_edit_is_valid(self):
+        form = TimeEditForm()
+        form.cleaned_data = {}
+        # Check time in past
+        form.cleaned_data["proposal_datetime_local"] = timezone.now()
+        self.assertEqual(False, form.check_time_is_valid())
+        # Check time in future
+        form.cleaned_data["proposal_datetime_local"] = timezone.now() + timedelta(6)
+        self.assertEqual(True, form.check_time_is_valid())
+
+    def test_user_passwords_not_match(self):
+        form = UserRegistrationForm()
+        form.cleaned_data = {}
+        form.cleaned_data["password"] = "My_pass"
+        form.cleaned_data["password2"] = "My_pass_dont_match"
+        self.assertEqual('My_pass_dont_match', form.clean_password2())
