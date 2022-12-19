@@ -28,7 +28,7 @@ deploy:
   secret_access_key: $SECRET_KEY_PROD
   region: "us-west-2"
   app: "timeandplacenyu"
-  env: "timeandplacenyu-prod"
+  env: "timeandplace-prod"
   bucket_name: "elasticbeanstalk-us-west-2-920848894865"
   on:
     branch: main
