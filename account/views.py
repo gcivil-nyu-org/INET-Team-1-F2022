@@ -89,18 +89,20 @@ def dashboard(request):
                 user_profile.feedback_submitted = False
                 other_user_profile.matches.clear()
                 other_user_profile.feedback_submitted = False
+                user_profile.declines.clear()
+                other_user_profile.declines.clear()
                 msg = "Your match with " + other_user_profile.user.first_name + " has expired."
                 messages.success(request, msg)
                 user_profile.save()
                 other_user_profile.save()
             else:
-                print("There is still time left for your match/date!")
+                #print("There is still time left for your match/date!")
                 if (time_now < user_profile.proposal_datetime_local + timedelta(hours=6) and
                     time_now > user_profile.proposal_datetime_local and
                         user_profile.feedback_submitted == False):
                     feedback_available = True
     elif user_profile.matched_with.all():
-        print("I didn't match, but someone matched with me (matched_with)")
+        #print("I didn't match, but someone matched with me (matched_with)")
         other_user_profile = user_profile.matched_with.first()
         if time_now > other_user_profile.proposal_datetime_local + timedelta(hours=6):
             # Clear matches for both user_profile and the other profile
@@ -108,6 +110,8 @@ def dashboard(request):
             other_user_profile.matches.clear()
             user_profile.feedback_submitted = False
             other_user_profile.feedback_submitted = False
+            user_profile.declines.clear()
+            other_user_profile.declines.clear()
             msg = "Your match with " + other_user_profile.user.first_name + " has expired."
             messages.success(request, msg)
         else:
@@ -117,7 +121,7 @@ def dashboard(request):
                     user_profile.feedback_submitted == False):
                 feedback_available = True
     else:
-        print("Not in a match at all")
+        #print("Not in a match at all")
         # Check if the user's time is now expired because proposal time < curr time
         if user_profile.proposal_datetime_local != None:
             if user_profile.proposal_datetime_local < time_now:
@@ -438,11 +442,8 @@ def submitFeedback(request):
             if (int(feedback_form.cleaned_data.get('match_rating')) < 2) or (feedback_form.cleaned_data.get('inappropriate_behavior')) != None:
                 obj.matched_user = request.user.profile.matches.first().user
                 obj.matched_user.profile.warning_count += 1
-                print(obj.matched_user.profile.warning_count)
                 obj.matched_user.profile.save()
 
-            print("Feedback User:", obj.feedback_user)
-            print("Match Comments: ", obj.match_comments)
             obj.save()
 
             request.user.profile.feedback_submitted = True
