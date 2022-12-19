@@ -93,6 +93,11 @@ def dashboard(request):
                 other_user_profile.declines.clear()
                 msg = "Your match with " + other_user_profile.user.first_name + " has expired."
                 messages.success(request, msg)
+
+                # Clean Chatroom
+                chatroom_slug = user_profile.chatroom_slug
+                cleanChatroom(chatroom_slug)
+
                 user_profile.save()
                 other_user_profile.save()
             else:
@@ -112,6 +117,11 @@ def dashboard(request):
             other_user_profile.feedback_submitted = False
             user_profile.declines.clear()
             other_user_profile.declines.clear()
+
+            # Clean Chatroom
+            chatroom_slug = user_profile.chatroom_slug
+            cleanChatroom(chatroom_slug)
+
             msg = "Your match with " + other_user_profile.user.first_name + " has expired."
             messages.success(request, msg)
         else:
@@ -536,3 +546,16 @@ def chatroom_detail(request, chatroom):
         'user': user,
     })
 
+
+# Delete a chatroom and related comments and slug
+def cleanChatroom(chatroom_slug):
+    chatroom = Chatroom.objects.get(slug=chatroom_slug)
+
+    # Delete comments from this chatroom
+    Comment.objects.filter(chatroom=chatroom).delete()
+
+    # Delete chatroom info from two attendees
+    Profile.objects.filter(chatroom_slug=chatroom_slug).update(chatroom_slug="")
+
+    # Delete chatroom
+    chatroom.delete()
