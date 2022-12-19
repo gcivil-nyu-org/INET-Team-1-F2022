@@ -492,7 +492,7 @@ def password_change(request):
         else:
             for error in list(form.errors.values()):
                 messages.error(request, error)
-
+    else:
         form = PasswordChangeForm(user)
         return render(request, 'registration/password_change_form.html', {'form': form})
 

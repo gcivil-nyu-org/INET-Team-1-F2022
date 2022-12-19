@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+{% if current_user_profile.warning_count < 4%}
 
 <section class="section">
   <div class="container">
@@ -12,7 +12,7 @@
         <!--  buttons -->  
         <div class="block">
           <!-- match buttons -->  
-          {% if not current_user_profile.matches.exists and not current_user_profile.matched_with.exists %}
+          {% if not current_user_profile.matches.exists and not current_user_profile.matched_with.exists  %}
           {%  if profile in current_user_profile.liked_by.all and profile not in current_user_profile.declines.all  %}
             <article class="message is-info">
               {% comment %} <div class="message-header">
@@ -91,5 +91,5 @@
   </a>
 </div>
 {%endif%} {% endcomment %}
-
+{% endif %}
 {% endblock content %}

@@ -3,6 +3,7 @@
 {% block title %}Edit your preferences{% endblock %}
 
 {% block content %}
+{%if request.user.profile.warning_count < 4%}
     <h1>Edit your preferences</h1>
     <p>You can edit your preferences using the following form:</p>
     <form method="post" enctype="multipart/form-data">
@@ -16,4 +17,5 @@
     
     <p><input type="submit" value="Save changes"></p>
     </form>
+{% endif %}
 {% endblock %}

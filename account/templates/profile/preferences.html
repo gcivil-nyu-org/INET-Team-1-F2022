@@ -4,7 +4,7 @@
 
 
 {% block content %}
-
+{% if request.user.profile.warning_count < 4%}
 <h2>
     {{ profile.user.first_name }}, {{ profile.calc_age }}
 </h2>
@@ -30,4 +30,5 @@
       </li>
     </ul>
   {% endif %}
+{% endif %}
 {% endblock content %}

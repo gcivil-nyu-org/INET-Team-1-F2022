@@ -5,6 +5,7 @@
 {% block title %}Edit your account{% endblock %}
 
 {% block content %}
+{%if request.user.profile.warning_count < 4%}
     <h1>Edit your account</h1>
     <p>You can edit your account using the following form:</p>
     <form method="post" id = 'editProfile' data-locations-url= "{% url 'ajax_load_locations' %}" enctype="multipart/form-data">
@@ -21,5 +22,6 @@
     {% endif %}
     <p><input type="submit" value="Save changes" />
     </p>
+{% endif %}
 {% endblock %}
 

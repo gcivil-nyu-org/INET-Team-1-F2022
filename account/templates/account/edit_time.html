@@ -5,7 +5,7 @@
 {% block title %}Edit your time{% endblock %}
 
 {% block content %}
-{%if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists%}
+{%if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists  and request.user.profile.warning_count < 4%}
     <h1>Edit your Time</h1>
     <br>
     <form method="post" enctype="multipart/form-data">
