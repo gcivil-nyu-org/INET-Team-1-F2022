@@ -9,21 +9,6 @@ import datetime
 from datetime import date
 #from smart_selects.db_fields import ChainedForeignKey
 
-
-class Location(models.Model):
-    DBA = models.CharField(max_length=255,blank=True,null=True)
-    BORO = models.CharField(max_length=255,blank=True,null=True)
-    BUILDING = models.CharField(max_length=255,blank=True,null=True)
-    STREET = models.CharField(max_length = 255,blank=True,null=True)
-    ZIPCODE = models.CharField(max_length=255,blank=True,null=True)
-    PHONE = models.CharField(max_length=255,blank=True,null=True)
-    CUISINE = models.CharField(max_length=255,blank=True,null=True)
-    LATITUDE = models.CharField(max_length=255,blank=True,null=True)
-    LONGITUDE = models.CharField(max_length=255,blank=True,null=True)
-
-    def __str__(self):
-        return f'{self.DBA} At : {self.BUILDING}, {self.STREET}, {self.BORO} '
-
 class Boro(models.Model):
     boro = models.CharField(max_length=255,blank=True,null=True)
     def __str__(self):
