@@ -22,13 +22,13 @@ after_script:
   - coveralls
 
 before_deploy: "echo 'Deploying Timenplace from Travis...'"
-deploy:
-  provider: elasticbeanstalk
-  access_key_id: $ACCESS_KEY_PROD
-  secret_access_key: $SECRET_KEY_PROD
-  region: "us-east-1"
-  app: "timeandplacenyu"
-  env: "timeandplacenyu-prod"
-  bucket_name: "elasticbeanstalk-us-west-2-749348312345"
-  on:
-    branch: main
+# deploy:
+#   provider: elasticbeanstalk
+#   access_key_id: $ACCESS_KEY_PROD
+#   secret_access_key: $SECRET_KEY_PROD
+#   region: "us-west-2"
+#   app: "timeandplacenyu"
+#   env: "timeandplacenyu-prod"
+#   bucket_name: "elasticbeanstalk-us-west-2-920848894865"
+#   on:
+#     branch: main
