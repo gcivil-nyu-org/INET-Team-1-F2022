@@ -67,6 +67,12 @@ def user_login(request):
                     return redirect('/account')
                 else:
                     return HttpResponse('Disabled account')
+            else:
+                # Incorrect login
+                msg = "Incorrect Login. Please double-check your login details and try again!"
+                messages.success(request, msg)
+                return render(request, 'account/login.html', {'form': form})
+
     else:  # when user_login view is called with a GET request
         form = LoginForm()  # instantiate a new login form
     return render(request, 'account/login.html', {'form': form})
