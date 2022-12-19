@@ -156,7 +156,7 @@ def edit(request):
             user_form.save()
             profile_form.save()
 
-            return redirect('profile', pk=user_id)
+            return redirect('dashboard')
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(
@@ -361,7 +361,9 @@ def edit_preferences(request):
                               {'preference_form': preference_form})
             if preference_form.check_age():
                 preference_form.save()
-                return redirect('profile', pk=user_id)
+                if request.user.profile.matches.exists() or request.user.profile.matched_with.exists():
+                    return redirect('dashboard')
+                return redirect('filter_profile_list')
     else:
         preference_form = PreferenceEditForm(
             instance=request.user.profile)
