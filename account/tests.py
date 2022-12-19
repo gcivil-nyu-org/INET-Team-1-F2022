@@ -387,7 +387,7 @@ class TestViews(TestCase):
         
     def test_editplace_get(self):
         response = self.client.get("/account/editplace/")
-        self.assertEqual(response.status_code,404)
+        self.assertEqual(response.status_code,302)
         #response = editplace(req)
         print("EDIT PLACE", response.status_code)
         response = self.client.get("/account/edit_timenplace/")
