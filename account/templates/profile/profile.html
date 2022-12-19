@@ -12,8 +12,8 @@
         <!--  buttons -->  
         <div class="block">
           <!-- match buttons -->  
-          {%if not current_user_profile.matches.exists %}
-          {%if profile in current_user_profile.liked_by.all and profile not in current_user_profile.declines.all  %}
+          {% if not current_user_profile.matches.exists and not current_user_profile.matched_with.exists %}
+          {%  if profile in current_user_profile.liked_by.all and profile not in current_user_profile.declines.all  %}
             <article class="message is-info">
               {% comment %} <div class="message-header">
                 <button class="delete is-small" aria-label="delete"></button>
@@ -45,7 +45,7 @@
           <br>
           <br>
           <!-- not show like hide for yourself -->
-          {%if profile != current_user_profile and profile not in current_user_profile.likes.all and profile not in current_user_profile.hides.all%}
+          {% if profile != current_user_profile and profile not in current_user_profile.likes.all and profile not in current_user_profile.hides.all and profile not in current_user_profile.matched_with.all and profile not in current_user_profile.matches.all %}
           <form method="post">
             {% csrf_token %}
             <div class="buttons">
