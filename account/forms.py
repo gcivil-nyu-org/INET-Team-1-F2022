@@ -7,6 +7,7 @@ import datetime
 from django.utils.safestring import mark_safe
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
+from .models import Comment
 # Form will be used to authenticate users against the database.
 
 
@@ -241,3 +242,13 @@ class MatchFeedbackForm(forms.ModelForm):
                   'match_rating',
                   'inappropriate_behavior',
                   'match_comments',)
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('body',)
+
+    def __init__(self, *args, **kwargs):
+        super(CommentForm, self).__init__(*args, **kwargs)
+        self.fields['body'].label = "" # Hide the body lable
+        self.fields['body'].widget.attrs = {'placeholder': 'Enter text here...', 'class':'form-control', 'rows':'2'}
