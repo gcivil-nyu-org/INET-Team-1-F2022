@@ -1,6 +1,19 @@
 {% extends "base.html" %}
    {% block title %}Log-in{% endblock %}
    {% block content %}
+
+   {% for msg in messages  %}
+   <article class="message is-success">
+     {% comment %} <div class="message-header">
+       <button class="delete is-small" aria-label="delete"></button>
+     </div> {% endcomment %}
+     <div class="message-body">
+       {{msg}}
+     </div>
+     </article>
+   {% endfor %}
+
+
      <h1>Log-in</h1>
      <p>Please, use the following form to log-in:</p>
      <form method="post">
