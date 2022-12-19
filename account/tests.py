@@ -387,7 +387,7 @@ class TestViews(TestCase):
         
     def test_editplace_get(self):
         response = self.client.get("/account/editplace/")
-        self.assertEqual(response.status_code,404)
+        self.assertEqual(response.status_code,302)
         #response = editplace(req)
         print("EDIT PLACE", response.status_code)
         response = self.client.get("/account/edit_timenplace/")
@@ -429,7 +429,18 @@ class TestViews(TestCase):
         # req.send(json.stringify(parameters))
         req.user = self.user1
         response = edittimenplace(req)
-        assert response.status_code == 200   
+        assert response.status_code == 200 
+
+
+    def test_password_change(self):
+        #repeat password
+        req = HttpRequest()
+        req.method = 'POST'
+        req.user = self.user1
+        req.POST = {'old_password': ['test-profile'], 'new_password1': ['test-profile'], 'new_password2': ['test-profile'], 'csrfmiddlewaretoken': ['oeUyACL20WNyvOBNqCPZ5wdRjQmF4LmXVVuupA7XuA5mEhA3BWqvcAohYWmEJZg5']}
+        response = password_change(req)
+        assert response.status_code == 200
+
 
 class TestProfile(TestCase):
     def setUp(self):

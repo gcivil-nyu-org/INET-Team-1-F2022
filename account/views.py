@@ -481,13 +481,10 @@ def password_change(request):
     user = request.user
     if request.method == 'POST':
         form = PasswordChangeForm(user, request.POST)
-
-        # added error if old and new passwords are the same
         if request.POST.get("old_password", '0') == request.POST.get("new_password1", '0'):
             form.errors['same_pass'] = "Passwords can't be the same as the old one"
             return HttpResponse("Passwords can't be the same as the old one")
 
-        # print(list(form.errors.values()))
         if form.is_valid() and len(form.errors.values()) == 0:
             form.save()
             messages.success(request, "Your password has been changed")
@@ -534,3 +531,4 @@ def chatroom_detail(request, chatroom):
         'comment_form':comment_form,
         'user': user,
     })
+
