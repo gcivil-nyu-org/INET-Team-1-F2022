@@ -1,0 +1,122 @@
+<!-- account/templates/profile/profile.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>
+    {{ profile.user.first_name }}, {{ profile.calc_age }}
+</h2>
+<b>Time:</b> {{ profile.proposal_time }}
+<br>
+<b>Place:</b> {{ profile.location_dropdown }}
+<p><img src="{{ profile.photo.url }}" width="250px"></p>
+<br>
+<b>Occupation:</b> {{ profile.occupation }}
+<br>
+<b>About me:</b> {{ profile.about_me }}
+<br>
+<b>Gender Identity: </b> {{ profile.gender_identity }}
+<br>
+<b>Sexual Orientation: </b> {{ profile.sexual_orientation }}
+<br>
+<br>
+<div class="block">
+{%if not current_user_profile.matches.exists %}
+{%if profile in current_user_profile.liked_by.all %}
+<form method="post">
+    {% csrf_token %}
+    <div class="buttons has-addons">
+      <button class="button is-success" name="match" value="match">Match</button>
+      <button class="button is-danger" name="match" value="decline">Decline</button>
+    </div>
+  </form>
+{% else %}
+<!-- not show like hide for yourself -->
+{%if profile != current_user_profile and profile not in current_user_profile.likes.all%}
+<form method="post">
+  {% csrf_token %}
+  <div class="buttons has-addons">
+    <button class="button is-success" name="like" value="like">Like</button>
+    <button class="button is-danger" name="like" value="hide">Hide</button>
+  </div>
+</form>
+{% endif %}
+{% endif %}
+{% endif %}
+</div>
+<br>
+{%if not current_user_profile.matches.exists %}
+<div class="block">
+  <a href="{% url 'filter_profile_list' %}">
+      <button class="button is-dark is-outlined is-fullwidth">
+          All Profiles
+      </button>
+  </a>
+</div>
+{%endif%}
+{% comment %} <div class="block">
+  <h3 class="title is-4">
+      {{profile.user.username}} likes:
+  </h3>
+  <div class="content">
+      <ul>
+      {% for user_liked in profile.likes.all %}
+          <li>
+              <a href="#">
+                  {{ user_liked }}
+              </a>
+          </li>
+      {% endfor %}
+      </ul>
+  </div>
+</div> {% endcomment %}
+
+{% comment %} <div class="block">
+  <h3 class="title is-4">
+      {{profile.user.username}} hides:
+  </h3>
+  <div class="content">
+      <ul>
+      {% for user_hides in profile.hides.all %}
+          <li>
+              <a href="#">
+                  {{ user_hides }}
+              </a>
+          </li>
+      {% endfor %}
+      </ul>
+  </div>
+</div> {% endcomment %}
+
+{% comment %} <div class="block">
+  <h3 class="title is-4">
+      {{profile.user.username}} accepted match request from:
+  </h3>
+  <div class="content">
+      <ul>
+      {% for user_matches in profile.matches.all %}
+          <li>
+              <a href="#">
+                  {{ user_matches }}
+              </a>
+          </li>
+      {% endfor %}
+      </ul>
+  </div>
+</div> {% endcomment %}
+
+
+{%if not current_user_profile.matches.exists and not current_user_profile.matched_with.exists%}
+<p>You can
+
+    <ul>
+      <li>
+        <a href="{% url "edit" %}">Edit your profile</a>, or
+      </li>
+{%endif%}
+      <li>
+        <a href="{% url "preferences" pk=profile.user_id %}">Preview your preferences</a>
+      </li>
+    </ul>
+
+{% endblock content %}

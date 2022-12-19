@@ -7,25 +7,18 @@ install:
   - pip install -r requirements.txt
 
 before_script:
-  - python ./timeandplace/manage.py migrate
+  - python manage.py makemigrations
+  - python manage.py migrate
+  # - python ./timeandplace/manage.py collectstatic
 
 script:
   - black ./
-  - flake8 ./
-  - coverage run timeandplace/manage.py test
+  # - flake8 ./
+  - coverage run manage.py test account.tests
+
+
 
 after_script:
   - coveralls
 
 before_deploy: "echo 'Deploying Timenplace from Travis...'"
-deploy:
-  provider: elasticbeanstalk
-  access_key_id: $AWS_ACCESS_KEY_ID
-  secret_access_key: $AWS_SECRET
-  region: "us-west-2"
-  app: "timeandplace"
-  env: "timeandplace-dev"
-  bucket_name: "elasticbeanstalk-us-west-2-522724211121"
-  on:
-      branch: main
-#only_create_app_version: "true"

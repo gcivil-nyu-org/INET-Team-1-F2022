@@ -1,0 +1,45 @@
+
+<!-- account/profile_list.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="column">
+  <h1> Here are all the people who liked you </h1>
+{% for liker in profile.liked_by.all %}
+{%if liker not in profile.declines.all %}
+{%if not profile.matches.exists %}
+    <div class="block">
+      <div class="card">
+        <a href="{% url 'profile' pk=liker.user.id %}">
+          <div class="card-content">
+            <div class="media">
+ 
+              <div class="media-content">
+                <h3 class="title is-4">
+                  {{ liker.user.first_name  }} , {{ liker.calc_age  }}
+                </h3>
+                <div class="media-left">
+                    <figure class="image is-48x48">
+                      <img src="{{ liker.photo.url }}" width="100px">
+                         <!--  alt="Placeholder image"> -->
+                    </figure>
+                  </div>
+                <p class="subtitle is-6">
+
+                  {{ liker.proposal_time }} @{{ liker.location_dropdown }}
+                </p>
+                <br>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+</div>
+
+{% endblock content %}

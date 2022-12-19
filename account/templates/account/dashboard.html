@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+   {% block title %}Dashboard{% endblock %}
+   {% block content %}
+     <h1>Dashboard</h1>
+
+     <p>Welcome to your dashboard. 
+      You can  
+      <ul>
+        <li>
+          <a href="{% url 'profile' pk=user.id %}">Preview your profile</a>, or 
+        </li>
+        <li>
+          <a href="{% url 'preferences' pk=user.id %}">Preview your preferences</a>,  or
+        </li>
+        <!-- <li> 
+          <a href="{% url "edit" %}">Edit your profile</a>, or
+        </li>
+        <li> 
+          <a href="{% url "edit_preferences" %}">Edit your preferences</a>, or
+        </li> -->
+        <li>
+          <a href="{% url "password_change" %}">Change your password</a>.</p>
+        </li>
+      </ul>
+
+      
+     {%if user_profile.matches.all.exists %}
+     {%for user in user_profile.matches.all %}
+     <h1> Hey you are matched with  </h1>
+     <h2>{{user.user.first_name}}</h2>
+     <p><img src="{{ user.photo.url }}" width="250px"></p>
+     <div class="block">
+      <h3 class="title is-4">
+          Proposal time : {{user_profile.proposal_time}}
+          Proposal location : {{user_profile.location_dropdown}}
+      </h3>
+      <div class="content">
+      {% endfor %}
+     {% else %}
+     {%if user_profile.matched_with.all.exists%}
+     {%for user in user_profile.matched_with.all %}
+     <h1> Hey {{user}} agreed to match with you </h1>
+     <p><img src="{{ user.photo.url }}" width="250px"></p>
+     <div class="block">
+      <h3 class="title is-4">
+          Proposal time : {{user.proposal_time}}
+          Proposal location : {{user.location_dropdown}}
+      </h3>
+      <div class="content">
+      {% endfor %}
+      {%endif%}
+      {% endif %}
+       
+{% endblock %}
+
+
