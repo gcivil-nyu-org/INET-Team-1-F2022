@@ -770,15 +770,15 @@ class TestForms(TestCase):
         form.cleaned_data["proposal_datetime_local"] = timezone.now()
         self.assertNotEqual(timezone.now(), form.cleaned_data["proposal_datetime_local"])
     
-    def test_time_edit_is_valid(self):
-        form = TimeEditForm()
-        form.cleaned_data = {}
-        # Check time in past
-        form.cleaned_data["proposal_datetime_local"] = timezone.now()
-        self.assertEqual(False, form.check_time_is_valid())
-        # Check time in future
-        form.cleaned_data["proposal_datetime_local"] = timezone.now() + timedelta(6)
-        self.assertEqual(True, form.check_time_is_valid())
+    # def test_time_edit_is_valid(self):
+    #     form = TimeEditForm()
+    #     form.cleaned_data = {}
+    #     # Check time in past
+    #     form.cleaned_data["proposal_datetime_local"] = timezone.now()
+    #     self.assertEqual(False, form.check_time_is_valid())
+    #     # Check time in future
+    #     form.cleaned_data["proposal_datetime_local"] = timezone.now() + timedelta(6)
+    #     self.assertEqual(True, form.check_time_is_valid())
 
     # def test_user_passwords_not_match(self):
     #     form = UserRegistrationForm()
