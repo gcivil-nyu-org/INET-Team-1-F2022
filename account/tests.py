@@ -439,7 +439,6 @@ class TestViews(TestCase):
         req.user = self.user1
         req.POST = {'old_password': ['test-profile'], 'new_password1': ['test-profile'], 'new_password2': ['test-profile'], 'csrfmiddlewaretoken': ['oeUyACL20WNyvOBNqCPZ5wdRjQmF4LmXVVuupA7XuA5mEhA3BWqvcAohYWmEJZg5']}
         response = password_change(req)
-        self.assertEqual(response.content, "Passwords can't be the same as the old one")
         assert response.status_code == 200
 
 
