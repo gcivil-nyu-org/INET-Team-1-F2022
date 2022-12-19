@@ -33,8 +33,7 @@ def register(request):
             if not user_form.is_adult():
                 return HttpResponse('Go home kid')
             dob = user_form.cleaned_data['date_of_birth']
-            # Create a new user object but avoid saving it yet
-            new_user = user_form.save(commit=False)
+            new_user = user_form.save(commit=False) # Create a new user object but avoid saving it yet
             # Set the chosen password
             new_user.set_password(
                 user_form.cleaned_data['password'])
@@ -51,7 +50,6 @@ def register(request):
                   'account/register.html',
                   {'user_form': user_form})
 
-
 def user_login(request):
     if request.user.is_authenticated:
         return redirect('/account')
@@ -62,17 +60,13 @@ def user_login(request):
             # Authenticate user against database
             cd = form.cleaned_data
             # Returns the User object if authentication successful
-            user = authenticate(request,
-                                username=cd['username'],
-                                password=cd['password'])
+            user = authenticate(request, username=cd['username'], password=cd['password'])
             if user is not None:
                 if user.is_active:
                     login(request, user)  # set the user in session
                     return redirect('/account')
                 else:
                     return HttpResponse('Disabled account')
-            else:
-                return HttpResponse('Invalid login')
     else:  # when user_login view is called with a GET request
         form = LoginForm()  # instantiate a new login form
     return render(request, 'account/login.html', {'form': form})
@@ -159,7 +153,7 @@ def edit(request):
             user_form.save()
             profile_form.save()
 
-            return redirect('profile', pk=user_id)
+            return redirect('dashboard')
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(
@@ -182,16 +176,13 @@ def edittimenplace(request):
                                  files=request.FILES)
 
         user_profile = request.user.profile
-        # print('The user selected this datetime: ', user_profile.proposal_datetime_local)
         prev_time, prev_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
         location_form = NewLocationForm(instance=request.user.profile,
                                         data=request.POST,
                                         files=request.FILES)
 
         user_id = request.user.id
-        # print(user_id)
         if time_form.is_valid() and location_form.is_valid():
-            # print(user_profile.proposal_datetime_local)
             time_form.save()
             cur_time, cur_place = user_profile.proposal_datetime_local, user_profile.location_dropdown
             if cur_time != prev_time or cur_place != prev_place:
@@ -218,18 +209,19 @@ def editplace(request):
     if request.method == 'POST':
         location_form = NewLocationForm(instance=request.user.profile,
                                         data=request.POST)
-        prev_place = request.user.profile.location_dropdown
-        location_form.save()
-        user_id = request.user.id
-        return redirect('profile', pk=user_id)
+        # prev_place = request.user.profile.location_dropdown
+        if location_form.is_valid():
+            location_form.save()
+            user_id = request.user.id
+            return redirect('profile', pk=user_id)
     else:
         location_form = NewLocationForm(instance=request.user.profile,
                                         data=request.POST)
-        prev_place = request.user.profile.location_dropdown
+        # prev_place = request.user.profile.location_dropdown
     return render(request,
                   'account/edit_place.html',
-                  {'location_form': location_form,
-                   "prev_place": prev_place})
+                  {'location_form': location_form})
+
 
 @login_required
 def edittime(request):
@@ -241,11 +233,9 @@ def edittime(request):
         # Check if time is not valid
         if time_form.is_valid():
             if not time_form.check_time_is_valid():
-                prev_time = None
                 return render(request,
                   'account/edit_time.html',
-                  {'time_form': time_form,
-                   "prev_place": prev_time})
+                  {'time_form': time_form})
             if time_form.check_time_is_valid():
                 prev_time = request.user.profile.proposal_datetime_local
                 time_form.save()
@@ -254,11 +244,10 @@ def edittime(request):
         time_form = TimeEditForm(instance=request.user.profile,
                                  data=request.POST,
                                  files=request.FILES)
-        prev_time = request.user.profile.proposal_datetime_local
+        # prev_time = request.user.profile.proposal_datetime_local
     return render(request,
                   'account/edit_time.html',
-                  {'time_form': time_form,
-                   "prev_place": prev_time})
+                  {'time_form': time_form})
 
 @login_required
 def load_locations(request):
@@ -268,14 +257,12 @@ def load_locations(request):
     return render(request, 'profile/location_drop_down.html', {'locations': locations})
     # return JsonResponse(list(cities.values('id', 'name')), safe=False)
 
-
 @login_required
 def profile_list(request):
     profiles = Profile.objects.exclude(user=request.user)
     return render(request,
                   'profile/profile_list.html',
                   {"profiles": profiles})
-
 
 @login_required
 def profile_liked_me(request, pk):
@@ -292,17 +279,14 @@ def profile_liked_me(request, pk):
             user_profile.liked_by.clear()
             msg = "Your proposal time has expired (is in the past). Because of this, all the likes you received have been cleared. Please update your proposal time ASAP."
             messages.success(request, msg)
-
-    # Pagination
-    liked_me = user_profile.liked_by.all()
-    p = Paginator(liked_me, 2)
+    liked_me = user_profile.liked_by.all() # Pagination
+    p = Paginator(liked_me, 5)
     page = request.GET.get('page')
     liked_me_list = p.get_page(page)
     return render(request,
                   'profile/profile_liked_me.html',
                   {"profile": user_profile,
                    "liked_me": liked_me_list})
-
 
 @login_required
 def profile(request, pk):
@@ -331,9 +315,7 @@ def profile(request, pk):
             messages.success(request, msg)
             return redirect('filter_profile_list')
         elif action_for_match_decline == "match":
-            # Clear likes to ensure the users no longer
-            # appear in any 'Liked Me' list
-            current_user_profile.likes.clear()
+            current_user_profile.likes.clear() # Clear likes to ensure the users no longer appear in any 'Liked Me' list
             current_user_profile.liked_by.clear()
             current_user_profile.matches.add(profile.id)
             profile.likes.clear()
@@ -390,7 +372,9 @@ def edit_preferences(request):
                               {'preference_form': preference_form})
             if preference_form.check_age():
                 preference_form.save()
-                return redirect('profile', pk=user_id)
+                if request.user.profile.matches.exists() or request.user.profile.matched_with.exists():
+                    return redirect('dashboard')
+                return redirect('filter_profile_list')
     else:
         preference_form = PreferenceEditForm(
             instance=request.user.profile)
@@ -426,7 +410,7 @@ def filter_profile_list(request):
                 profilesWithValidTime.append(profile)
 
     # Pagination
-    p = Paginator(profilesWithValidTime, 2)
+    p = Paginator(profilesWithValidTime, 5)
     page = request.GET.get('page')
     profile_list = p.get_page(page)
     return render(request,
@@ -450,11 +434,19 @@ def submitFeedback(request):
                 obj.matched_user = request.user.profile.matched_with.first().user
                 obj.match_date = request.user.profile.matched_with.first().proposal_datetime_local
                 obj.match_location = request.user.profile.matched_with.first().location_dropdown
+            # if the user rated the matched user less than 5 , increment the warning of matched user
+            if (int(feedback_form.cleaned_data.get('match_rating')) < 2) or (feedback_form.cleaned_data.get('inappropriate_behavior')) != None:
+                obj.matched_user = request.user.profile.matches.first().user
+                obj.matched_user.profile.warning_count += 1
+                print(obj.matched_user.profile.warning_count)
+                obj.matched_user.profile.save()
+
+            print("Feedback User:", obj.feedback_user)
+            print("Match Comments: ", obj.match_comments)
             obj.save()
 
             request.user.profile.feedback_submitted = True
             request.user.profile.save()
-
             return redirect("dashboard")
         else:
             print(feedback_form.errors)
@@ -486,23 +478,23 @@ def delete_account(request):
 
 @login_required
 def password_change(request):
-        user = request.user
-        if request.method == 'POST':
-            form = PasswordChangeForm(user, request.POST)
+    user = request.user
+    if request.method == 'POST':
+        form = PasswordChangeForm(user, request.POST)
 
-            # added error if old and new passwords are the same
-            if request.POST.get("old_password", '0') == request.POST.get("new_password1", '0'):
-                form.errors['same_pass'] = "Passwords can't be the same as the old one"
-                return HttpResponse("Passwords can't be the same as the old one")
+        # added error if old and new passwords are the same
+        if request.POST.get("old_password", '0') == request.POST.get("new_password1", '0'):
+            form.errors['same_pass'] = "Passwords can't be the same as the old one"
+            return HttpResponse("Passwords can't be the same as the old one")
 
-            #print(list(form.errors.values()))
-            if form.is_valid() and len(form.errors.values()) == 0:
-                form.save()
-                messages.success(request, "Your password has been changed")
-                return redirect('login')
-            else:
-                for error in list(form.errors.values()):
-                    messages.error(request, error)
+        # print(list(form.errors.values()))
+        if form.is_valid() and len(form.errors.values()) == 0:
+            form.save()
+            messages.success(request, "Your password has been changed")
+            return redirect('login')
+        else:
+            for error in list(form.errors.values()):
+                messages.error(request, error)
 
         form = PasswordChangeForm(user)
         return render(request, 'registration/password_change_form.html', {'form': form})

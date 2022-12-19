@@ -24,15 +24,16 @@ href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
 
         </span>
         <br>
-
-        {% if request.user.is_authenticated %}
-
+        {% if request.user.is_authenticated and request.user.profile.warning_count < 4 %}
                 <ul class="menu">
                     <li {% if section == "dashboard" %}class="selected"{% endif %}>
                     <a href="{% url "dashboard" %}">My dashboard</a>
                     </li>
                 </ul>
-        {% if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists %}
+
+
+        {% if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists and request.user.profile.warning_count < 4%}
+
                 <ul class="menu">
 
                     {% comment %} <li {% if section == "people" %}class="selected"{% endif %}>
