@@ -902,8 +902,3 @@ class TestForms(TestCase):
         string_time_future = time_future.strftime("%Y-%m-%dT%H:%M")
         form.cleaned_data["proposal_datetime_local"] = string_time_future
         self.assertEqual(True, form.check_time_is_valid())
-
-class TestModels(TestCase):
-    Boro.objects.create(boro="cat")
-    Cusine.objects.create(cusine="cat")
-    newLocation.objects.create(DBA="lion", BORO="roar", BUILDING= , STREET= , ZIPCODE= ,)
