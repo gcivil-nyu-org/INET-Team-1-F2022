@@ -6,6 +6,10 @@
      <form method="post">
        {{ form.as_p }}
        {% csrf_token %}
+       <br>
+       <br>
+       <div id="wrapper">
        <p><input type="submit" value="Log in"></p>
+       </div>
      </form>
    {% endblock %}

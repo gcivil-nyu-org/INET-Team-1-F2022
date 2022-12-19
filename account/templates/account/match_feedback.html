@@ -12,7 +12,11 @@
     {% csrf_token %}
     <div class="bold-my-labels">{{ form.condition.label_tag }}{{ form.condition }}</div>
     <style type="text/css">.bold-my-labels label{font-weight:bold;}</style>
+    <br>
+    <br>
+    <div id="wrapper">
     <p><input type="submit" value="Submit Feedback"></p>
+    </div>
     </form>
     {% endif %}
     {% else %}

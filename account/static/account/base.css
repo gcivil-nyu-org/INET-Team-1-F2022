@@ -6,6 +6,9 @@ body {
     font-family:helvetica, sans-serif;
     overflow:auto;
     overflow-y: scroll;
+    height: 100%;
+    width:100%;
+    text-align: center;
 }
 
 html {
@@ -91,12 +94,19 @@ ol {
 }
 
 #content {
-    padding:30px 100px;
+    padding:100px 100px;
+    margin: 0 auto; 
+    height: 100%;
+    width:100%;
+    text-align: center;
 }
 
 /* forms */
 form {
     overflow:auto;
+    margin: 0 auto; 
+    width:250px;
+    text-align: center;
 }
 
 form p {
@@ -121,12 +131,21 @@ input, textarea {
 }
 input[type=submit], a.button {
     font-weight:bold;
-    background:#12c064;
+    background: purple;
     color:#fff;
     padding:10px 20px;
     font-size:14px;
     text-transform:uppercase;
+    height: 50px;
+    width: 100%;
 }
+
+#wrapper {
+    border: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 .errorlist {
     color:#cc0033;
     float:left;

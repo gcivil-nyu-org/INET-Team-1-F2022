@@ -13,7 +13,10 @@
         {{ preference_form.as_p }}
         {% csrf_token %}
     {% endif %}
-    
+    <br>
+    <br>
+    <div id="wrapper">
     <p><input type="submit" value="Save changes"></p>
+    </div>
     </form>
 {% endblock %}

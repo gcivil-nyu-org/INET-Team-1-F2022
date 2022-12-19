@@ -92,6 +92,10 @@ ol {
 
 #content {
     padding:30px 100px;
+    display: block;
+    margin: auto;
+    max-height: 500px;
+    max-width: 500px;
 }
 
 /* forms */

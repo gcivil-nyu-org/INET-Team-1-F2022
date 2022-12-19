@@ -48,9 +48,11 @@
           {%if profile != current_user_profile and profile not in current_user_profile.likes.all and profile not in current_user_profile.hides.all%}
           <form method="post">
             {% csrf_token %}
+            <div id="wrapper">
             <div class="buttons">
               <button class="button is-success" name="like" value="like">Like</button>
               <button class="button is-danger" name="like" value="hide">Hide</button>
+            </div>
             </div>
           </form>
           {% endif %}
