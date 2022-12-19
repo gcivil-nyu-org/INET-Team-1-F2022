@@ -347,6 +347,7 @@ def profile(request, pk):
             messages.success(request, msg)
             return redirect('profile_liked_me', request.user.id)
 
+        profile.save()
         current_user_profile.save()
     return render(request,
                   "profile/profile.html",
