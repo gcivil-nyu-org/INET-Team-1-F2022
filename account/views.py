@@ -333,6 +333,8 @@ def profile(request, pk):
             # Assign the chatroom url to both matched profile
             current_user_profile.chatroom_slug = chatroom_id
             profile.chatroom_slug = chatroom_id
+            profile.save()
+            current_user_profile.save()
 
             return redirect('dashboard')
         elif action_for_match_decline == "decline":
