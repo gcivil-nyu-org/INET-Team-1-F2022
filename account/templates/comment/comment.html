@@ -1,0 +1,25 @@
+<li class="clearfix active">
+    {% if comment.profile.user_id != user.id %}
+        <div class="border-0 border-start border-2 ps-2" id="{{comment.id}}">
+            <div class="message-data text-right">
+                <img src="{{ comment.profile.photo.url }}">
+                <strong>{{comment.name}}</strong>
+                <small class="text-muted">On {{ comment.created.date }} and {{ comment.profile.user_id }} vs {{ user.id }}</small>
+            </div>
+            <div class="border p-2 rounded">
+                <div class="message my-message">{{comment.body}}</div>
+            </div>
+        </div>
+    {% else %}
+        <div class="border-0 border-start border-2 ps-2 float-right" id="{{comment.id}}">
+            <div class="message-data text-right">
+                <strong>{{comment.name}}</strong>
+                <small class="text-muted">On {{ comment.created.date }}</small>
+                <img src="{{ comment.profile.photo.url }}">
+            </div>
+            <div class="border p-2 rounded float-right">
+                <div class="message other-message">{{comment.body}}</div>
+            </div>
+        </div>
+    {% endif %}
+</li>

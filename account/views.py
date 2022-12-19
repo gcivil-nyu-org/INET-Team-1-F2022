@@ -1,10 +1,10 @@
-import datetime
+import datetime, random, time
 from django.http import HttpResponse, Http404
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth.decorators import login_required
-from .forms import LoginForm, UserRegistrationForm, PreferenceEditForm, MatchFeedbackForm, TimeEditForm, NewLocationForm, UserEditForm, ProfileEditForm
-from .models import Profile, newLocation
+from .forms import LoginForm, UserRegistrationForm, PreferenceEditForm, MatchFeedbackForm, TimeEditForm, NewLocationForm, UserEditForm, ProfileEditForm, CommentForm
+from .models import Profile, newLocation, Comment, Chatroom
 
 from django.core.mail import send_mail, BadHeaderError
 from django.contrib.auth.forms import PasswordChangeForm
@@ -21,7 +21,6 @@ from django.core.paginator import Paginator  # for pagination of list views
 from django.utils import timezone
 
 from datetime import date, timedelta
-
 
 def register(request):
     if request.user.is_authenticated:
@@ -321,6 +320,20 @@ def profile(request, pk):
             current_user_profile.matches.add(profile.id)
             profile.likes.clear()
             profile.liked_by.clear()
+
+            # Create a new chatroom
+            chatroom_id = hash(str(random.random()) + str(time.time()))
+            Chatroom.objects.create(
+                name=chatroom_id,
+                slug=chatroom_id,
+                attendees_one=current_user_profile.user.email,
+                attendees_two=profile.user.email,
+                status='published')
+
+            # Assign the chatroom url to both matched profile
+            current_user_profile.chatroom_slug = chatroom_id
+            profile.chatroom_slug = chatroom_id
+
             return redirect('dashboard')
         elif action_for_match_decline == "decline":
             # Add profile id to declined list
@@ -479,5 +492,43 @@ def password_change(request):
         else:
             for error in list(form.errors.values()):
                 messages.error(request, error)
-    form = PasswordChangeForm(user)
-    return render(request, 'registration/password_change_form.html', {'form': form})
+
+        form = PasswordChangeForm(user)
+        return render(request, 'registration/password_change_form.html', {'form': form})
+
+@login_required
+def chatroom_detail(request, chatroom):
+    chatroom=get_object_or_404(Chatroom,slug=chatroom,status='published')
+    user = User.objects.get(pk=request.user.id)
+    profile = user.profile
+
+    # Check if the request is the attendee of the chatroom
+    # If not, redirect to the dashboard
+    if  user.email not in [chatroom.attendees_one, chatroom.attendees_two]:
+        return redirect("dashboard")
+
+    # List of active comments for this chatroom
+    comments = chatroom.comments.filter(active=True)
+    new_comment = None
+    if request.method == 'POST':
+        # A comment was posted
+        comment_form = CommentForm(data=request.POST)
+
+        if comment_form.is_valid():
+            # Create Comment object but don't save to database yet
+            new_comment = comment_form.save(commit=False)
+            new_comment.chatroom = chatroom
+            new_comment.profile = profile
+            new_comment.name = user.username
+            new_comment.save()
+
+            return redirect(chatroom.get_absolute_url()+'#'+str(new_comment.id))
+    else:
+        comment_form = CommentForm()
+    return render(request, 'comment/chatroom.html',{
+        'chatroom':chatroom,
+        'comments': comments,
+        'comment_form':comment_form,
+        'user': user,
+    })
+

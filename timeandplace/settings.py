@@ -126,13 +126,16 @@ USE_TZ = False
 # STATIC_ROOT = os.path.join(PROJECT_ROOT,'static/')
 # print("Project root is "+ STATIC_ROOT)
 # STATIC_URL = '/static/'
-# STATICFILES_FINDERS = (
+# STATICFILES_DIRS= (
 #     'django.contrib.staticfiles.finders.FileSystemFinder',
 #     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 # )
 
 STATIC_URL = '/static/'
 STATIC_ROOT = 'static'
+# STATICFILES_DIRS = (
+#   os.path.join(BASE_DIR, '/static/'),
+# )
 
 # Tells Django which URL to redirect user to after
 # a successful login if no next parameter present in request

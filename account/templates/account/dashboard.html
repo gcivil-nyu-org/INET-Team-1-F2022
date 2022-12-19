@@ -6,7 +6,7 @@
      {%if request.user.profile.warning_count < 4 %}
      <h1 class="title is-2">Dashboard</h1>
 <section class="main-content columns is-fullheight">
-  
+
   <aside class="column is-2  is-fullheight ">
     <p class="menu-label is-hidden-touch">Options</p>
     <ul class="menu-list">
@@ -80,7 +80,7 @@
       </li>
     </ul>
   </aside>
-  
+
 
   <div class="container column is-10">
     <div class="section">
@@ -92,8 +92,8 @@
     </div>
     </article>
   {% endfor %}
- 
-      
+
+
 
      {%if user_profile.matches.all.exists %}
      {%for user in user_profile.matches.all %}
@@ -102,29 +102,29 @@
      <div class="columns">
       <div class="column">
         <img  src="{{ user.photo.url }}" width="250px">
-        <a href="{% url 'profile' pk=user.user.id %}"> 
+        <a href="{% url 'profile' pk=user.user.id %}">
           <div class="buttons has-addons is-left">
             <button class="button is-link is-outlined">View Profile</button>
-            <a href="#">
-             
+            <a href="{{ user.profile.chatroom_slug }}">
+
                 <button class="button is-link is-outlined">Chat</button>
-           
-              </a>
+
+            </a>
           </div>
         </a>
 
       </div>
       <div class = "column">
         <div class="block">
-          
+
             <article class="message is-info is-medium">
               {% comment %} <div class="message-header">
                 <button class="delete is-small" aria-label="delete"></button>
               </div> {% endcomment %}
               <div class="message-header">
-                 Meeting Details 
+                 Meeting Details
                 </div>
-              <div class="message-body"> 
+              <div class="message-body">
 
                 <strong>Time:</strong>  {{ user_profile.proposal_datetime_local }}
                 <br>
@@ -141,12 +141,12 @@
       {% else %}
       {% comment %} <h1> Feedback not available </h1> {% endcomment %}
       <article class="message is-info">
-        Once the designated proposal time passes, you will have 6 hours to submit a feedback form before your match expires. 
+        Once the designated proposal time passes, you will have 6 hours to submit a feedback form before your match expires.
       </article>
       {%endif%}
       {% comment %} feedback form button {% endcomment %}
-  
-    
+
+
       {% endfor %}
      {% else %}
      {%if user_profile.matched_with.all.exists%}
@@ -157,7 +157,7 @@
      <div class="columns">
       <div class="column">
         <img  src="{{ user.photo.url }}" width="250px">
-        <a href="{% url 'profile' pk=user.user.id %}"> 
+        <a href="{% url 'profile' pk=user.user.id %}">
           <div class="buttons has-addons is-left">
             <button class="button is-link is-outlined">View Profile</button>
           </div>
@@ -165,15 +165,15 @@
       </div>
       <div class = "column">
         <div class="block">
-          
+
             <article class="message is-info is-medium">
               {% comment %} <div class="message-header">
                 <button class="delete is-small" aria-label="delete"></button>
               </div> {% endcomment %}
               <div class="message-header">
-                 Meeting Details 
+                 Meeting Details
                 </div>
-              <div class="message-body"> 
+              <div class="message-body">
 
                 <strong>Time:</strong>  {{ user.proposal_datetime_local }}
                 <br>
@@ -183,20 +183,20 @@
         </div>
       </div>
     </div>
-     
-      
+
+
       {% endfor %}
       {%endif%}
       {% endif %}
 
       {%if feedback_available %}
-      
+
         <div class="block">
           <article class="message is-info">
-            Your match will expire 6 hours after the designated proposal time. 
+            Your match will expire 6 hours after the designated proposal time.
             We strongly encourage you to let us know about how the date went.
             Please click on the button below to access the match feedback form.
-    
+
           </article>
           <a href="{% url "submitFeedback" %}">
           <div class="buttons has-addons is-centered">
@@ -210,7 +210,7 @@
         <br>
         <br>
         <br>
-      
+
       {%if user_profile.warning_count < 3 %}
       <div id="bottom">
         <p class="thicker">WARNING COUNT: {{user_profile.warning_count}}</p>
@@ -224,14 +224,14 @@
 
     {%else%}
       <p>You are banned!</p>
- 
+
       <div id="bottom">
         <p class="thicker">WARNING COUNT: {{user_profile.warning_count}}</p>
         <p style="color:red">Your account has been temporarily deactivated!</p>
         <p style="color:red">You have been flagged inappropriate or rated bad too many times!</p>
         <p style="color:red">Your account is being reviewed by the admin!</p>
       </div>
-      {%endif%}
+    {%endif%}
 {% endblock %}
 
 
