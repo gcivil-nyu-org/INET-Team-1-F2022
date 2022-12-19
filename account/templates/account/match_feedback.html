@@ -4,7 +4,7 @@
 {{current_user_profile.feedback_submitted}}
 
 {% block content %}
-{% if current_user_profile.feedback_submitted == False   %}
+{% if current_user_profile.feedback_submitted == False and current_user_profile.warning_count < 4 %}
 {%if current_user_profile.matches.all.exists or current_user_profile.matched_with.all.exists %}
     <h1 class="title is-2">Match Feedback</h1>
     <form method="post" enctype="multipart/form-data">

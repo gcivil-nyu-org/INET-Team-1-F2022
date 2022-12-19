@@ -5,7 +5,7 @@
 {% block title %}Edit your time and place{% endblock %}
 
 {% block content %}
-{%if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists%}
+{%if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists and request.user.profile.warning_count < 4%}
     <h1>Edit your Time and Place</h1>
     <br>
     <form method="post" id = 'editProfile' data-locations-url= "{% url 'ajax_load_locations' %}" enctype="multipart/form-data">

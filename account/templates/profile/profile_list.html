@@ -2,6 +2,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{%if request.user.profile.warning_count < 4%}
 
 <div class="column">
 
@@ -37,5 +38,5 @@
 {% endfor %}
 
 </div>
-
+{% endif %}
 {% endblock content %}
