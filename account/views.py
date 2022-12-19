@@ -79,7 +79,6 @@ def dashboard(request):
     time_now = timezone.now()
     # Check if the user is in a match and check if it has expired
     if user_profile.matches.all():
-        # Get the other user profile who user_profile is matched with
         other_user_profile = user_profile.matches.first()
         # Check time against proposal time
         if user_profile.proposal_datetime_local != None:
@@ -93,10 +92,14 @@ def dashboard(request):
                 other_user_profile.declines.clear()
                 msg = "Your match with " + other_user_profile.user.first_name + " has expired."
                 messages.success(request, msg)
+
+                # Clean Chatroom
+                chatroom_slug = user_profile.chatroom_slug
+                cleanChatroom(chatroom_slug)
+
                 user_profile.save()
                 other_user_profile.save()
             else:
-                #print("There is still time left for your match/date!")
                 if (time_now < user_profile.proposal_datetime_local + timedelta(hours=6) and
                     time_now > user_profile.proposal_datetime_local and
                         user_profile.feedback_submitted == False):
@@ -112,6 +115,11 @@ def dashboard(request):
             other_user_profile.feedback_submitted = False
             user_profile.declines.clear()
             other_user_profile.declines.clear()
+
+            # Clean Chatroom
+            chatroom_slug = user_profile.chatroom_slug
+            cleanChatroom(chatroom_slug)
+
             msg = "Your match with " + other_user_profile.user.first_name + " has expired."
             messages.success(request, msg)
         else:
@@ -121,8 +129,6 @@ def dashboard(request):
                     user_profile.feedback_submitted == False):
                 feedback_available = True
     else:
-        #print("Not in a match at all")
-        # Check if the user's time is now expired because proposal time < curr time
         if user_profile.proposal_datetime_local != None:
             if user_profile.proposal_datetime_local < time_now:
                 msg = "Your proposal time " + str(user_profile.proposal_datetime_local) + " has now expired because it's in the past. Please update your time as soon as possible."
@@ -145,7 +151,6 @@ def edit(request):
 
         user_profile = request.user.profile
         user_id = request.user.id
-        # print(user_id)
         if user_form.is_valid() and profile_form.is_valid():
             if user_form.check_username() == "":
                 return render(request,
@@ -153,7 +158,6 @@ def edit(request):
                               {'user_form': user_form,
                                'profile_form': profile_form,
                                })
-            # print(user_profile.proposal_datetime_local)
             user_form.save()
             profile_form.save()
 
@@ -234,7 +238,6 @@ def edittime(request):
                                  data=request.POST,
                                  files=request.FILES)
         user_id = request.user.id
-        # Check if time is not valid
         if time_form.is_valid():
             if not time_form.check_time_is_valid():
                 return render(request,
@@ -334,7 +337,6 @@ def profile(request, pk):
                 attendees_two=profile.user.email,
                 status='published')
 
-            # Assign the chatroom url to both matched profile
             current_user_profile.chatroom_slug = chatroom_id
             profile.chatroom_slug = chatroom_id
             profile.save()
@@ -536,3 +538,16 @@ def chatroom_detail(request, chatroom):
         'user': user,
     })
 
+
+# Delete a chatroom and related comments and slug
+def cleanChatroom(chatroom_slug):
+    chatroom = Chatroom.objects.get(slug=chatroom_slug)
+
+    # Delete comments from this chatroom
+    Comment.objects.filter(chatroom=chatroom).delete()
+
+    # Delete chatroom info from two attendees
+    Profile.objects.filter(chatroom_slug=chatroom_slug).update(chatroom_slug="")
+
+    # Delete chatroom
+    chatroom.delete()

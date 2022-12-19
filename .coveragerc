@@ -4,3 +4,5 @@ omit =
     timeandplace/wsgi.py
     timeandplace/asgi.py
     timeandplace/urls.py
+    account/tests.py
+    timeandplace/
