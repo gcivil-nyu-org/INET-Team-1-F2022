@@ -337,6 +337,8 @@ def profile(request, pk):
             # Assign the chatroom url to both matched profile
             current_user_profile.chatroom_slug = chatroom_id
             profile.chatroom_slug = chatroom_id
+            profile.save()
+            current_user_profile.save()
 
             return redirect('dashboard')
         elif action_for_match_decline == "decline":
@@ -347,6 +349,7 @@ def profile(request, pk):
             messages.success(request, msg)
             return redirect('profile_liked_me', request.user.id)
 
+        profile.save()
         current_user_profile.save()
     return render(request,
                   "profile/profile.html",
