@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
+    'easy_thumbnails',
     # 'map.apps.MapConfig'
 ]
 
@@ -109,13 +110,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'America/Los_Angeles'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -125,13 +126,16 @@ USE_TZ = True
 # STATIC_ROOT = os.path.join(PROJECT_ROOT,'static/')
 # print("Project root is "+ STATIC_ROOT)
 # STATIC_URL = '/static/'
-# STATICFILES_FINDERS = (
+# STATICFILES_DIRS= (
 #     'django.contrib.staticfiles.finders.FileSystemFinder',
 #     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 # )
 
 STATIC_URL = '/static/'
 STATIC_ROOT = 'static'
+# STATICFILES_DIRS = (
+#   os.path.join(BASE_DIR, '/static/'),
+# )
 
 # Tells Django which URL to redirect user to after
 # a successful login if no next parameter present in request
@@ -154,3 +158,5 @@ AWS_SES_REGION_ENDPOINT ='email.us-east-2.amazonaws.com'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 30000

@@ -1,0 +1,74 @@
+
+{% extends "base.html" %}
+{% comment %} <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
+<script src="{% static 'smart-selects/admin/js/chainedm2m.js' %}"></script> {% endcomment %}
+{% block title %}Edit your time and place{% endblock %}
+
+{% block content %}
+{%if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists and request.user.profile.warning_count < 4%}
+    <h1>Edit your Time and Place</h1>
+    <br>
+    <form method="post" id = 'editProfile' data-locations-url= "{% url 'ajax_load_locations' %}" enctype="multipart/form-data">
+        {%if not prev_place and not prev_time %}
+        <br>
+        <!-- new user -->
+        <h2>You can set your Time and Place using the following form:</h2>
+        <p style="color:red">Note: If you are a new user, You need to set a Time and Place for Match! </p>
+        <br>
+
+        {{ time_form.as_p }}
+        {{ location_form.as_p }}
+        {% csrf_token %}
+        <!-- old user wanting to change time or place -->
+        {%elif prev_place or prev_time %}
+        <p >Your previous selected time was:</p>
+         {{request.user.profile.proposal_datetime_local}}
+        <p >Your previous selected location was:</p>
+         {{request.user.profile.location_dropdown}}
+        <br>
+        <br>
+         <a href="{% url "edit_time" %}">Edit your Time here</a>
+         <br>
+         <br>
+         <a href="{% url "edit_place" %}">Edit your Place here</a>
+         <br>
+         <br>
+        {% endif %}
+    <p><input type="submit" value="Save changes" 
+        onclick="return confirm('WARNING: Any changes to proposal time and place will clear the likes you have so far received.')" />
+    </p>
+
+{% else %}
+Oops! It looks like you are currently in a match. You won't be able to edit your time and place until the match expires.
+<a href="{% url 'dashboard' %}">Go back to dashboard</a>
+{%endif%}
+    <!-- <p><input type="submit" value="Save changes"></p> -->
+    </form>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $("#id_cusine,#id_boro").change(function () {
+            const url = $("#editProfile").attr("data-locations-url");  // get the url of the `load_cities` view
+            
+            var cusineId = $('#id_cusine').val();
+            var boroId = $('#id_boro').val();
+            $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= /persons/ajax/load-cities/ )
+                data: {
+                    'cusine_id': cusineId, // set the country
+                    'boro_id': boroId,
+                          // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                    $("#id_location_dropdown").html(data);  // replace the contents of the city input with the data that came from the server
+
+                }
+            });
+        });
+
+        $("#editProfile").submit(function () {
+
+        });
+    </script>
+
+{% endblock %}
+

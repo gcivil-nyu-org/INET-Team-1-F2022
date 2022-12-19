@@ -1,56 +1,237 @@
 {% extends "base.html" %}
-   {% block title %}Dashboard{% endblock %}
+   {% comment %} {% block title %}Dashboard{% endblock %} {% endcomment %}
    {% block content %}
-     <h1>Dashboard</h1>
+     {% comment %} <h1 class="title is-2">Dashboard</h1> {% endcomment %}
 
-     <p>Welcome to your dashboard. 
-      You can  
-      <ul>
-        <li>
-          <a href="{% url 'profile' pk=user.id %}">Preview your profile</a>, or 
-        </li>
-        <li>
-          <a href="{% url 'preferences' pk=user.id %}">Preview your preferences</a>,  or
-        </li>
-        <!-- <li> 
-          <a href="{% url "edit" %}">Edit your profile</a>, or
-        </li>
-        <li> 
-          <a href="{% url "edit_preferences" %}">Edit your preferences</a>, or
-        </li> -->
-        <li>
-          <a href="{% url "password_change" %}">Change your password</a>.</p>
-        </li>
-      </ul>
+     {%if request.user.profile.warning_count < 4 %}
+     <h1 class="title is-2">Dashboard</h1>
+<section class="main-content columns is-fullheight">
 
-      
+  <aside class="column is-2  is-fullheight ">
+    <p class="menu-label is-hidden-touch">Options</p>
+    <ul class="menu-list">
+      <li>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link is-arrowless">
+            My Account
+          </a>
+      <div class="navbar-dropdown is-right">
+        <a class="navbar-item " href="{% url "password_change" %}">
+          Change Password
+        </a>
+        <hr class="navbar-divider">
+        <div class="buttons has-addons">
+          <a href="{% url 'delete_account' %}" class="button is-danger"
+          onclick="return confirm('WARNING: This will permanently delete your account and you will not be able to get it back. Do you wish to proceed?')">Delete My Account</a>
+        </div>
+        <style>
+          #bottom {
+              position: absolute;
+              bottom: 5px;
+              right: 5px;
+          }
+          p.thicker {
+              font-weight: 900;
+          }
+        </style>
+        <hr class="navbar-divider">
+
+      </li>
+
+      <li>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link is-arrowless">
+            My Profile
+          </a>
+      <div class="navbar-dropdown is-right">
+        <a class="navbar-item" href="{% url 'profile' pk=user.id %}">
+          Preview
+        </a>
+        <a class="navbar-item" href="{% url "edit" %}">
+          Edit
+        </a>
+        <hr class="navbar-divider">
+
+      </li>
+      <li>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link is-arrowless" >
+            My Preferences
+          </a>
+      <div class="navbar-dropdown">
+        <a class="navbar-item" href="{% url 'preferences' pk=user.id %}">
+          Preview
+        </a>
+        <a class="navbar-item" href="{% url "edit_preferences" %}">
+          Edit
+        </a>
+        <hr class="navbar-divider">
+      </li>
+      <li>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link is-arrowless" >
+            My Proposal
+          </a>
+      <div class="navbar-dropdown">
+        <a class="navbar-item" href="{% url "edit_timenplace" %}">
+          Edit
+        </a>
+        <hr class="navbar-divider">
+      </li>
+    </ul>
+  </aside>
+
+
+  <div class="container column is-10">
+    <div class="section">
+      <script src="/static/account/dashboard.js"></script>
+  {% for msg in messages  %}
+  <article class="message is-success">
+    <div class="message-body">
+      {{msg}}
+    </div>
+    </article>
+  {% endfor %}
+
+
+
      {%if user_profile.matches.all.exists %}
      {%for user in user_profile.matches.all %}
-     <h1> Hey you are matched with  </h1>
-     <h2>{{user.user.first_name}}</h2>
-     <p><img src="{{ user.photo.url }}" width="250px"></p>
-     <div class="block">
-      <h3 class="title is-4">
-          Proposal time : {{user_profile.proposal_time}}
-          Proposal location : {{user_profile.location_dropdown}}
-      </h3>
-      <div class="content">
+     <h2 class="title is-4 has-text-success-dark	" 	> You agreed to match with: </h2>
+     <h2 class="title is-3">{{user.user.first_name}}, {{user.calc_age}}</h2>
+     <div class="columns">
+      <div class="column">
+        <img  src="{{ user.photo.url }}" width="250px">
+        <a href="{% url 'profile' pk=user.user.id %}">
+          <div class="buttons has-addons is-left">
+            <button class="button is-link is-outlined">View Profile</button>
+            <a href="{{ user.profile.chatroom_slug }}">
+
+                <button class="button is-link is-outlined">Chat</button>
+
+            </a>
+          </div>
+        </a>
+
+      </div>
+      <div class = "column">
+        <div class="block">
+
+            <article class="message is-info is-medium">
+              {% comment %} <div class="message-header">
+                <button class="delete is-small" aria-label="delete"></button>
+              </div> {% endcomment %}
+              <div class="message-header">
+                 Meeting Details
+                </div>
+              <div class="message-body">
+
+                <strong>Time:</strong>  {{ user_profile.proposal_datetime_local }}
+                <br>
+                <strong>Place:</strong>  {{ user_profile.location_dropdown }}
+              </div>
+            </article>
+
+        </div>
+      </div>
+    </div>
+      <br>
+      {%if feedback_available %}
+      {% comment %} <h1> Feedback Available </h1> {% endcomment %}
+      {% else %}
+      {% comment %} <h1> Feedback not available </h1> {% endcomment %}
+      <article class="message is-info">
+        Once the designated proposal time passes, you will have 6 hours to submit a feedback form before your match expires.
+      </article>
+      {%endif%}
+      {% comment %} feedback form button {% endcomment %}
+
+
       {% endfor %}
      {% else %}
      {%if user_profile.matched_with.all.exists%}
      {%for user in user_profile.matched_with.all %}
-     <h1> Hey {{user}} agreed to match with you </h1>
-     <p><img src="{{ user.photo.url }}" width="250px"></p>
-     <div class="block">
-      <h3 class="title is-4">
-          Proposal time : {{user.proposal_time}}
-          Proposal location : {{user.location_dropdown}}
-      </h3>
-      <div class="content">
+
+     <h2 class="title is-4 has-text-success-dark	" > Someone agreed to match with you: </h2>
+     <h2 class="title is-3">{{user.user.first_name}}, {{user.calc_age}}</h2>
+     <div class="columns">
+      <div class="column">
+        <img  src="{{ user.photo.url }}" width="250px">
+        <a href="{% url 'profile' pk=user.user.id %}">
+          <div class="buttons has-addons is-left">
+            <button class="button is-link is-outlined">View Profile</button>
+          </div>
+        </a>
+      </div>
+      <div class = "column">
+        <div class="block">
+
+            <article class="message is-info is-medium">
+              {% comment %} <div class="message-header">
+                <button class="delete is-small" aria-label="delete"></button>
+              </div> {% endcomment %}
+              <div class="message-header">
+                 Meeting Details
+                </div>
+              <div class="message-body">
+
+                <strong>Time:</strong>  {{ user.proposal_datetime_local }}
+                <br>
+                <strong>Place:</strong>  {{ user.location_dropdown }}
+              </div>
+            </article>
+        </div>
+      </div>
+    </div>
+
+
       {% endfor %}
       {%endif%}
       {% endif %}
-       
+
+      {%if feedback_available %}
+
+        <div class="block">
+          <article class="message is-info">
+            Your match will expire 6 hours after the designated proposal time.
+            We strongly encourage you to let us know about how the date went.
+            Please click on the button below to access the match feedback form.
+
+          </article>
+          <a href="{% url "submitFeedback" %}">
+          <div class="buttons has-addons is-centered">
+            <button class="button is-link is-outlined">Feedback Form</button>
+          </div>
+          </a>
+        </div>
+      {% endif %}
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+      {%if user_profile.warning_count < 3 %}
+      <div id="bottom">
+        <p class="thicker">WARNING COUNT: {{user_profile.warning_count}}</p>
+      </div>
+      {%else %}
+      <div id="bottom">
+        <p class="thicker">WARNING COUNT: {{user_profile.warning_count}}</p>
+        <p style="color:red">Beware! One more bad rating and you risk losing access to our app.</p>
+      </div>
+      {%endif%}
+
+    {%else%}
+      <p>You are banned!</p>
+
+      <div id="bottom">
+        <p class="thicker">WARNING COUNT: {{user_profile.warning_count}}</p>
+        <p style="color:red">Your account has been temporarily deactivated!</p>
+        <p style="color:red">You have been flagged inappropriate or rated bad too many times!</p>
+        <p style="color:red">Your account is being reviewed by the admin!</p>
+      </div>
+    {%endif%}
 {% endblock %}
 
 

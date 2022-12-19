@@ -4,6 +4,16 @@ body {
     margin:0;
     padding:0;
     font-family:helvetica, sans-serif;
+    overflow:auto;
+    overflow-y: scroll;
+}
+
+html {
+    overflow-y: scroll;
+}
+
+card {
+    overflow: auto;
 }
 
 p {
@@ -203,6 +213,7 @@ ul.messages li a.close {
 .image-info div {
     padding:20px 0;
     overflow:auto;
+    overflow-y:auto;
 }
 .count {
     color:#aaa;
@@ -275,3 +286,10 @@ img.user-detail {
     font-style:italic;
     color:#ccc;
 }
+
+.header img {
+    float: left;
+    width: 100px;
+    height: 100px;
+    background: #555;
+  }
