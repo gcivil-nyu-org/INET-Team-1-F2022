@@ -1,8 +1,10 @@
 # Create your models here.
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 import datetime
 from datetime import date
 #from smart_selects.db_fields import ChainedForeignKey
@@ -82,6 +84,10 @@ class Profile(models.Model):
     # marital_choices = (('Single', 'Single'), ('Widowed', 'Widowed'), ('Married', 'Married'), ('Unmarried', 'Unmarried'), ('Divorced', 'Divorced'))
     # marital_status = models.CharField(max_length = 10, choices = marital_choices, blank = True)
     # users_like = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='users_liked', blank=True)
+
+    # Only one chatroom url for each person at a time should be enough
+    chatroom_slug = models.CharField(max_length=150, blank=True, default="")
+
     likes = models.ManyToManyField(
         "self",
         related_name="liked_by",
@@ -133,3 +139,56 @@ class Match_Feedback(models.Model):
 
     def __str__(self):
         return f'Feedback by {self.feedback_user} for {self.matched_user}. Comments: {self.match_comments}'
+
+class Chatroom(models.Model):
+    STATUS_CHOICES = (
+    ('draft', 'Draft'),
+    ('published', 'Published'),
+    )
+
+    # Chatroom info
+    name = models.CharField(max_length=250)
+    slug = models.SlugField(max_length=250, unique_for_date='publish', default="publicChat")
+    publish = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(default=timezone.now)
+    updated = models.DateTimeField(default=timezone.now)
+    status = models.CharField(max_length=10,choices=STATUS_CHOICES, default='draft')
+
+    # Related users info
+    attendees_one = models.CharField(max_length=250, default="nobody")
+    attendees_two = models.CharField(max_length=250, default="nobody")
+
+    class Meta:
+        ordering = ('-publish',)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('chatroom_detail',args=[self.slug])
+
+    # added after get_absolute_url function
+    # to get comment with parent is none and active is true, we can use this in template
+    def get_comments(self):
+        return self.comments.filter(parent=None).filter(active=True)
+
+# comment model
+class Comment(models.Model):
+    chatroom=models.ForeignKey(Chatroom,on_delete=models.CASCADE, related_name="comments")
+    profile = models.ForeignKey(Profile,  on_delete=models.CASCADE)
+    name=models.CharField(max_length=50, default="x")
+    parent=models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
+    body = models.TextField()
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ('created',)
+
+    def __str__(self):
+        return self.body
+
+    def get_comments(self):
+        return Comment.objects.filter(parent=self).filter(active=True)

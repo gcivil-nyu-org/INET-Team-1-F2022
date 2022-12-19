@@ -15,19 +15,88 @@
   </article>
 {% endfor %}
 
+{%if not request.user.profile.matches.exists and not request.user.profile.matched_with.exists and request.user.profile.warning_count < 4 %}
+<h1 class="title is-2">Proposals</h1>
+<section class="main-content columns is-fullheight">
+
+<aside class="column is-2  is-fullheight ">
+<p class="menu-label is-hidden-touch">Options</p>
+<ul class="menu-list">
+ <li>
+   <div class="navbar-item has-dropdown is-hoverable">
+     <a class="navbar-link is-arrowless">
+       My Account
+     </a>
+ <div class="navbar-dropdown is-right">
+   <a class="navbar-item " href="{% url "password_change" %}">
+     Change Password
+   </a>
+   <hr class="navbar-divider">
+   <div class="buttons has-addons">
+     <a href="{% url 'delete_account' %}" class="button is-danger"
+     onclick="return confirm('WARNING: This will permanently delete your account and you will not be able to get it back. Do you wish to proceed?')">Delete My Account</a>
+   </div>
+   <style>
+     #bottom {
+         position: absolute;
+         bottom: 5px;
+         right: 5px;
+     }
+     p.thicker {
+         font-weight: 900;
+     }
+   </style>
+   <hr class="navbar-divider">
+
+ </li>
+
+ <li>
+   <div class="navbar-item has-dropdown is-hoverable">
+     <a class="navbar-link is-arrowless">
+       My Profile
+     </a>
+ <div class="navbar-dropdown is-right">
+   <a class="navbar-item" href="{% url 'profile' pk=user.id %}">
+     Preview
+   </a>
+   <a class="navbar-item" href="{% url "edit" %}">
+     Edit
+   </a>
+   <hr class="navbar-divider">
+
+ </li>
+ <li>
+   <div class="navbar-item has-dropdown is-hoverable">
+     <a class="navbar-link is-arrowless" >
+       My Preferences
+     </a>
+ <div class="navbar-dropdown">
+   <a class="navbar-item" href="{% url 'preferences' pk=user.id %}">
+     Preview
+   </a>
+   <a class="navbar-item" href="{% url "edit_preferences" %}">
+     Edit
+   </a>
+   <hr class="navbar-divider">
+ </li>
+ <li>
+   <div class="navbar-item has-dropdown is-hoverable">
+     <a class="navbar-link is-arrowless" >
+       My Proposal
+     </a>
+ <div class="navbar-dropdown">
+   <a class="navbar-item" href="{% url "edit_timenplace" %}">
+     Edit
+   </a>
+   <hr class="navbar-divider">
+ </li>
+</ul>
+</aside>
+
 <div class="column">
-  <h1 class="title is-4">Here are the suggestions based on your preferences!</h1>
-    <p style="color:red">Note: If this page is empty, we are not able to suggest anyone for your preferences! </p>
-  <p>
-    You can 
-    <ul>
-      <li>
-        <a href="{% url 'preferences' pk=user.id %}">Preview your preferences</a>,  or
-      </li>
-      <li> 
-        <a href="{% url "edit_preferences" %}">Edit your preferences</a>
-      </li>
-    </ul>
+  <h2 class="title is-4">Here are the available proposals based on your preferences</h2>
+    <p style="color:blue">Note: You can <a href="{% url "edit_preferences" %}">modify your preferences</a>  to widen the results. </p>
+
 {% for profile in profiles %}
   {% if profile.calc_age >= currentuser.age_preference_min and profile.calc_age <= currentuser.age_preference_max %}
     <div class="block">
@@ -67,7 +136,7 @@
     {% endif %} 
 {% endfor %}
 
-</div>
+
 
 <!--Pagination-->
 
@@ -81,6 +150,11 @@ Page {{profiles.number}} of {{profiles.paginator.num_pages}}
 {% if profiles.has_next %} 
 <a href="?page={{profiles.next_page_number}}">&raquo Next </a>
 {% endif %}  -->
+<br>
+<br>
+<br>
+<br>
+<br>
 <hr>
 <nav class="pagination is-centered is-rounded" role="navigation" aria-label="pagination">
 	{% if profiles.has_previous %} 
@@ -101,8 +175,8 @@ Page {{profiles.number}} of {{profiles.paginator.num_pages}}
 	
 	</ul>
 	
-	
-	
   </nav>
-
+</div>
+{% else %} Error: You do not have permission to view this page
+{% endif %}
 {% endblock content %}

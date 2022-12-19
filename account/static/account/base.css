@@ -8,7 +8,6 @@ body {
     overflow-y: scroll;
     height: 100%;
     width:100%;
-    text-align: center;
 }
 
 html {
@@ -98,7 +97,6 @@ ol {
     margin: 0 auto; 
     height: 100%;
     width:100%;
-    text-align: center;
 }
 
 /* forms */
@@ -106,7 +104,6 @@ form {
     overflow:auto;
     margin: 0 auto; 
     width:250px;
-    text-align: center;
 }
 
 form p {
@@ -259,7 +256,6 @@ a.like, a.follow { float:right; margin-top:-8px; }
     float:left;
     width:auto;
     padding:10px;
-    text-align:center;
 }
 .image-likes img {
     width:120px;

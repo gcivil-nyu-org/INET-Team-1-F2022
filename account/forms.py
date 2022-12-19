@@ -7,6 +7,7 @@ import datetime
 from django.utils.safestring import mark_safe
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
+from .models import Comment
 # Form will be used to authenticate users against the database.
 
 
@@ -106,8 +107,8 @@ class TimeEditForm(forms.ModelForm):
     def check_time_is_valid(self):
         time_proposal = self.cleaned_data.get('proposal_datetime_local')
         time_now = timezone.now()
-        time_proposal_datetime_obj = parse_datetime(time_proposal)
-        if time_proposal_datetime_obj > time_now:
+        # time_proposal_datetime_obj = parse_datetime(time_proposal)
+        if time_proposal > time_now:
             return True
         else:
             self.add_error('proposal_datetime_local',
@@ -241,3 +242,13 @@ class MatchFeedbackForm(forms.ModelForm):
                   'match_rating',
                   'inappropriate_behavior',
                   'match_comments',)
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('body',)
+
+    def __init__(self, *args, **kwargs):
+        super(CommentForm, self).__init__(*args, **kwargs)
+        self.fields['body'].label = "" # Hide the body lable
+        self.fields['body'].widget.attrs = {'placeholder': 'Enter text here...', 'class':'form-control', 'rows':'2'}

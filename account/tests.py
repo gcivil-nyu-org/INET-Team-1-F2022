@@ -14,7 +14,7 @@ from django.http import HttpRequest, Http404
 from django.test.client import RequestFactory
 from django.core.handlers.wsgi import WSGIRequest
 from .views import edittimenplace, profile,load_locations,dashboard,edit, register, editplace, edittime,profile_liked_me, \
-preferences, edit_preferences,filter_profile_list,get_referer,submitFeedback, delete_account,password_change
+preferences,profile_list, edit_preferences,filter_profile_list,get_referer,submitFeedback, delete_account,password_change
 
 
 
@@ -58,7 +58,6 @@ class TestRegister(TestCase):
                 "password2": "foobar123123ABC@",
             },
         )
-
         self.assertEqual(response.status_code, 200)
 
 class TestLogin(TestCase):
@@ -267,7 +266,6 @@ class TestViews(TestCase):
         response = profile_liked_me(req, pk1)
         self.assertEqual(response.status_code, 200)
 
-
     def test_load_locations(self):   
         url_path = 'ajax/load-locations/' + "?cusine_id=1&boro_id=4"
         response = self.client.get(url_path)
@@ -289,6 +287,11 @@ class TestViews(TestCase):
         response = self.client.get("account/edit/")
         self.assertEqual(response.status_code,404)
 
+    def test_profile_list(self):
+        response = self.client.get("/account/profile_list/")
+        self.assertTemplateUsed('profile/profile_list.html')
+        self.assertEqual(response.status_code,302)
+
     def test_filter_pref(self):   
         response = self.client.get("/account/filter_profile_list/")
         self.assertEqual(response.status_code,302)
@@ -307,7 +310,7 @@ class TestViews(TestCase):
     def test_edit_time_get(self):   
         response = self.client.get("/account/edit_time/")
         self.assertEqual(response.status_code,302)
-
+       
         req = HttpRequest()
         req.method = "GET"
         req.user = self.user1
@@ -316,12 +319,13 @@ class TestViews(TestCase):
     
     def test_edit_place_get(self):   
         response = self.client.get("/account/edit_place/")
-        self.assertEqual(response.status_code,302)
+        self.assertEqual(response.status_code,302)        
 
         req = HttpRequest()
         req.method = "GET"
         req.user = self.user1
         response = editplace(req)
+        
         assert response.status_code == 200
     
     def test_edit_time_place_get(self):   
@@ -333,6 +337,7 @@ class TestViews(TestCase):
         req.user = self.user1
         response = edittimenplace(req)
         assert response.status_code == 200
+        
 
     def test_edit_time_post(self):
         time_form = TimeEditForm()
@@ -377,7 +382,18 @@ class TestViews(TestCase):
         # req.send(json.stringify(parameters))
         req.user = self.user1
         response = editplace(req)
+        
         assert response.status_code == 200
+        
+    def test_editplace_get(self):
+        response = self.client.get("/account/editplace/")
+        self.assertEqual(response.status_code,404)
+        #response = editplace(req)
+        print("EDIT PLACE", response.status_code)
+        response = self.client.get("/account/edit_timenplace/")
+        self.assertEqual(response.status_code,302)
+        #assert response.status_code == 200
+        self.assertTemplateNotUsed( 'account/edit_place.html')
 
     def test_edit_timenplace_post(self):
         location_form = NewLocationForm()
@@ -524,13 +540,15 @@ class TestProfile(TestCase):
         self.assertEqual(len(profile1.likes.all()), 0)
         self.assertEqual(len(profile2.likes.all()), 0)
         self.assertEqual(len(profile3.likes.all()), 0)
+        self.assertFalse(profile1.liked_by.exists())
+        self.assertFalse(profile1.likes.exists())
+        self.assertFalse(profile2.likes.exists())
+        self.assertFalse(profile3.likes.exists())
 
         #TODO: Test redirection to dashboard
         # self.assertRedirects(response, reverse('filter_profile_list'), 
         #                             status_code=302, target_status_code=200,
         #                              msg_prefix='', fetch_redirect_response=True)
-
-
 
     def testHide(self):
         profile1 = Profile.objects.get(user=self.user1)
@@ -552,6 +570,7 @@ class TestProfile(TestCase):
 
         self.assertEquals(profile1.hides.all().first(), profile2)
         self.assertEquals(profile2.hidden_by.all().first(), profile1)
+        self.assertEqual(response.status_code, 302)
 
     def testDecline(self):
         profile1 = Profile.objects.get(user=self.user1)
@@ -725,6 +744,8 @@ class TestForms(TestCase):
         self.assertEqual("", form.check_username())
         # This should raise a validation error
         #self.assertTrue('First Name cannot be empty!')
+        form.cleaned_data["first_name"] = "@"
+        self.assertTrue("Symbols @/./-/+ are not allowed in username.", form.check_username())
 
     def test_meta_time(self):
         form = TimeEditForm()
@@ -737,3 +758,20 @@ class TestForms(TestCase):
         form.cleaned_data = {}
         form.cleaned_data["proposal_datetime_local"] = timezone.now()
         self.assertNotEqual(timezone.now(), form.cleaned_data["proposal_datetime_local"])
+    
+    def test_time_edit_is_valid(self):
+        form = TimeEditForm()
+        form.cleaned_data = {}
+        # Check time in past
+        form.cleaned_data["proposal_datetime_local"] = timezone.now()
+        self.assertEqual(False, form.check_time_is_valid())
+        # Check time in future
+        form.cleaned_data["proposal_datetime_local"] = timezone.now() + timedelta(6)
+        self.assertEqual(True, form.check_time_is_valid())
+
+    # def test_user_passwords_not_match(self):
+    #     form = UserRegistrationForm()
+    #     form.cleaned_data = {}
+    #     form.cleaned_data["password"] = "My_pass"
+    #     form.cleaned_data["password2"] = "My_pass_dont_match"
+    #     self.assertEqual('My_pass_dont_match', form.clean_password2())
