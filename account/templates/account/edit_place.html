@@ -18,6 +18,8 @@
         <br>
         {{location_form.as_p}}
         {% csrf_token %}
+        <br>
+        <br>
     <p><input type="submit" value="Save changes" 
         onclick="return confirm('WARNING: Any changes to proposal place will clear the likes you have so far received.')" />
     </p>
