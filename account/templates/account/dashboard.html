@@ -105,10 +105,8 @@
         <a href="{% url 'profile' pk=user.user.id %}">
           <div class="buttons has-addons is-left">
             <button class="button is-link is-outlined">View Profile</button>
-            <a href="{{ user.profile.chatroom_slug }}">
-
+            <a href="{{ user_profile.chatroom_slug }}">
                 <button class="button is-link is-outlined">Chat</button>
-
             </a>
           </div>
         </a>
@@ -160,6 +158,9 @@
         <a href="{% url 'profile' pk=user.user.id %}">
           <div class="buttons has-addons is-left">
             <button class="button is-link is-outlined">View Profile</button>
+            <a href="{{ user_profile.chatroom_slug }}">
+              <button class="button is-link is-outlined">Chat</button>
+            </a>
           </div>
         </a>
       </div>
