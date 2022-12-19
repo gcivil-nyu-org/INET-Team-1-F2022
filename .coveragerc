@@ -5,3 +5,4 @@ omit =
     timeandplace/asgi.py
     timeandplace/urls.py
     account/tests.py
+    timeandplace/
