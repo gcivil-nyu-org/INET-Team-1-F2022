@@ -451,7 +451,10 @@ def submitFeedback(request):
                 obj.match_location = request.user.profile.matched_with.first().location_dropdown
             # if the user rated the matched user less than 5 , increment the warning of matched user
             if (int(feedback_form.cleaned_data.get('match_rating')) < 2) or (feedback_form.cleaned_data.get('inappropriate_behavior')) != None:
-                obj.matched_user = request.user.profile.matches.first().user
+                if not request.user.profile.matches.first():
+                    obj.matched_user = request.user.profile.matched_with.first().user
+                if not request.user.profile.matched_with.first():
+                    obj.matched_user = request.user.profile.matches.first().user
                 obj.matched_user.profile.warning_count += 1
                 obj.matched_user.profile.save()
 
